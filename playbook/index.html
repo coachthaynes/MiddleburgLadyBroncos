@@ -699,15 +699,16 @@ const PLAYS=[
  {ball:"o1",t:"{2} passes right back to {1} in the corner."},
  {shot:true,t:"{1} shoots the open corner 3."}
  ]},
-{id:"middle",vids:[["_n44_VAi-NE", "4 simple plays to beat a 2 3 zone"], ["YPwgU6mBDjA", "5 plays to punish a 2 3 zone"]],sys:"z41",name:"Middle",target:"2 3 zone",look:"Elbow pull up or corner 3",def:"23",
- keys:["The high post catch draws the top defenders in.","{3} pins the top defender so {1} can curl free.","{1} reads the low defender. If she steps up, the corner 3 is open."],
+{id:"middle",vids:[["_n44_VAi-NE", "4 simple plays to beat a 2 3 zone"], ["YPwgU6mBDjA", "5 plays to punish a 2 3 zone"]],sys:"z41",name:"Middle",target:"2 3 zone",look:"Wing drive to the basket or corner 3",def:"23",
+ keys:["{5} flashes from the lane to the top of the key. The catch up top pulls the top defenders together.","{1} and {3} stay spaced wide on the wings, with {2} and {4} deep in the corners.","{5} kicks it right to {3} while {1} comes across to set the pin down screen for {3}.","{3} attacks the basket off the screen. If the low defender steps up to stop her, kick it out to the open corner."],
  steps:[
- {o:{o1:[150,295],o2:[462,50],o3:[350,295],o4:[38,50],o5:[250,205]},ball:"o1",t:"Setup: 4 Out, 1 In. {1} and {3} wide in the slots, {2} and {4} in the corners, {5} in the high post."},
- {ball:"o5",t:"{1} passes into the high post to {5}."},
- {o:{o3:[318,258],o1:[210,300]},scr:["o3"],t:"{3} steps down and sets a pin screen on the top defender. {1} slides toward the middle to set up the curl."},
- {o:{o1:[332,212]},via:{o1:[[292,296]]},ball:"o1",t:"{5} passes back to {1}, who curls around the screen into a pull up at the elbow."},
- {ball:"o2",t:"The low defender steps up to {1}, so {1} kicks it to {2} in the corner."},
- {shot:true,t:"{2} shoots the corner 3."}
+  {o:{o1:[75,205],o2:[462,50],o3:[425,205],o4:[38,50],o5:[250,150]},ball:"o1",t:"Setup: 4 Out, 1 In. {1} and {3} spaced out on the wings, {2} and {4} deep in the corners, {5} in the middle of the lane. {1} has the ball."},
+  {o:{o5:[250,300]},t:"{5} flashes from the lane up to the top of the key."},
+  {ball:"o5",t:"{1} passes to {5} at the top of the key."},
+  {o:{o1:[385,182]},via:{o1:[[200,250],[320,235]]},ball:"o3",scr:["o1"],t:"{5} kicks it to {3} on the far wing while {1} comes across to set the pin down screen for {3}."},
+  {o:{o3:[290,165]},via:{o3:[[372,252]]},xo:{x4:[322,142],x5:[262,120]},t:"{3} comes off the screen and attacks the basket. Defensive player {x4}, the low defender, steps up to stop her."},
+  {ball:"o2",t:"The corner is open, so {3} kicks it out to {2}."},
+  {shot:true,t:"{2} shoots the corner 3."}
  ]},
 {id:"line",vids:[["YPwgU6mBDjA", "5 plays to punish a 2 3 zone"], ["_n44_VAi-NE", "4 simple plays to beat a 2 3 zone"]],sys:"z41",name:"Line",target:"2 3 zone",look:"Corner 3 or baseline drive",def:"23",
  keys:["{1}'s dribble engages the top defender and forces the other to cover.","{3} steps out of the high post to be the reversal.","Swing it fast. The zone cannot shift as quickly as the ball.","{3} dives right after she swings it for the low post feed."],
