@@ -570,7 +570,7 @@ const FULL0={o1:[300,945],o2:[140,850],o3:[360,830],o4:[250,620],o5:[250,330]};
 const PLAYS=[
 /* FLOW */
 {id:"flow",sys:"flow",name:"Entry and Continuity",target:"Man to man",look:"Empty side ball screen, roll, and swing",
- keys:["Wings run wide and deep to the corners in transition to stretch the defense.","{5} runs the rim first, then shakes up to the block.","Screeners sprint into the screen. The ball handler waits for it to be set.","After every roll, somebody lifts to the slot to catch the kick out.","Each phase ends with a swing and a new empty side ball screen, so the action never stops."],
+ keys:["Wings run wide and deep to the corners in transition to stretch the defense.","{5} runs the rim first, then shakes up to the block.","Screeners sprint into the screen. The ball handler waits for it to be set.","After every roll, somebody lifts to the slot to catch the kick out.","The cutter goes hard to the basket first, then all the way through to the opposite corner.","When the cutter fills the corner, the wing and corner players rotate up along the 3 point line.","Each phase ends with a swing and a new empty side ball screen, so the action never stops."],
  steps:[
  {o:{o1:[350,295],o2:[462,50],o3:[38,50],o4:[150,295],o5:[345,100]},ball:"o1",t:"4 Out setup. {1} has the ball in the slot. {4}, the trail big, fills the other slot. {2} and {3} sprint wide to the corners and {5} runs the rim, then shakes up to the block."},
  {o:{o1:[425,205]},ball:"o4",pass:"start",tag:"Entry",t:"{1} reverses the ball to {4} in the other slot, then drifts down to the wing."},
@@ -578,13 +578,16 @@ const PLAYS=[
  {o:{o4:[112,232]},scr:["o4"],tag:"Entry",t:"{4} follows the pass into an empty wing ball screen for {3}. Nobody sits in the corner behind it."},
  {o:{o3:[205,170],o4:[215,95],o5:[350,295]},via:{o3:[[150,215]]},tag:"Phase 1",t:"{3} waits for the screen, then drives off it. {4} rolls hard to the rim. {5} lifts to the weak side slot to clear the lane for the roll."},
  {ball:"o5",tag:"Phase 1",t:"{3} kicks the ball out to {5} in the slot."},
- {o:{o3:[75,205],o4:[38,50],o1:[250,315],o2:[425,205]},tag:"Phase 2",t:"{4} steps out to the weak side corner and {3} spaces back to the wing. {1} lifts up top to bait the cut while {2} lifts to fill the wing."},
- {o:{o1:[250,105]},ball:"o2",pass:"start",tag:"Phase 2",t:"{5} swings the ball to {2} on the far wing as {1} makes a hard cut to the basket."},
- {o:{o5:[388,228],o1:[38,50],o4:[250,310]},scr:["o5"],tag:"Phase 3",t:"{5} follows the pass into a wing ball screen for {2}. {1} finishes the cut in the weak side corner and {4} lifts to the top as the safety."},
- {o:{o2:[300,170],o5:[300,95]},via:{o2:[[350,215]]},tag:"Phase 3",t:"{2} attacks the paint off the screen while {5} rolls to the rim."},
- {ball:"o4",tag:"Phase 3",t:"{2} passes back out to {4} at the top."},
- {o:{o5:[345,100],o2:[425,205]},ball:"o3",tag:"Phase 4",t:"{5} clears out of the lane and {2} spaces to the wing. {4} swings the ball to {3} to restart on the other side."},
- {o:{o4:[112,232],o1:[250,315]},scr:["o4"],tag:"Phase 4",t:"{4} follows the pass into the next empty wing ball screen and {1} lifts out of the corner. The continuity starts over."}
+ {o:{o1:[250,105],o2:[425,205],o3:[75,205],o4:[38,50]},via:{o1:[[330,160]]},tag:"Phase 2",t:"{1} cuts hard from the wing to the basket. {2} lifts from the corner to fill the wing. {4} steps out to the weak side corner and {3} spaces back to the wing."},
+ {o:{o1:[38,50],o4:[75,205],o3:[250,315]},via:{o1:[[150,70]],o4:[[48,130]],o3:[[150,285]]},tag:"Phase 2",t:"{1} continues through to the opposite corner. As she gets there, {3} and {4} rotate up along the 3 point line: {3} to the top of the key and {4} to the wing. {1} stays in the corner."},
+ {ball:"o2",tag:"Phase 3",t:"{5} passes to {2} on the wing."},
+ {o:{o5:[388,228]},scr:["o5"],tag:"Phase 3",t:"{5} follows the pass into a ball screen for {2}."},
+ {o:{o2:[300,170],o5:[300,95]},via:{o2:[[350,215]]},tag:"Phase 3",t:"{2} attacks the middle off the screen while {5} rolls to the rim."},
+ {o:{o4:[160,300]},ball:"o4",tag:"Phase 4",t:"{4} lifts up to the top of the key and {2} passes out to her."},
+ {o:{o5:[345,100],o2:[425,205],o3:[462,50]},via:{o3:[[250,115],[390,75]]},tag:"Phase 4",t:"{5} clears out of the lane and {2} spaces back out to the wing. {3} cuts from the top of the key to the basket, then continues through to the opposite corner."},
+ {o:{o1:[75,205]},ball:"o1",tag:"Phase 4",t:"{1} lifts from the corner to the wing and {4} passes her the ball."},
+ {o:{o4:[112,232]},scr:["o4"],tag:"Phase 4",t:"{4} follows the pass into a ball screen for {1}."},
+ {o:{o1:[205,170],o4:[215,95]},via:{o1:[[150,215]]},tag:"Phase 4",t:"{1} attacks off the ball screen and {4} rolls hard to the basket."}
  ]},
 {id:"flow_highlow",sys:"flow",name:"High Low Read",target:"Switches or under",look:"Lob from the slot to the rolling post",
  keys:["Read the switch as soon as you catch in the slot.","The roller seals the smaller defender and shows a high target with one hand.","Throw it high and to the rim side, where only your teammate can catch it.","If they front, the lob is there. If they play behind, the roller posts and catches low."],
