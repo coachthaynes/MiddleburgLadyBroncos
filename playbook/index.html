@@ -1,0 +1,1328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lady Broncos Playbook</title>
+<meta name="description" content="Every offense and defense the Middleburg Lady Broncos run, animated on the court with film for every play.">
+<meta name="theme-color" content="#141116">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F3F1F1; --panel:#FFFFFF; --panel2:#FAF8F8; --ink:#17141A; --muted:#645D62; --line:#DDD6D7;
+  --red:#C8102E; --redsoft:#F7E3E6; --court:#FCFAF7; --paint:#F4ECE6; --cline:#2B2528;
+  --ofill:#17141A; --otext:#FFFFFF; --ball:#E07A22; --arrow:#2B2528; --xarrow:#C8102E;
+  --good:#1E7A46; --goodsoft:#E1F2E8; --bad:#B3261E; --badsoft:#FBE4E2;
+  --night:#141116; --nightink:#FFFFFF; --nightmuted:#CFC8CB; --hot:#E8243F;
+  --shadow:0 1px 2px rgba(23,20,26,.06),0 8px 24px rgba(23,20,26,.07);
+  --display:"Big Shoulders Display","Oswald","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow","Segoe UI",system-ui,sans-serif;
+  --cond:"Barlow Condensed","Arial Narrow","Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111013; --panel:#1B191D; --panel2:#201E22; --ink:#F2EEEF; --muted:#A79FA3; --line:#322E33;
+    --red:#F0485E; --redsoft:#3A1A20; --court:#1D1B1F; --paint:#262227; --cline:#D8D1D3;
+    --ofill:#F2EEEF; --otext:#141216; --ball:#F08A34; --arrow:#E4DEE0; --xarrow:#F0485E;
+    --good:#4CC784; --goodsoft:#16301F; --bad:#FF7A70; --badsoft:#3A1A18;
+    --night:#0B0A0C;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111013; --panel:#1B191D; --panel2:#201E22; --ink:#F2EEEF; --muted:#A79FA3; --line:#322E33;
+  --red:#F0485E; --redsoft:#3A1A20; --court:#1D1B1F; --paint:#262227; --cline:#D8D1D3;
+  --ofill:#F2EEEF; --otext:#141216; --ball:#F08A34; --arrow:#E4DEE0; --xarrow:#F0485E;
+  --good:#4CC784; --goodsoft:#16301F; --bad:#FF7A70; --badsoft:#3A1A18;
+  --night:#0B0A0C;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%}
+[hidden]{display:none!important}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:20px}
+
+/* player tokens in text */
+.pn,.dn{display:inline-grid;place-items:center;min-width:1.45em;height:1.45em;padding:0 .2em;border-radius:50%;font-family:var(--cond);font-weight:700;font-size:.9em;line-height:1;vertical-align:.08em;font-variant-numeric:tabular-nums}
+.pn{background:var(--ofill);color:var(--otext)}
+.dn{border:2px solid var(--red);color:var(--red);border-radius:5px;height:1.4em;min-width:1.4em}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:20;background:var(--night);color:var(--nightink);border-bottom:4px solid #C8102E;padding-top:env(safe-area-inset-top,0px)}
+.bar-in{display:flex;align-items:center;gap:14px;min-height:62px;flex-wrap:wrap;padding-block:6px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
+.brand-mark{width:38px;height:38px;border-radius:8px;background:#C8102E;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:21px;letter-spacing:.02em;color:#fff}
+.brand-name{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:22px;letter-spacing:.03em;line-height:1}
+.brand-name span{color:var(--hot)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{background:none;border:0;color:var(--nightmuted);font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:15px;padding:9px 12px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.tab svg{width:17px;height:17px;fill:currentColor}
+.tab:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tab[aria-current="page"]{color:#fff;background:#C8102E}
+.bar-tools{display:flex;align-items:center;gap:8px}
+.pill{font-family:var(--cond);font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--nightmuted);border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:5px 11px;white-space:nowrap}
+.pill b{color:#fff}
+.iconbtn{width:38px;height:38px;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:none;color:#fff;display:grid;place-items:center;cursor:pointer}
+.iconbtn svg{width:18px;height:18px;fill:currentColor}
+.iconbtn:hover{background:rgba(255,255,255,.08)}
+
+/* home */
+.hero{background:var(--night);color:var(--nightink);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(600px 300px at 85% 110%,rgba(200,16,46,.35),transparent 70%),
+  repeating-linear-gradient(90deg,rgba(255,255,255,.025) 0 2px,transparent 2px 64px);pointer-events:none}
+.hero-in{position:relative;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:40px;align-items:center;padding-block:44px 48px}
+.eyebrow{font-family:var(--cond);text-transform:uppercase;letter-spacing:.16em;font-size:14px;font-weight:700;color:var(--red)}
+.hero .eyebrow{color:#FF8A9A}
+.hero h1{font-family:var(--display);font-weight:900;text-transform:uppercase;line-height:.84;letter-spacing:.005em;font-size:clamp(56px,9vw,124px);margin:10px 0 18px}
+.hero h1 span{color:var(--hot);display:block}
+.hero p.lede{color:var(--nightmuted);font-size:18px;max-width:46ch;margin:0 0 24px}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.big{display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:13px 20px;font-family:var(--cond);font-weight:700;font-size:18px;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;border:2px solid transparent;text-decoration:none}
+.big svg{width:18px;height:18px;fill:currentColor}
+.big.red{background:#C8102E;color:#fff}
+.big.red:hover{background:#A60D26}
+.big.ghost{border-color:rgba(255,255,255,.35);color:#fff;background:none}
+.big.ghost:hover{border-color:#fff}
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stat b{display:block;font-family:var(--display);font-weight:800;font-size:44px;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+.stat span{font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:13px;color:var(--nightmuted)}
+.hero-court{background:#1D1B1F;border:1px solid #322E33;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.hero-court .court-wrap{background:#1D1B1F}
+.hero-cap{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid #322E33;font-family:var(--cond);font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#A79FA3}
+.hero-cap b{color:#fff}
+.hero-cap button{background:none;border:1px solid #4a444b;color:#fff;border-radius:6px;padding:5px 10px;font-family:var(--cond);font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.hero-cap button:hover{border-color:#fff}
+.dark-court{--court:#1D1B1F;--paint:#262227;--cline:#D8D1D3;--ofill:#F2EEEF;--otext:#141216;--ball:#F08A34;--arrow:#E4DEE0;--xarrow:#F0485E;--red:#F0485E;--muted:#A79FA3}
+
+.section{padding-block:40px 8px}
+.section h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:clamp(32px,4vw,44px);line-height:.95;margin:0 0 6px;letter-spacing:.01em;text-wrap:balance}
+.section .sub{color:var(--muted);margin:0 0 22px;max-width:62ch}
+.sides{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.side-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.side-head{padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:1px solid var(--line)}
+.side-head h3{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:40px;line-height:.9;margin:0}
+.side-head.def h3{color:var(--red)}
+.side-head small{font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-size:14px;font-weight:600}
+.sys-list{list-style:none;margin:0;padding:8px}
+.sys-btn{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;align-items:center;border-radius:8px;padding:12px}
+.sys-btn:hover{background:var(--panel2)}
+.sys-go{background:none;border:0;padding:0;text-align:left;cursor:pointer;display:grid;gap:2px;border-radius:4px}
+.sys-go:hover .nm{color:var(--red)}
+.sys-btn .nm{font-family:var(--cond);font-weight:700;font-size:21px;text-transform:uppercase;letter-spacing:.04em;line-height:1.1}
+.sys-btn .ds{color:var(--muted);font-size:14px}
+.sys-btn .ct{grid-row:1/span 2;grid-column:2;display:flex;align-items:center;gap:10px;font-family:var(--cond);font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.meter{width:76px;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--good);border-radius:99px}
+.plays-inline{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.mini{font-family:var(--cond);font-weight:600;font-size:14px;letter-spacing:.03em;border:1px solid var(--line);background:var(--panel2);border-radius:99px;padding:3px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.mini:hover{border-color:var(--ink)}
+.mini.learned{border-color:var(--good);color:var(--good);background:var(--goodsoft)}
+.mini.learned::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--good)}
+
+.read{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+.card h3{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:26px;margin:0 0 12px;letter-spacing:.02em;line-height:1}
+.card ul{margin:0;padding-left:20px;display:grid;gap:8px}
+.card li{max-width:70ch}
+.numrow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.numrow div{display:grid;justify-items:center;gap:4px;text-align:center;font-family:var(--cond);font-size:13px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.numrow .pn,.numrow .dn{font-size:22px}
+.keyline{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px}
+.keyline span{display:flex;align-items:center;gap:10px;font-size:15px}
+.keyline svg{width:46px;height:18px;flex:none}
+.tipbox{margin-top:14px;padding:12px 14px;border-radius:8px;background:var(--redsoft);font-size:15px}
+.shortcuts{display:grid;gap:10px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.shortcut{display:flex;flex-direction:column;gap:6px;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:18px;cursor:pointer;box-shadow:var(--shadow)}
+.shortcut:hover{border-color:var(--ink)}
+.shortcut b{font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1}
+.shortcut span{color:var(--muted);font-size:15px}
+.shortcut .go{font-family:var(--cond);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);font-size:14px;margin-top:auto}
+
+/* play view */
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:32px;align-items:start;padding-block:28px 60px}
+.side{position:sticky;top:84px;max-height:calc(100vh - 100px);overflow:auto;padding-right:4px}
+.side .search{width:100%;font:inherit;font-size:15px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);margin-bottom:10px}
+.side h2{font-family:var(--display);font-weight:800;font-size:26px;text-transform:uppercase;margin:6px 0 4px;letter-spacing:.02em}
+.side h2.def{margin-top:20px;color:var(--red)}
+.grp{margin:12px 0 4px;font-family:var(--cond);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.side ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.side button{width:100%;text-align:left;background:none;border:0;padding:7px 10px;border-radius:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:15px}
+.side button:hover{background:var(--panel)}
+.side button[aria-current="true"]{background:var(--ink);color:var(--bg)}
+.side .chk{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);flex:none;display:grid;place-items:center}
+.side .chk.on{background:var(--good);border-color:var(--good)}
+.side .chk.on::after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.picker{display:none;margin-bottom:18px}
+.picker label{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:13px;color:var(--muted);margin-bottom:4px;font-weight:700}
+.picker select{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+
+.ph{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:6px}
+.ph h1{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(44px,6vw,72px);line-height:.88;margin:4px 0 0;text-wrap:balance}
+.learn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--good);color:var(--good);background:none;border-radius:99px;padding:8px 16px;font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.07em;text-transform:uppercase;cursor:pointer}
+.learn svg{width:18px;height:18px;fill:currentColor}
+.learn[aria-pressed="true"]{background:var(--good);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px}
+.chip{font-family:var(--cond);font-size:16px;border:1px solid var(--line);background:var(--panel);padding:4px 10px;border-radius:5px}
+.chip b{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:var(--muted);margin-right:6px}
+.setup{color:var(--muted);max-width:75ch;margin:0 0 18px}
+
+.viewer{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.court-wrap{background:var(--court);padding:10px;display:flex;justify-content:center}
+.court{width:100%;height:auto;display:block;max-width:100%}
+.stage.full .court{max-height:78vh;width:auto}
+.cap{padding:14px 16px;border-top:1px solid var(--line);min-height:100px}
+.cap .k{font-family:var(--cond);font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:600}
+.cap .k em{font-style:normal;color:var(--red);font-weight:700;margin-left:8px}
+.cap p{margin:4px 0 0;font-size:17px;line-height:1.5}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);background:var(--panel2)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);padding:8px 12px;border-radius:6px;cursor:pointer;font-family:var(--cond);font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.06em}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff;min-width:108px;justify-content:center}
+.btn svg{width:16px;height:16px;fill:currentColor}
+.btn[disabled]{opacity:.4;cursor:default}
+.ctl .sp{margin-left:auto;min-width:56px;justify-content:center}
+.prog{height:5px;background:var(--line)}
+.prog i{display:block;height:100%;background:var(--red);width:0}
+.legend{display:flex;flex-wrap:wrap;gap:14px;padding:10px 16px;border-top:1px solid var(--line);font-family:var(--cond);font-size:14px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend svg{width:34px;height:16px}
+
+.steps{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.steps h3{margin:0;padding:12px 16px;border-bottom:1px solid var(--line);font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:14px;color:var(--muted);display:flex;justify-content:space-between;font-weight:700}
+.steps ol{list-style:none;margin:0;padding:6px;display:grid;gap:2px;max-height:640px;overflow:auto}
+.steps li button{width:100%;text-align:left;border:0;background:none;display:grid;grid-template-columns:30px 1fr;gap:10px;padding:9px 10px;border-radius:6px;cursor:pointer;font-size:15px;line-height:1.45}
+.steps li button:hover{background:var(--panel2)}
+.steps .num{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-family:var(--cond);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.steps .tag{display:block;font-family:var(--cond);font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--red);font-weight:700}
+.steps li.done button{color:var(--muted)}
+.steps li.done .num{border-color:var(--muted)}
+.steps li.on button{background:var(--redsoft)}
+.steps li.on .num{background:var(--red);border-color:var(--red);color:#fff}
+
+.block{margin-top:28px}
+.block-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.block-h h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:34px;line-height:1;margin:0}
+.block-h p{margin:0;color:var(--muted);font-size:15px;max-width:60ch}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.vcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.yt{position:relative;aspect-ratio:16/9;background:#000;max-width:100%}
+.yt button{position:absolute;inset:0;border:0;padding:0;background:#000;cursor:pointer;width:100%;height:100%}
+.yt img{width:100%;height:100%;object-fit:cover;display:block;opacity:.88;transition:opacity .2s}
+.yt button:hover img{opacity:1}
+.yt .play{position:absolute;left:50%;top:50%;width:66px;height:46px;margin:-23px 0 0 -33px;border-radius:12px;background:#C8102E;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.4);transition:transform .15s}
+.yt button:hover .play{transform:scale(1.08)}
+.yt .play svg{width:24px;height:24px;fill:#fff}
+.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vmeta{padding:12px 14px;display:grid;gap:6px}
+.vmeta b{font-weight:600;line-height:1.3}
+.vtags{display:flex;flex-wrap:wrap;gap:6px}
+.vtags button{font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:2px 9px;cursor:pointer}
+.vtags button:hover{border-color:var(--ink)}
+.vfall{font-size:13px;color:var(--muted)}
+.vfall a{color:var(--muted)}
+.info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:28px}
+.info .card.rules{background:var(--panel2)}
+.playnav{display:flex;justify-content:space-between;gap:12px;margin-top:28px;flex-wrap:wrap}
+.playnav button{flex:1 1 240px;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:14px 16px;cursor:pointer}
+.playnav button:last-child{text-align:right}
+.playnav button:hover{border-color:var(--ink)}
+.playnav small{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-size:13px;font-weight:700}
+.playnav b{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:24px}
+
+/* film room */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.filter{font-family:var(--cond);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:7px 14px;cursor:pointer}
+.filter:hover{border-color:var(--ink)}
+.filter[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* quiz */
+.quiz{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start;padding-block:10px 60px}
+.qpanel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:20px}
+.score{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.score div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.score b{display:block;font-family:var(--display);font-weight:800;font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
+.score span{font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:12px;color:var(--muted);font-weight:700}
+.qq{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:30px;line-height:1;margin:0 0 14px}
+.choices{display:grid;gap:8px}
+.choice{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 14px;cursor:pointer;font-size:17px;font-weight:600}
+.choice small{font-family:var(--cond);font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--muted)}
+.choice:hover:not([disabled]){border-color:var(--ink)}
+.choice[disabled]{cursor:default}
+.choice.right{border-color:var(--good);background:var(--goodsoft)}
+.choice.wrong{border-color:var(--bad);background:var(--badsoft)}
+.feedback{margin-top:14px;padding:14px;border-radius:10px;font-size:16px}
+.feedback.good{background:var(--goodsoft)}
+.feedback.bad{background:var(--badsoft)}
+.feedback b{font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-size:18px;display:block}
+.qactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.qbtn{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:10px 16px;font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;border:2px solid var(--line);background:var(--panel)}
+.qbtn.red{background:var(--red);border-color:var(--red);color:#fff}
+.qbtn:hover{border-color:var(--ink)}
+.qbtn.red:hover{border-color:var(--red);filter:brightness(1.08)}
+
+.foot{border-top:1px solid var(--line);margin-top:40px;padding-block:22px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+/* svg court */
+.fl{fill:var(--court)} .pt{fill:var(--paint)}
+.ln{fill:none;stroke:var(--cline);stroke-width:2.2;stroke-linejoin:round}
+.ln.thin{stroke-width:2} .ln.dash{stroke-dasharray:6 6;opacity:.6}
+.rim{fill:none;stroke:var(--red);stroke-width:2.6}
+.lbltxt{font:600 13px "Barlow Condensed",sans-serif;letter-spacing:.14em;fill:var(--muted)}
+.ahp{fill:var(--arrow)} .ahx{fill:var(--xarrow)}
+.mv{fill:none;stroke:var(--arrow);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.mv.pass{stroke-dasharray:7 5}
+.mv.x{stroke:var(--xarrow);stroke-width:1.6;opacity:.75}
+.of circle{fill:var(--ofill)} .of text{fill:var(--otext);font:700 15px "Barlow Condensed",sans-serif}
+.df path{stroke:var(--red);stroke-width:3.6;stroke-linecap:round;fill:none}
+.df text{fill:var(--red);font:700 12px "Barlow Condensed",sans-serif}
+.bl{fill:var(--ball);stroke:#7A3A0C;stroke-width:1.2}
+
+@media (max-width:1100px){.viewer{grid-template-columns:1fr}.steps ol{max-height:none}.hero-in{grid-template-columns:1fr}.hero-court{max-width:640px}.read{grid-template-columns:1fr}}
+@media (max-width:900px){.layout{grid-template-columns:1fr;gap:0}.side{display:none}.picker{display:block}.sides{grid-template-columns:1fr}.info{grid-template-columns:1fr}.quiz{grid-template-columns:1fr}.shortcuts{grid-template-columns:1fr}.pill{display:none}}
+@media (max-width:640px){.wrap{padding-inline:16px}.tab .tl{display:none}.tab{padding:9px 10px}.brand-name{font-size:19px}.keyline{grid-template-columns:1fr}.stat b{font-size:36px}}
+@media (max-width:520px){.btn .lbl{display:none}.btn.primary .lbl{display:inline}.cap p{font-size:16px}.brand-name{display:none}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap bar-in">
+    <a class="brand" href="#home" aria-label="Lady Broncos Playbook home"><span class="brand-mark">LB</span><span class="brand-name">Lady Broncos <span>Playbook</span></span></a>
+    <nav class="tabs" aria-label="Sections">
+      <button class="tab" data-go="home"><svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg><span class="tl">Home</span></button>
+      <button class="tab" data-go="plays"><svg viewBox="0 0 24 24"><path d="M3 4h18v16H3zm2 2v12h6V6zm8 0v12h6V6zm-5 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg><span class="tl">Plays</span></button>
+      <button class="tab" data-go="film"><svg viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm6 4v6l5-3z"/></svg><span class="tl">Film Room</span></button>
+      <button class="tab" data-go="quiz"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 16h-2v-2h2zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.3a2 2 0 1 0-3.4-1.4H8a4 4 0 1 1 7.1 2.3z"/></svg><span class="tl">Quiz</span></button>
+    </nav>
+    <div class="bar-tools">
+      <span class="pill" id="learnPill"><b>0</b> of 0 learned</span>
+      <button class="iconbtn" id="themeBtn" title="Switch light or dark mode" aria-label="Switch light or dark mode"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-.9-.1-1.4A5.5 5.5 0 0 1 13.4 3.1 9 9 0 0 0 12 3z"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<!-- HOME -->
+<main id="v-home" class="view">
+  <section class="hero">
+    <div class="wrap hero-in">
+      <div>
+        <div class="eyebrow">Middleburg High School Girls Basketball</div>
+        <h1>Lady Broncos <span>Playbook</span></h1>
+        <p class="lede">Every offense and defense we run, drawn on the court. Pick a set, press play, and watch each cut, pass, and screen one step at a time. Then watch the film and test yourself.</p>
+        <div class="cta">
+          <button class="big red" id="startBtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span id="startLbl">Start learning</span></button>
+          <button class="big ghost" data-go="quiz">Take the quiz</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><b id="sPlays">0</b><span>Plays</span></div>
+          <div class="stat"><b id="sSystems">0</b><span>Systems</span></div>
+          <div class="stat"><b id="sVids">0</b><span>Film clips</span></div>
+        </div>
+      </div>
+      <div class="hero-court dark-court">
+        <div class="court-wrap"><svg class="court" id="heroCourt" role="img" aria-label="Animated preview of a play"></svg></div>
+        <div class="hero-cap"><span>Now running: <b id="heroName"></b></span><button id="heroOpen">Open play</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <h2>Pick your side</h2>
+    <p class="sub">Tap a system to open its first play, or jump straight to any play. Green means you marked it learned.</p>
+    <div class="sides" id="sides"></div>
+  </section>
+
+  <section class="section wrap">
+    <h2>How to read the court</h2>
+    <p class="sub">Every diagram and every sentence uses the same numbers, so what you read always matches what you see.</p>
+    <div class="read">
+      <div class="card">
+        <h3>The numbers</h3>
+        <div class="numrow" aria-label="Our players">
+          <div><span class="pn">1</span>Player 1</div><div><span class="pn">2</span>Player 2</div><div><span class="pn">3</span>Player 3</div><div><span class="pn">4</span>Player 4</div><div><span class="pn">5</span>Player 5</div>
+        </div>
+        <div class="numrow" aria-label="Defensive players">
+          <div><span class="dn">1</span>Defensive player 1</div><div><span class="dn">2</span>Defensive player 2</div><div><span class="dn">3</span>Defensive player 3</div><div><span class="dn">4</span>Defensive player 4</div><div><span class="dn">5</span>Defensive player 5</div>
+        </div>
+        <p class="tipbox">Dark circles are the offense: players 1 through 5. Red X marks are the defense: defensive players 1 through 5. When our defense runs man, defensive player 1 guards player 1, defensive player 2 guards player 2, and so on.</p>
+      </div>
+      <div class="card">
+        <h3>The lines</h3>
+        <div class="keyline">
+          <span><svg viewBox="0 0 46 18"><path d="M2 9h34" stroke="var(--arrow)" stroke-width="2.2" fill="none"/><path d="M34 4l9 5-9 5z" fill="var(--arrow)"/></svg>Cut: a player runs without the ball</span>
+          <span><svg viewBox="0 0 46 18"><path d="M2 9l3-5 4 10 4-10 4 10 4-10 4 10 4-10 3 5h4" stroke="var(--arrow)" stroke-width="2" fill="none"/><path d="M34 4l9 5-9 5z" fill="var(--arrow)"/></svg>Dribble: a player moves with the ball</span>
+          <span><svg viewBox="0 0 46 18"><path d="M2 9h34" stroke="var(--arrow)" stroke-width="2.2" stroke-dasharray="6 4" fill="none"/><path d="M34 4l9 5-9 5z" fill="var(--arrow)"/></svg>Pass: the ball moves between players</span>
+          <span><svg viewBox="0 0 46 18"><path d="M2 9h36M38 2v14" stroke="var(--arrow)" stroke-width="2.6" fill="none"/></svg>Screen: a player sets a pick</span>
+          <span><svg viewBox="0 0 46 18"><path d="M2 9h34" stroke="var(--xarrow)" stroke-width="1.8" fill="none" opacity=".8"/><path d="M34 4l9 5-9 5z" fill="var(--xarrow)"/></svg>Defensive movement</span>
+          <span><svg viewBox="0 0 46 18"><circle cx="12" cy="9" r="6.5" fill="var(--ball)" stroke="#7A3A0C" stroke-width="1.2"/></svg>The ball</span>
+        </div>
+        <p class="tipbox">On any play: Space plays or pauses, the right arrow goes forward one step, and the left arrow goes back.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="shortcuts">
+      <button class="shortcut" data-go="plays"><b>Study a play</b><span>Animated court, step by step breakdown, keys, and film for all of our sets.</span><span class="go">Open the plays</span></button>
+      <button class="shortcut" data-go="film"><b>Film Room</b><span>Every clip in one place. Filter by system and watch right here on the page.</span><span class="go">Watch film</span></button>
+      <button class="shortcut" data-go="quiz"><b>Name that play</b><span>Watch a play run with no words and pick its name. Build your streak.</span><span class="go">Start the quiz</span></button>
+    </div>
+  </section>
+  <footer class="wrap foot"><span>Middleburg Lady Broncos Girls Basketball</span><span>Know the play. Run the play. Win the play.</span></footer>
+</main>
+
+<!-- PLAY -->
+<main id="v-play" class="view" hidden>
+  <div class="wrap layout">
+    <nav class="side" id="side" aria-label="Plays"></nav>
+    <div>
+      <div class="picker"><label for="pick">Choose a play</label><select id="pick"></select></div>
+      <section>
+        <div class="eyebrow" id="eyebrow"></div>
+        <div class="ph">
+          <h1 id="title"></h1>
+          <button class="learn" id="learnBtn" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span id="learnLbl">Mark as learned</span></button>
+        </div>
+        <div class="chips" id="chips"></div>
+        <p class="setup" id="setup"></p>
+      </section>
+
+      <div class="viewer">
+        <div class="stage" id="stage">
+          <div class="court-wrap"><svg class="court" id="court" role="img" aria-label="Animated play diagram"></svg></div>
+          <div class="prog"><i id="bar"></i></div>
+          <div class="cap" aria-live="polite"><div class="k" id="capk"></div><p id="capt"></p></div>
+          <div class="ctl">
+            <button class="btn" id="bRestart" title="Restart"><svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg><span class="lbl">Restart</span></button>
+            <button class="btn" id="bPrev" title="Back one step"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zM9.5 12 18 18V6z"/></svg><span class="lbl">Back</span></button>
+            <button class="btn primary" id="bPlay"><svg viewBox="0 0 24 24" id="playIcon"><path d="M8 5v14l11-7z"/></svg><span class="lbl" id="playLbl">Play</span></button>
+            <button class="btn" id="bNext" title="Next step"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg><span class="lbl">Next</span></button>
+            <button class="btn sp" id="bSpeed" title="Change speed"><span id="spd">1x</span></button>
+          </div>
+          <div class="legend">
+            <span><svg viewBox="0 0 34 16"><circle cx="8" cy="8" r="7" fill="var(--ofill)"/><text x="8" y="11.5" text-anchor="middle" font-size="10" font-weight="700" fill="var(--otext)" font-family="Barlow Condensed,sans-serif">1</text></svg>Player</span>
+            <span><svg viewBox="0 0 34 16"><path d="M3 3l10 10M13 3 3 13" stroke="var(--red)" stroke-width="3" stroke-linecap="round"/></svg>Defensive player</span>
+            <span><svg viewBox="0 0 34 16"><path d="M2 8h24" stroke="var(--arrow)" stroke-width="2"/><path d="M24 4l7 4-7 4z" fill="var(--arrow)"/></svg>Cut</span>
+            <span><svg viewBox="0 0 34 16"><path d="M2 8l3-4 4 8 4-8 4 8 4-8 3 4h4" stroke="var(--arrow)" stroke-width="2" fill="none"/><path d="M26 4l7 4-7 4z" fill="var(--arrow)"/></svg>Dribble</span>
+            <span><svg viewBox="0 0 34 16"><path d="M2 8h24" stroke="var(--arrow)" stroke-width="2" stroke-dasharray="4 3"/><path d="M24 4l7 4-7 4z" fill="var(--arrow)"/></svg>Pass</span>
+            <span><svg viewBox="0 0 34 16"><path d="M2 8h26M28 2v12" stroke="var(--arrow)" stroke-width="2.5"/></svg>Screen</span>
+          </div>
+        </div>
+        <aside class="steps">
+          <h3><span>Step by step</span><span id="stepCount"></span></h3>
+          <ol id="stepList"></ol>
+        </aside>
+      </div>
+
+      <section class="block">
+        <div class="block-h"><h2>Watch the film</h2><p id="filmNote"></p></div>
+        <div class="vgrid" id="playVids"></div>
+      </section>
+
+      <div class="info">
+        <div class="card"><h3>Keys to run it</h3><ul id="keys"></ul></div>
+        <div class="card rules" id="sysrules"></div>
+      </div>
+
+      <div class="playnav" id="playnav"></div>
+    </div>
+  </div>
+</main>
+
+<!-- FILM -->
+<main id="v-film" class="view" hidden>
+  <section class="section wrap">
+    <div class="eyebrow">Film Room</div>
+    <h2>Watch it done right</h2>
+    <p class="sub">Every clip from the playbook, playing right here on the page. Our play names are our own, so the clips may call things by different names. Tap a tag to open the play it teaches.</p>
+    <div class="filters" id="filters"></div>
+    <div class="vgrid" id="filmGrid"></div>
+  </section>
+  <footer class="wrap foot"><span>Middleburg Lady Broncos Girls Basketball</span><span>Know the play. Run the play. Win the play.</span></footer>
+</main>
+
+<!-- QUIZ -->
+<main id="v-quiz" class="view" hidden>
+  <section class="section wrap" style="padding-bottom:0">
+    <div class="eyebrow">Quiz</div>
+    <h2>Name that play</h2>
+    <p class="sub">Watch the play run with no words, then pick its name. Replay it as many times as you need.</p>
+    <div class="filters" id="qfilters"></div>
+  </section>
+  <div class="wrap quiz">
+    <div class="stage" id="qstage">
+      <div class="court-wrap"><svg class="court" id="qcourt" role="img" aria-label="Quiz play diagram"></svg></div>
+      <div class="prog"><i id="qbar"></i></div>
+      <div class="ctl">
+        <button class="btn primary" id="qReplay"><svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg><span class="lbl">Replay</span></button>
+        <span class="k" id="qstep" style="font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-size:14px"></span>
+      </div>
+    </div>
+    <div class="qpanel">
+      <div class="score">
+        <div><b id="qScore">0</b><span>Correct</span></div>
+        <div><b id="qStreak">0</b><span>Streak</span></div>
+        <div><b id="qBest">0</b><span>Best streak</span></div>
+      </div>
+      <p class="qq">Which play is this?</p>
+      <div class="choices" id="choices"></div>
+      <div id="qfeed"></div>
+      <div class="qactions">
+        <button class="qbtn red" id="qNext">Next play</button>
+        <button class="qbtn" id="qStudy" hidden>Study this play</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ---------- geometry ---------- */
+const RIM=[250,78];
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]], add=(a,b)=>[a[0]+b[0],a[1]+b[1]], mul=(a,k)=>[a[0]*k,a[1]*k];
+const len=a=>Math.hypot(a[0],a[1]), unit=a=>{const l=len(a)||1;return[a[0]/l,a[1]/l]};
+const dist=(a,b)=>len(sub(a,b));
+const rot=(v,t)=>[v[0]*Math.cos(t)-v[1]*Math.sin(t),v[0]*Math.sin(t)+v[1]*Math.cos(t)];
+
+/* ---------- defense logic ---------- */
+const ZONES={
+  "23":{base:[[200,245],[300,245],[120,125],[380,125],[250,110]],kx:[.35,.35,.22,.22,.35],ky:[.15,.15,.08,.08,.05]},
+  "131":{base:[[250,330],[95,215],[405,215],[250,200],[250,95]],kx:[.4,.15,.15,.3,.55],ky:[.2,.1,.1,.1,.02],trap:true},
+  "122":{base:[[250,330],[180,250],[320,250],[165,110],[335,110]],kx:[.4,.3,.3,.25,.25],ky:[.2,.15,.15,.05,.05],trap:true},
+  "32":{base:[[250,305],[110,245],[390,245],[185,115],[315,115]],kx:[.3,.2,.2,.3,.3],ky:[.15,.1,.1,.05,.05]},
+  "tri":{base:[[250,210],[180,105],[320,105]],kx:[.3,.25,.25],ky:[.1,.05,.05]},
+  "box":{base:[[190,220],[310,220],[180,105],[320,105]],kx:[.3,.3,.25,.25],ky:[.12,.12,.05,.05]},
+  "circle":{base:[[250,268],[140,205],[360,205],[160,100],[340,100]],kx:[.25,.2,.2,.2,.2],ky:[.1,.08,.08,.04,.04]}
+};
+function zoneCalc(z,B){
+  const pts=z.base.map((b,i)=>[b[0]+(B[0]-250)*z.kx[i],b[1]+(B[1]-230)*z.ky[i]]);
+  const order=pts.map((p,i)=>[dist(p,B),i]).sort((a,b)=>a[0]-b[0]).map(a=>a[1]);
+  if(z.trap&&Math.abs(B[0]-250)>110&&B[1]<300){
+    const u=unit(sub(RIM,B));
+    pts[order[0]]=add(B,mul(rot(u,.75),28));
+    pts[order[1]]=add(B,mul(rot(u,-.75),28));
+  }else{
+    pts[order[0]]=add(B,mul(unit(sub(RIM,B)),26));
+  }
+  return pts;
+}
+function manSpot(O,B,mode,isBall){
+  if(mode==="boxout") return add(O,mul(unit(sub(RIM,O)),20));
+  if(isBall) return add(O,mul(unit(sub(RIM,O)),mode==="deny"?17:24));
+  if(mode==="deny") return add(add(O,mul(unit(sub(B,O)),16)),mul(unit(sub(RIM,O)),6));
+  return add(O,add(mul(sub(RIM,O),.22),mul(sub(B,O),.22)));
+}
+function defCalc(dm,P,ball,play){
+  const X={}, B=P[ball];
+  if(!B||dm==="none") return X;
+  if(dm==="man"||dm==="deny"||dm==="boxout"){
+    for(let i=1;i<=5;i++){const o=P["o"+i]; if(o) X["x"+i]=manSpot(o,B,dm,ball==="o"+i);}
+    return X;
+  }
+  if(dm==="fdeny"){
+    for(let i=1;i<=5;i++){const o=P["o"+i]; if(!o) continue;
+      X["x"+i]= ball==="o"+i ? [o[0],o[1]-24] : add(o,mul(unit(sub(B,o)),15));}
+    return X;
+  }
+  if(dm==="tri"||dm==="box"){
+    const t=play.targets, zid=dm==="tri"?["x3","x4","x5"]:["x2","x3","x4","x5"];
+    t.forEach((id,k)=>{X["x"+(k+1)]=manSpot(P[id],B,"deny",ball===id)});
+    const pts=zoneCalc(ZONES[dm],B); zid.forEach((id,k)=>X[id]=pts[k]);
+    return X;
+  }
+  if(ZONES[dm]){zoneCalc(ZONES[dm],B).forEach((p,k)=>X["x"+(k+1)]=p);}
+  return X;
+}
+
+const DEF_RULES=["Talk early, talk loud. Call ball, help, screens, cutters, and loose balls. If you are not talking, you are not playing defense.","Protect the paint first. Deny straight line drives and make them take contested jumpers.","Sprint to help, fly to contest. Help side crosses the key line before the ball moves. High hands on closeouts, no fouls.","Finish every play. Physical box out and a secure two hand rebound."];
+const SYSTEMS={
+  flow:{side:"Offense",name:"FLOW",sub:"Ball screen continuity",rules:["Pace and patience. Screeners sprint into screens. Ball handlers wait for the screen to be set before attacking.","Empty corners. Keep the corner on the ball screen side clear so there is no help defender there.","High low reads. Slot catchers read switches right away and throw the lob over fronting defenders. Timing is essential.","Lift from the corners. Never catch the ball in the corner.","Make eye contact with the ball handler before sealing.","Cut with a purpose."],vids:[["wj74RMHfu9Q", "Ball screen continuity"], ["0xvqFBmsYeo", "Ball screen scoring options"], ["CXSVg_-J11w", "Ball screen continuity: BYU and the Bulls"]]},
+  princeton:{side:"Offense",name:"Princeton Point",sub:"Point Series",rules:["High elbow spacing. {5} lifts one step outside and above the elbow so backdoor cutters have room.","Sell the cuts. Every cut has to look like a scoring cut or the defense will not overplay into the backdoor.","Patience at the elbow. {5} pivots, keeps the ball high, and reads the defender before choosing backdoor, handoff, or screen."],vids:[["n59Z36O9AGI", "Point Away: San Francisco Dons"], ["W0j-fXxsIq0", "Point Away and Point Over: Nebraska Wesleyan"], ["TFS37TrZHO8", "Air Force Princeton breakdown: Point and Chin"]]},
+  z41:{side:"Offense",name:"41 Zone Offense",sub:"4 Out sets vs zone",rules:["Patience over fast shots. At least two or three passes before a shot to pull the zone out of position.","Pass fake and catch. Crisp fakes freeze zone defenders before the entry to the post or corner.","Target the gaps. Attack the seams with purpose, draw two defenders, then kick or dump it off.","Baseline spacing. The post holds the short corner 12 to 15 feet out so corner shooters have room.","Cut with a purpose."],vids:[["oM61VCHxuCc", "4 Out offense vs the 2 3 zone"], ["TYSBWUAR0qE", "3 plays to beat the 2 3 zone"], ["y-lJndxcsow", "High low offense vs the 2 3 zone"]]},
+  man:{side:"Defense",name:"Man Defenses",sub:"Shadow, Dark, Blackout",rules:DEF_RULES,vids:[["vh96pvvzODk", "Man to man defense fundamentals"]]},
+  zone:{side:"Defense",name:"Zone Defenses",sub:"Numbers system",rules:DEF_RULES,vids:[]},
+  spec:{side:"Defense",name:"Specialty Defenses",sub:"Shapes system",rules:DEF_RULES,vids:[]},
+  press:{side:"Defense",name:"Full Court Press",sub:"Press defenses",rules:DEF_RULES,vids:[]}
+};
+
+/* ---------- plays ---------- */
+const PB={o1:[175,290],o2:[325,290],o3:[75,205],o4:[425,205],o5:[155,100]};
+const PEND={o1:[462,50],o2:[290,300],o3:[38,50],o4:[425,205],o5:[165,240]};
+const OFF={o1:[250,300],o2:[425,205],o3:[75,205],o4:[462,50],o5:[155,100]};
+const OFF2={o1:[200,300],o2:[300,300],o3:[75,205],o4:[425,205],o5:[155,100]};
+const FULL0={o1:[300,945],o2:[140,850],o3:[360,830],o4:[250,620],o5:[250,330]};
+
+const PLAYS=[
+/* FLOW */
+{id:"flow",sys:"flow",name:"Entry and Continuity",target:"Man to man",look:"Empty side ball screen, roll, and swing",
+ keys:["Wings run wide and deep to the corners in transition to stretch the defense.","{5} runs the rim first, then shakes up to the block.","Screeners sprint into the screen. The ball handler waits for it to be set.","After every roll, somebody lifts to the slot to catch the kick out.","Each phase ends with a swing and a new empty side ball screen, so the action never stops."],
+ steps:[
+ {o:{o1:[350,295],o2:[462,50],o3:[38,50],o4:[150,295],o5:[345,100]},ball:"o1",t:"4 Out setup. {1} has the ball in the slot. {4}, the trail big, fills the other slot. {2} and {3} sprint wide to the corners and {5} runs the rim, then shakes up to the block."},
+ {o:{o1:[425,205]},ball:"o4",pass:"start",tag:"Entry",t:"{1} reverses the ball to {4} in the other slot, then drifts down to the wing."},
+ {o:{o3:[75,205]},ball:"o3",tag:"Entry",t:"{3} lifts from the corner to the wing (never catch it in the corner) and {4} swings the ball to {3}."},
+ {o:{o4:[112,232]},scr:["o4"],tag:"Entry",t:"{4} follows the pass into an empty wing ball screen for {3}. Nobody sits in the corner behind it."},
+ {o:{o3:[205,170],o4:[215,95],o5:[350,295]},via:{o3:[[150,215]]},tag:"Phase 1",t:"{3} waits for the screen, then drives off it. {4} rolls hard to the rim. {5} lifts to the weak side slot to clear the lane for the roll."},
+ {ball:"o5",tag:"Phase 1",t:"{3} kicks the ball out to {5} in the slot."},
+ {o:{o3:[75,205],o4:[38,50],o1:[250,315],o2:[425,205]},tag:"Phase 2",t:"{4} steps out to the weak side corner and {3} spaces back to the wing. {1} lifts up top to bait the cut while {2} lifts to fill the wing."},
+ {o:{o1:[250,105]},ball:"o2",pass:"start",tag:"Phase 2",t:"{5} swings the ball to {2} on the far wing as {1} makes a hard cut to the basket."},
+ {o:{o5:[388,228],o1:[38,50],o4:[250,310]},scr:["o5"],tag:"Phase 3",t:"{5} follows the pass into a wing ball screen for {2}. {1} finishes the cut in the weak side corner and {4} lifts to the top as the safety."},
+ {o:{o2:[300,170],o5:[300,95]},via:{o2:[[350,215]]},tag:"Phase 3",t:"{2} attacks the paint off the screen while {5} rolls to the rim."},
+ {ball:"o4",tag:"Phase 3",t:"{2} passes back out to {4} at the top."},
+ {o:{o5:[345,100],o2:[425,205]},ball:"o3",tag:"Phase 4",t:"{5} clears out of the lane and {2} spaces to the wing. {4} swings the ball to {3} to restart on the other side."},
+ {o:{o4:[112,232],o1:[250,315]},scr:["o4"],tag:"Phase 4",t:"{4} follows the pass into the next empty wing ball screen and {1} lifts out of the corner. The continuity starts over."}
+ ]},
+{id:"flow_highlow",sys:"flow",name:"High Low Read",target:"Switches or under",look:"Lob from the slot to the rolling post",
+ keys:["Read the switch as soon as you catch in the slot.","The roller seals the smaller defender and shows a high target with one hand.","Throw it high and to the rim side, where only your teammate can catch it.","If they front, the lob is there. If they play behind, the roller posts and catches low."],
+ steps:[
+ {o:{o1:[425,205],o2:[462,50],o3:[205,170],o4:[215,95],o5:[350,295]},ball:"o3",t:"Start from Phase 1. {3} is driving off the wing ball screen and {4} is rolling to the rim."},
+ {o:{o3:[75,205]},ball:"o5",pass:"start",t:"{3} kicks the ball out to {5} in the slot and spaces back to the wing."},
+ {o:{o4:[235,122]},t:"The defense switched or went under, so {4} seals the smaller defender in the lane and shows a high target."},
+ {ball:"o4",t:"{5} reads it right away and throws the high low pass over the top."},
+ {shot:true,t:"{4} finishes at the rim."}
+ ]},
+/* PRINCETON */
+{id:"point_entry_a",sys:"princeton",name:"Entry A: Slot Reversal",target:"Man to man",look:"Get the ball to {5} at the high elbow",
+ keys:["Guards start in the slots, lane line extended.","The shallow cut goes through the paint, not around it.","{5} lifts one step outside and above the elbow.","Once {5} catches, the passer triggers Over or Away."],
+ steps:[
+ {o:PB,ball:"o1",t:"Setup: {1} and {2} in the slots, {3} and {4} on the wings, {5} on the ball side block."},
+ {ball:"o2",t:"{1} reverses the ball to {2} in the other slot."},
+ {o:{o1:[462,50],o5:[165,240],o3:[38,50]},via:{o1:[[250,185]]},t:"{1} makes a shallow cut through the paint to the far corner. {5} lifts to the high elbow, one step above and outside it. {3} sinks to the corner."},
+ {o:{o2:[290,300]},ball:"o5",t:"{2} takes one or two dribbles toward the middle and hits {5} at the high elbow. Now {2} chooses Over or Away."}
+ ]},
+{id:"point_entry_b",sys:"princeton",name:"Entry B: Wave Through",target:"Man to man",look:"Get the ball to {5} at the high elbow",
+ keys:["{1} dribbles at {2} and waves her through.","{2}'s shallow cut clears the slot for the dribbler.","{5} lifts to the elbow on the other side of the floor.","{1} makes the entry and immediately triggers the action."],
+ steps:[
+ {o:PB,ball:"o1",t:"Setup: {1} and {2} in the slots, {3} and {4} on the wings, {5} on the block."},
+ {o:{o1:[290,295],o2:[38,50]},via:{o2:[[250,185]]},t:"{1} dribbles toward {2} and waves her through. {2} makes a shallow cut across the key to the far corner."},
+ {o:{o5:[165,240]},t:"{5} lifts to the high elbow on the other side of the floor."},
+ {ball:"o5",t:"{1} hits {5} at the high elbow and triggers Over or Away."}
+ ]},
+{id:"point_over",vids:[["W0j-fXxsIq0", "Point Away and Point Over: Nebraska Wesleyan"]],sys:"princeton",name:"Point Over",target:"Man to man",look:"Zoom into a handoff, drive, and roll",
+ keys:["The passer cuts over the top of {5}, not behind.","Pin down, then zoom: {3} sprints right at {5} for the handoff.","{5} rolls hard the moment the ball leaves her hands.","{2} shakes up to the wing after screening to pull the help away."],
+ steps:[
+ {o:PEND,ball:"o5",t:"Start: {5} has the ball at the high elbow. {2} just made the entry pass."},
+ {o:{o2:[62,98]},via:{o2:[[140,275]]},scr:["o2"],t:"{2} cuts over the top of {5} toward the corner and sets a pin down screen for {3}."},
+ {o:{o3:[140,255]},via:{o3:[[95,160]]},t:"{3} comes off the pin down (zoom action) and sprints right at {5} for the handoff."},
+ {ball:"o3",t:"{5} hands the ball off to {3}."},
+ {o:{o3:[225,150],o5:[240,95],o2:[75,205]},t:"{3} attacks downhill. {5} rolls hard to the rim. {2} shakes up to the wing to pull the help defender away."},
+ {ball:"o5",t:"The help steps up to {3}, so {3} drops it to {5} on the roll."},
+ {shot:true,t:"{5} finishes at the rim."}
+ ]},
+{id:"point_over_back",vids:[["W0j-fXxsIq0", "Point Away and Point Over: Nebraska Wesleyan"]],sys:"princeton",name:"Point Over: Backdoor Read",target:"Man to man",look:"Backdoor layup when the defender cheats the screen",
+ keys:["{3} reads her defender. If she cheats over the screen, reject it and go.","{5} keeps the ball high and pivots to see the cut.","Use a bounce pass to the backdoor cutter.","If the backdoor is covered, {3} keeps going to the weak side and {2} pops out for a pass and follow ball screen from {5}."],
+ steps:[
+ {o:PEND,ball:"o5",t:"Start: {5} has the ball at the high elbow."},
+ {o:{o2:[62,98]},via:{o2:[[140,275]]},scr:["o2"],t:"{2} cuts over the top of {5} and sets the pin down for {3}."},
+ {o:{o3:[225,100]},via:{o3:[[120,70]]},t:"{3}'s defender cheats over the screen, so {3} rejects it and cuts backdoor to the rim."},
+ {ball:"o3",t:"{5} pivots, keeps the ball high, and delivers the bounce pass."},
+ {shot:true,t:"{3} finishes the layup."}
+ ]},
+{id:"point_away",vids:[["n59Z36O9AGI", "Point Away: San Francisco Dons"], ["W0j-fXxsIq0", "Point Away and Point Over: Nebraska Wesleyan"]],sys:"princeton",name:"Point Away",target:"Man to man",look:"Backdoor cut, then pass and follow ball screen",
+ keys:["The passer screens away for the next closest perimeter player.","The cutter usually rejects the screen and goes backdoor.","If it is covered, clear to the corner and flow right into the ball screen.","{1} lifts from the corner to the wing to keep the tag defender busy."],
+ steps:[
+ {o:PEND,ball:"o5",t:"Start: {5} has the ball at the high elbow. {2} just made the entry pass."},
+ {o:{o2:[392,228]},scr:["o2"],t:"{2} cuts away from {5} and sets an away screen for {4}."},
+ {o:{o4:[275,100]},via:{o4:[[380,140]]},t:"{4} reads the screen, rejects it, and cuts hard backdoor looking for the pass from {5}."},
+ {o:{o4:[462,50],o1:[425,205],o2:[325,290]},t:"{4} is covered, so she clears to the corner. {1} shakes up to the wing and {2} pops back out to the perimeter."},
+ {ball:"o2",t:"{5} passes to {2}."},
+ {o:{o5:[292,262]},scr:["o5"],t:"{5} follows the pass into a ball screen for {2}."},
+ {o:{o2:[235,170],o5:[275,95]},via:{o2:[[270,245]]},t:"{2} attacks off the ball screen as {5} rolls. {1} on the wing occupies the tag defender."}
+ ]},
+{id:"forwards_out",sys:"princeton",name:"Forwards Out",target:"Man to man",look:"Swap guards and forwards to create mismatches",
+ keys:["Keeps the defense from keying on fixed positions.","Gets guards into the post and pulls forwards to the top.","Can also be triggered with a slot to wing handoff."],
+ steps:[
+ {o:PB,ball:"o1",t:"Setup: guards in the slots, forwards on the wings, {5} on the block."},
+ {ball:"o3",t:"{1} passes to {3} on the wing."},
+ {o:{o1:[38,50],o2:[425,205],o4:[325,290]},via:{o1:[[150,190]]},t:"{1} cuts to the corner while {2} and {4} exchange on the weak side. A forward is now up top."},
+ {o:{o5:[165,240]},t:"{5} lifts to the high elbow."},
+ {ball:"o5",t:"{3} hits {5} at the elbow and the Point Series runs with the forwards in the guard spots."}
+ ]},
+/* 41 ZONE */
+{id:"river",vids:[["VnyuAhFZSXM", "4 Flash offense vs the 2 3 zone: Michigan"]],sys:"z41",name:"River",target:"1 2 2 or 2 3 zone",look:"High post flash jumper or weak side block layup",def:"23",
+ keys:["Start in true 4 Out spacing: guards wide in the slots, {3} and {4} deep in the corners.","{1} attacks the gap to make two defenders commit.","{5} slides ball side when the low defender steps out.","On every return pass, the weak side player flashes into the paint.","Flash, slip, and repeat. The high low is always there."],
+ steps:[
+ {o:{o1:[150,295],o2:[350,295],o3:[462,50],o4:[38,50],o5:[345,100]},ball:"o1",t:"Setup: 4 Out, 1 In. {1} and {2} wide in the slots, {3} and {4} deep in the corners, {5} on the weak side block."},
+ {o:{o1:[215,262],o5:[250,150],o3:[425,82]},t:"{1} dribbles directly at the gap between the top two defenders to make both commit. {5} flashes into the middle of the paint and {3} creeps from the corner toward the weak side block."},
+ {o:{o1:[150,295],o4:[75,205],o5:[160,100]},ball:"o4",t:"{1} dribbles back out and hits {4} as she lifts from the corner to the wing. As the low defender steps out, {5} slides to the ball side block and posts up."},
+ {ball:"o1",t:"Nothing inside, so {4} passes back out to {1}."},
+ {o:{o3:[255,165],o5:[345,100]},t:"As the ball comes back, {3} flashes hard into the middle of the paint and {5} slips to the weak side block."},
+ {ball:"o3",t:"{1} hits {3} in the paint. The lob to {5} over the middle defender is also there."},
+ {ball:"o5",t:"High low: {3} can shoot, or drop it to {5} on the opposite block."},
+ {shot:true,t:"{5} finishes at the rim."}
+ ]},
+{id:"river_cont",vids:[["VnyuAhFZSXM", "4 Flash offense vs the 2 3 zone: Michigan"]],sys:"z41",name:"River Continuity",target:"1 2 2 or 2 3 zone",look:"Keep flashing until the zone breaks",def:"23",
+ keys:["If the flash is denied, clear back out to the corner so there is no 3 second call.","Reverse the ball slot to slot, then down to the wing.","The post always posts on the new ball side.","As the ball comes back up, the weak side player flashes."],
+ steps:[
+ {o:{o1:[150,295],o2:[350,295],o3:[255,165],o4:[75,205],o5:[345,100]},ball:"o1",t:"Start: the pass to {3} in the paint is denied."},
+ {o:{o3:[462,50]},t:"{3} clears back out to the corner so there is no 3 second call."},
+ {ball:"o2",t:"{1} reverses the ball to {2} in the other slot."},
+ {o:{o3:[425,205],o4:[155,100]},ball:"o3",t:"{3} lifts from the corner and {2} swings it to her. {5} posts up on the new ball side block and {4} slides to the weak side block."},
+ {o:{o4:[250,165],o5:[160,100]},ball:"o2",t:"As the ball goes back to {2}, {4} flashes into the paint and {5} slips to the weak side block."},
+ {ball:"o4",t:"{2} hits {4} on the flash for the shot or the high low to {5}."}
+ ]},
+{id:"pace",vids:[["7SffbISA540", "4 Out sets vs the 2 3 zone: Toronto Raptors"], ["EHjsdNLtJgY", "Motion offense vs 3 2 and 1 2 2 zones"]],sys:"z41",name:"Pace",target:"2 3, 1 3 1, or 1 2 2 zone",look:"Gap drives, corner 3, low post dive",def:"23",
+ keys:["True 4 Out spacing: guards wide in the slots, {3} and {4} in the corners.","Ball in a slot: {5} sits at the ball side elbow. Ball in the corner: {5} dives to the ball side post.","Do not hold it. Quick, crisp passes and skip passes shift the zone faster than it can recover.","Attack the gaps once the zone over shifts.","Against a 1 3 1, the guards overload the top defender and the corners stay deep. Against a 1 2 2, {5} lives in the middle of the box."],
+ steps:[
+ {o:{o1:[150,295],o2:[350,295],o3:[38,50],o4:[462,50],o5:[172,222]},ball:"o1",t:"Setup: 4 Out, 1 In. {1} and {2} wide in the slots, {3} and {4} in the corners. With the ball in the slot, {5} sits at the ball side elbow."},
+ {o:{o5:[155,100]},ball:"o3",t:"{1} passes to {3} in the corner, so {5} dives to the ball side low post."},
+ {o:{o5:[250,205]},ball:"o1",t:"Quick reversal. {3} moves it right back to {1} and {5} comes up the lane."},
+ {o:{o5:[328,222]},ball:"o2",t:"{1} to {2} without holding it. {5} settles at the new ball side elbow."},
+ {o:{o5:[345,100]},ball:"o4",t:"{2} to {4} in the corner and {5} dives to the ball side post."},
+ {ball:"o2",t:"{4} moves it right back up to {2}."},
+ {ball:"o3",t:"The zone has over shifted. {2} throws the skip pass to {3} in the far corner."},
+ {o:{o3:[120,165]},t:"{3} attacks the open gap before the zone recovers: pull up, kick, or dump it inside."}
+ ]},
+{id:"corner",vids:[["_n44_VAi-NE", "4 simple plays to beat a 2 3 zone"], ["YPwgU6mBDjA", "5 plays to punish a 2 3 zone"]],sys:"z41",name:"Corner",target:"2 3 zone",look:"Open corner 3",def:"23",
+ keys:["The corner pass pulls the low defender out.","{2} dribbles up hard enough to drag that defender with her.","{1} cuts underneath into the empty corner.","Shot fake if the defender recovers, then drive the baseline."],
+ steps:[
+ {o:{o1:[150,295],o2:[38,50],o3:[350,295],o4:[462,50],o5:[345,100]},ball:"o1",t:"Setup: 4 Out, 1 In. {1} and {3} wide in the slots, {2} and {4} in the corners, {5} on the block."},
+ {ball:"o2",t:"{1} passes to {2} in the corner, pulling the low defender out."},
+ {o:{o2:[82,198],o1:[38,50]},via:{o1:[[125,125]]},t:"{2} dribbles up toward the free throw line extended and drags the low defender with her. {1} cuts underneath {2} into the empty corner."},
+ {ball:"o1",t:"{2} passes right back to {1} in the corner."},
+ {shot:true,t:"{1} shoots the open corner 3."}
+ ]},
+{id:"middle",vids:[["_n44_VAi-NE", "4 simple plays to beat a 2 3 zone"], ["YPwgU6mBDjA", "5 plays to punish a 2 3 zone"]],sys:"z41",name:"Middle",target:"2 3 zone",look:"Elbow pull up or corner 3",def:"23",
+ keys:["The high post catch draws the top defenders in.","{3} pins the top defender so {1} can curl free.","{1} reads the low defender. If she steps up, the corner 3 is open."],
+ steps:[
+ {o:{o1:[150,295],o2:[462,50],o3:[350,295],o4:[38,50],o5:[250,205]},ball:"o1",t:"Setup: 4 Out, 1 In. {1} and {3} wide in the slots, {2} and {4} in the corners, {5} in the high post."},
+ {ball:"o5",t:"{1} passes into the high post to {5}."},
+ {o:{o3:[318,258],o1:[210,300]},scr:["o3"],t:"{3} steps down and sets a pin screen on the top defender. {1} slides toward the middle to set up the curl."},
+ {o:{o1:[332,212]},via:{o1:[[292,296]]},ball:"o1",t:"{5} passes back to {1}, who curls around the screen into a pull up at the elbow."},
+ {ball:"o2",t:"The low defender steps up to {1}, so {1} kicks it to {2} in the corner."},
+ {shot:true,t:"{2} shoots the corner 3."}
+ ]},
+{id:"line",vids:[["YPwgU6mBDjA", "5 plays to punish a 2 3 zone"], ["_n44_VAi-NE", "4 simple plays to beat a 2 3 zone"]],sys:"z41",name:"Line",target:"2 3 zone",look:"Corner 3 or baseline drive",def:"23",
+ keys:["{1}'s dribble engages the top defender and forces the other to cover.","{3} steps out of the high post to be the reversal.","Swing it fast. The zone cannot shift as quickly as the ball.","{3} dives right after she swings it for the low post feed."],
+ steps:[
+ {o:{o1:[350,295],o2:[462,50],o3:[250,205],o4:[38,50],o5:[150,295]},ball:"o1",t:"Setup: 4 Out, 1 In. {1} and {5} wide in the slots, {2} and {4} in the corners, {3} in the high post."},
+ {o:{o1:[405,250]},t:"{1} dribbles toward the wing to engage the top defender and force the other top defender to cover the next pass."},
+ {o:{o3:[250,305]},ball:"o3",t:"{3} steps out from the high post to the top of the key and catches from {1}."},
+ {ball:"o5",t:"{3} swings it quickly to {5} in the slot."},
+ {ball:"o4",t:"The defender closes out on {5}, so {5} passes down to {4} in the corner for the 3 or a baseline drive."},
+ {o:{o3:[175,110]},ball:"o3",t:"{3} dives down the lane to the low post for the feed from {4}."},
+ {shot:true,t:"{3} scores inside."}
+ ]},
+{id:"fiftytwo",vids:[["_n44_VAi-NE", "4 simple plays to beat a 2 3 zone"], ["YPwgU6mBDjA", "5 plays to punish a 2 3 zone"]],sys:"z41",name:"52",target:"2 3 zone",look:"Seam jumper or low block pass",def:"23",
+ keys:["52 means {5} screens for {2}.","The screen goes on the top defender in the gap.","{4}'s baseline cut has to be under the zone, behind the defense.","{2} reads: pull up, kick to {3} in the corner if the low defender drops, feed {4} if the middle steps up."],
+ steps:[
+ {o:{o1:[150,295],o2:[350,295],o3:[462,50],o4:[38,50],o5:[250,205]},ball:"o1",t:"Setup: 4 Out, 1 In. {1} and {2} wide in the slots, {3} and {4} in the corners, {5} in the high post."},
+ {o:{o5:[312,262]},ball:"o2",scr:["o5"],t:"{1} passes to {2} as {5} slides up and sets a gap screen on the top defender."},
+ {o:{o4:[340,98]},via:{o4:[[150,64],[260,64]]},t:"{3} holds the corner. {4} cuts along the baseline underneath the zone to the ball side block."},
+ {o:{o2:[282,205]},via:{o2:[[300,250]]},t:"{2} drives the seam off the screen. Options: pull up, kick to {3} if the low defender drops, or feed {4} if the middle defender steps up."},
+ {ball:"o4",t:"The middle defender stepped up, so {2} feeds {4} on the block."},
+ {shot:true,t:"{4} finishes."}
+ ]},
+{id:"stack",vids:[["YPwgU6mBDjA", "5 plays to punish a 2 3 zone"], ["_n44_VAi-NE", "4 simple plays to beat a 2 3 zone"]],sys:"z41",name:"Stack",target:"2 3 zone",look:"Back side corner 3 or inside slot layup",def:"23",
+ keys:["{4}'s dribble pulls the zone away from the stack.","The double screen goes on the back side low defender inside the key.","{2} runs the baseline behind the zone.","Counter: if the low defender fights out, {5} screens the middle defender and {3} cuts into the open slot."],
+ steps:[
+ {o:{o1:[350,295],o2:[38,50],o3:[335,155],o4:[150,295],o5:[345,110]},ball:"o1",t:"Setup: {1} and {4} wide in the slots, {2} in the far corner, {3} and {5} stacked on the block."},
+ {ball:"o4",t:"{1} passes to {4}."},
+ {o:{o4:[85,215]},t:"{4} dribbles toward the wing to pull the zone that way."},
+ {o:{o3:[322,145],o5:[322,102]},scr:["o3","o5"],t:"{3} and {5} set a double screen on the back side low defender, inside the key."},
+ {o:{o2:[462,50]},via:{o2:[[140,40],[360,40]]},t:"{2} runs the baseline behind the zone into the open corner."},
+ {ball:"o1",t:"{4} passes back to {1}."},
+ {o:{o1:[395,255]},t:"{1} dribbles toward {2}'s side."},
+ {ball:"o2",t:"{1} feeds {2}. If the low defender fights out to {2}, {5} screens the middle defender and {3} cuts into the open slot for the layup."},
+ {shot:true,t:"{2} shoots the corner 3."}
+ ]},
+{id:"opp",vids:[["_n44_VAi-NE", "4 simple plays to beat a 2 3 zone"], ["YPwgU6mBDjA", "5 plays to punish a 2 3 zone"]],sys:"z41",name:"Opp",aka:"Star on the cheat sheet",target:"2 3 zone",look:"Elbow pull up, corner 3, or low post drop",def:"23",
+ keys:["The cheat sheet calls this Star. Same play.","{4} pins the top defender to open the gap.","{1} attacks the gap toward the elbow and reads the low and middle defenders.","Low defender steps up: corner 3. Middle defender steps up: dump it to {5}."],
+ steps:[
+ {o:{o1:[350,295],o2:[38,50],o3:[462,50],o4:[150,295],o5:[155,100]},ball:"o1",t:"Setup: 4 Out, 1 In. {1} and {4} wide in the slots, {2} and {3} in the corners, {5} on the block."},
+ {o:{o4:[195,258]},scr:["o4"],t:"{4} steps in and sets a pin screen on the top defender."},
+ {o:{o1:[200,212]},via:{o1:[[255,255]]},t:"{1} dribbles around the screen and attacks the gap toward the elbow."},
+ {ball:"o2",t:"The low defender steps up, so {1} kicks to {2} in the corner. If the middle defender slides up instead, {1} dumps it to {5} on the block."},
+ {shot:true,t:"{2} shoots the corner 3."}
+ ]},
+{id:"flash",vids:[["VnyuAhFZSXM", "4 Flash offense vs the 2 3 zone: Michigan"]],sys:"z41",name:"Flash",aka:"Wing Flash",target:"2 3 zone",look:"High low dive cut layup",def:"23",
+ keys:["The deep corner pass pulls the zone down.","{5} slides under the zone to the short corner, 12 to 15 feet out.","{3} flashes to the elbow, then dives the moment {5} catches.","{1} crashes the weak side block for the rebound or kickout."],
+ steps:[
+ {o:{o1:[350,295],o2:[38,50],o3:[462,50],o4:[150,295],o5:[345,100]},ball:"o1",t:"Setup: 4 Out, 1 In. {1} and {4} wide in the slots, {2} and {3} in the corners, {5} on the weak side block."},
+ {ball:"o4",t:"{1} passes to {4}."},
+ {ball:"o2",t:"{4} swings it down to {2} in the deep corner."},
+ {o:{o3:[188,218],o5:[98,88]},via:{o3:[[420,170]],o5:[[250,68]]},t:"{3} flashes from the weak side corner to the ball side elbow gap. {5} slides underneath the zone to the short corner."},
+ {ball:"o5",t:"{2} feeds {5} in the short corner."},
+ {o:{o3:[222,105],o1:[345,100]},ball:"o3",t:"The moment {5} catches, {3} dives hard down the lane for the high low pass. {1} slides to the weak side block."},
+ {shot:true,t:"{3} finishes the layup."}
+ ]},
+/* MAN DEFENSE */
+{id:"shadow",vids:[["ES7MVSegkSs","Help side principles in man defense"],["VfIdn8Lk3q8","Help, sink, and recover"],["gbb9CoEMF7s","Rebounding and box out drills"]],sys:"man",name:"Shadow",call:"SHADOW",target:"Straight man to man",look:"Contested, low percentage shots",def:"man",xArrows:true,
+ keys:["Each defensive player guards the player with her number: defensive player {x1} guards {1}, defensive player {x2} guards {2}, and so on.","No switching. Fight over or under ball screens per the scouting report and fight through every down screen.","Pressure the ball without getting beat. Force it to the sideline or baseline.","Keep the ball, you, man triangle and jump to the ball on every pass.","The lowest help defender crosses the key line on drives. Sink and fill."],
+ steps:[
+ {o:OFF,ball:"o1",t:"Straight man. Defensive player {x1} pressures {1} on the ball without getting beat. Off the ball: see ball, you, and your man."},
+ {ball:"o2",t:"{1} passes to {2} on the wing. Everyone jumps to the ball on the pass to shorten the help."},
+ {o:{o2:[405,98]},xo:{x5:[305,102]},t:"{2} drives baseline. Defensive player {x5}, the lowest help defender, crosses the key line and stops it."},
+ {ball:"o4",t:"{2} kicks the ball to {4} in the corner. Rotate, sink and fill, and close out with high hands."},
+ {shot:true,dm:"boxout",t:"The shot goes up. Every defensive player makes contact, boxes out, and finishes with a two hand rebound."}
+ ]},
+{id:"dark",vids:[["TerW88zXBuM","Match up zone: disguising your defense"],["IXVUmXPa8mg","Zone vs man to man defense"]],sys:"man",name:"Dark",call:"DARK",target:"Teams running set plays",look:"Confused offense, bad decisions",def:"man",xArrows:true,
+ keys:["Pick up in tight Shadow as soon as the ball crosses half court.","On the second pass (or the first wing kickout), the safety calls DARK! DARK! loud and clear.","All five drop into the 2 3 zone shell unless another zone was signaled, and match up with the nearest player.","The goal is to make them run a man play into a zone."],
+ steps:[
+ {o:OFF,ball:"o1",t:"Pick up in tight Shadow man as soon as the ball enters the half court. Each defensive player is on the player with her number."},
+ {ball:"o2",t:"First pass, {1} to {2}. Still man."},
+ {ball:"o4",dm:"23",t:"Second pass, {2} to {4}. The safety echoes DARK! DARK! and all five defensive players drop into the 2 3 zone shell."},
+ {ball:"o2",t:"Now the offense is running its man set into a zone."}
+ ]},
+{id:"blackout",vids:[["nN7M6ewFqJg","Fundamentals of denying the pass: Isiah Thomas"],["gO8DX6vcwAE","Deny and disrupt: half court denial man defense"]],sys:"man",name:"Blackout",call:"BLACKOUT",target:"Ball handlers who can be rattled",look:"Denied touches and panic",def:"deny",xArrows:true,
+ keys:["Suffocating ball pressure. Turn the handler at least twice before half court.","High hip in every passing lane. Deny the easy perimeter entry.","Stay closer to your player than normal. Help only on a dead drive.","Hit someone on every shot."],
+ steps:[
+ {o:{o1:[250,330],o2:[425,230],o3:[75,230],o4:[400,100],o5:[155,100]},ball:"o1",t:"Defensive player {x1} puts suffocating pressure on {1}. Every other defensive player sits on the high hip in the passing lane."},
+ {o:{o1:[335,338]},t:"Defensive player {x1} turns the ball handler. There is nowhere easy to go."},
+ {o:{o2:[435,322]},t:"{2} pops out high from the wing. Defensive player {x2} stays attached and keeps denying."},
+ {o:{o2:[330,100]},via:{o2:[[440,200]]},t:"{2} goes backdoor. Defensive player {x2} stays on her hip. Help only on a dead drive."}
+ ]},
+/* ZONE DEFENSE */
+{id:"z23",vids:[["fQJBgJVhzp8","How to teach an effective 2 3 zone"],["YbHngANT7Qg","Villanova's rules for the 2 3 zone"]],sys:"zone",name:"23",call:"23",target:"Teams that live in the paint",look:"No easy baskets inside",def:"23",xArrows:true,
+ keys:["Guards (defensive players {x1} and {x2}) overlap at the high post and top of the key, pass off handlers, and contest top of the key shots.","Wings (defensive players {x3} and {x4}) close out hard on wing shooters, drop to the short corner on skips, and sink to the opposite block when the ball is on the far side.","The center (defensive player {x5}) owns the lane block to block: protect the rim, contest high post entries, and own the glass."],
+ steps:[
+ {o:OFF,ball:"o1",t:"Ball up top with {1}. Defensive players {x1} and {x2}, the guards, match up on the ball and the high post. The wings and center hold the paint."},
+ {ball:"o2",t:"Ball on the wing with {2}. Defensive player {x2}, the ball side guard, takes the ball and the weak side sinks toward the opposite block."},
+ {ball:"o4",t:"Ball in the corner with {4}. Defensive player {x4}, the wing, closes out hard and defensive player {x5}, the center, plays the ball side block."},
+ {o:{o5:[250,205]},ball:"o5",t:"Ball in the high post with {5}. The guards collapse and defensive player {x5} stays home to protect the rim."},
+ {ball:"o3",t:"Skip to {3} on the far wing. The zone slides with the ball in the air and defensive player {x3}, the wing, drops to cover the short corner."}
+ ]},
+{id:"z13",vids:[["-k-Fy36Mz1o","1 3 1 zone defense complete tutorial"],["apjaZu0T67Y","Trap and extend the 1 3 1 zone"]],sys:"zone",name:"13",call:"13",target:"Teams that struggle with length",look:"Wing traps and turnovers",def:"131",xArrows:true,
+ keys:["Point (defensive player {x1}): harass the ball at the top and force it to one side.","High post (defensive player {x4}): cover elbow to elbow and shut down the middle pass.","Wings (defensive players {x2} and {x3}): trap on the wing with the point or the baseline player and deny the outlet back to the top.","Baseline warrior (defensive player {x5}): sprint corner to corner, guard the low post, and take charges on baseline drives."],
+ steps:[
+ {o:OFF2,ball:"o1",t:"Defensive player {x1}, the point, harasses {1} and forces the ball to one side."},
+ {ball:"o3",xo:{x1:[72,234],x2:[103,208],x4:[197,197]},t:"Wing entry to {3}. Defensive players {x1} and {x2}, the point and the wing, trap. Defensive player {x4}, the high post, cuts off the pass back to the middle."},
+ {o:{o5:[45,58]},ball:"o5",t:"Pass to {5} in the corner. Defensive player {x5}, the baseline warrior, sprints corner to corner and defensive player {x2} traps with her."},
+ {ball:"o1",t:"The ball gets out to {1} at the top. Every defensive player recovers to the 1 3 1 shell."}
+ ]},
+{id:"z12",vids:[["A9dazo3BZL8","1 2 2 zone defense full tutorial"],["i_SGR-xvSfs","How to run a 1 2 2 zone defense"]],sys:"zone",name:"12",call:"12",target:"Guards who get sped up",look:"Trap and bait on the wing entry",def:"122",xArrows:true,
+ keys:["Point (defensive player {x1}): pressure above the arc and steer the ball into the side traps. Read the pass and anticipate steals.","Elbows (defensive players {x2} and {x3}): guard the wings and high post, then close out hard to the short corner when the ball drops low.","Down low (defensive players {x4} and {x5}): guard the post and the low corners and call out cutters crossing the lane."],
+ steps:[
+ {o:OFF2,ball:"o1",xo:{x1:[206,275],x2:[165,260]},t:"Defensive player {x1}, the point, pressures {1} above the arc and steers the ball to a side."},
+ {ball:"o3",xo:{x1:[72,234],x2:[103,208],x4:[121,109]},t:"Wing entry to {3}. Trap and bait: defensive players {x1} and {x2}, the point and the elbow, trap while defensive players {x4} and {x5} protect the post and short corner."},
+ {ball:"o2",xo:{x1:[294,275],x3:[335,260]},t:"The ball escapes to {2} at the top. Defensive player {x1} picks it up again and the elbows get back to the wings and high post."},
+ {ball:"o4",xo:{x1:[428,234],x3:[397,208],x5:[379,109]},t:"Wing entry to {4} on the other side. Same trap, same rotations: now defensive players {x1} and {x3} trap."}
+ ]},
+{id:"z32",vids:[["YVFqsTxJxQ0","3 2 zone defense complete guide"],["SJWxQjdi5Ao","3 2 zone defense with game footage"]],sys:"zone",name:"32",call:"32",target:"Heavy outside shooting teams",look:"Contested 3 point attempts",def:"32",xArrows:true,
+ keys:["Top three (defensive players {x1}, {x2}, and {x3}) tightly guard the arc: the point and both wings. Contest every 3.","Bottom two (defensive players {x4} and {x5}) own the whole paint and baseline.","The bottom two must get out to the corners fast on skip passes."],
+ steps:[
+ {o:OFF,ball:"o1",t:"Ball up top with {1}. The top three take away the arc and the bottom two hold the paint."},
+ {ball:"o2",t:"Ball on the wing with {2}. Defensive player {x3}, the wing defender, contests the shooter and defensive player {x1}, the point, slides with it."},
+ {ball:"o4",t:"Ball in the corner with {4}. Defensive player {x5}, a bottom defender, sprints out to the corner."},
+ {ball:"o3",t:"Skip to {3} on the far wing. Defensive player {x2}, the far top defender, closes out hard with high hands."}
+ ]},
+/* SPECIALTY */
+{id:"triangle",vids:[["kyTz0l4uJfY","Triangle and 2 full tutorial"],["8n5AmuZxJlU","How to play a triangle and 2"]],sys:"spec",name:"Triangle",call:"TRIANGLE",target:"Two elite scorers",look:"Take their top two away",def:"tri",targets:["o1","o2"],xArrows:true,
+ keys:["Two lockdown defenders (defensive players {x1} and {x2}) guard the top two scorers in full Blackout denial. Zero touches.","The other three form a triangle: defensive player {x3} at the free throw line, defensive players {x4} and {x5} on the blocks.","The triangle protects the rim and rebounds."],
+ steps:[
+ {o:OFF,ball:"o1",t:"Defensive players {x1} and {x2}, the two chasers, deny the top two scorers, {1} and {2}. The other three form the triangle in the key."},
+ {ball:"o3",t:"The ball goes to {3}, a non scorer. The triangle shifts to the ball while the chasers stay attached."},
+ {o:{o2:[330,300]},t:"{2}, a star, tries to pop free. Defensive player {x2}, her chaser, goes with her. No help duties."},
+ {ball:"o4",t:"Ball in the corner with {4}. Defensive player {x5}, the ball side block, steps out and defensive player {x3}, the top of the triangle, drops."}
+ ]},
+{id:"box",vids:[["R8cwiXpxG1U","Teach a box and 1 zone defense"],["xhdD78OSgsY","Box and 1 in the NBA: Raptors vs Celtics"]],sys:"spec",name:"Box",call:"BOX",target:"One elite scorer",look:"Take their best player away",def:"box",targets:["o1"],xArrows:true,
+ keys:["One chaser (defensive player {x1}) stays attached to the primary scorer at all times. No help duties.","The other four set up in a 2 2 box: defensive players {x2} and {x3} on the elbows, defensive players {x4} and {x5} on the blocks.","The box slides to absorb drives and contest perimeter shots."],
+ steps:[
+ {o:OFF,ball:"o1",t:"Defensive player {x1}, the chaser, locks onto {1}, the primary scorer. The other four set up in a box: two elbows, two blocks."},
+ {ball:"o2",t:"Ball to {2} on the wing. The box slides and defensive player {x1} keeps denying."},
+ {o:{o1:[175,290]},t:"{1}, the star, cuts. Defensive player {x1} goes with her."},
+ {ball:"o4",t:"Ball in the corner with {4}. Defensive player {x5}, the ball side block, steps out and the box sinks with it."}
+ ]},
+{id:"circle",vids:[["vVUPoO8AWb0","Amoeba match up zone"],["TerW88zXBuM","Match up zone: disguising your defense"]],sys:"spec",name:"Circle",call:"CIRCLE",target:"Teams that cut a lot",look:"Zone look that turns into man",def:"circle",xArrows:true,
+ keys:["Line up in a loose circle around the key.","Flow with the ball and pass off cutters from zone to zone.","On the call LOCK! (post entry or any pass inside the arc), every defensive player locks into tight man on the nearest player."],
+ steps:[
+ {o:OFF,ball:"o1",t:"Loose circle around the key. Flow with the ball."},
+ {ball:"o2",t:"The ball moves to {2} on the wing and the circle rotates with it."},
+ {o:{o3:[180,125]},t:"{3} flashes through as a cutter. Pass her off to the next defender in the circle."},
+ {o:{o5:[200,110]},ball:"o5",dm:"man",t:"Pass inside the arc to {5}. The call is LOCK! and every defensive player locks into tight man."}
+ ]},
+/* PRESS */
+{id:"p21",vids:[["nlDwYjMMeoU","How to run a 2 2 1 full court press"],["3g1t0RyDg3k","2 2 1 press: pressure the ball"]],sys:"press",name:"21",call:"21",target:"Force quick decisions",look:"Sideline traps",court:"full",def:"manual",xArrows:true,
+ keys:["Front line (defensive players {x1} and {x2}): force the inbound to the sideline or corner, then trap once she is in the trap area.","Mid line (defensive players {x3} and {x4}): read the ball handler's eyes and body and jump the escape passes.","Safety (defensive player {x5}): stay deeper than the deepest offensive player, take away the long pass, and protect the rim."],
+ steps:[
+ {o:FULL0,ball:"o1",x:{x1:[200,800],x2:[300,800],x3:[130,590],x4:[370,590],x5:[250,380]},t:"2 2 1 alignment. The front line (defensive players {x1} and {x2}) sits near the free throw line, the mid line ({x3} and {x4}) near half court, and the safety ({x5}) deep."},
+ {o:{o2:[110,850]},ball:"o2",x:{x1:[150,815],x2:[245,790]},t:"Defensive players {x1} and {x2} let the inbound go to {2} on the sideline and close in."},
+ {o:{o2:[80,690]},x:{x1:[112,714],x3:[80,648],x2:[205,700],x4:[265,565],x5:[175,390]},t:"{2} dribbles up the sideline into the trap area. Defensive players {x1} and {x3} trap her. Defensive player {x4}, the other mid defender, plays the middle."},
+ {x:{x4:[215,625]},t:"Defensive player {x4} reads the ball handler's eyes and jumps the escape pass to the middle. Defensive player {x5}, the safety, stays deeper than the deepest player."}
+ ]},
+{id:"p11",vids:[["VnZElPvUke0","Diamond 1 2 1 1 full court press"],["AsqNiRXRz5I","How to run a 1 2 1 1 diamond press"]],sys:"press",name:"11",call:"11",target:"Force baseline turnovers",look:"Trap right on the catch",court:"full",def:"manual",xArrows:true,
+ keys:["Point (defensive player {x1}): turn the ball handler toward the sideline the moment she catches the inbound.","Wings (defensive players {x2} and {x3}): spring the trap instantly with the point.","Middle (defensive player {x4}): pick off the high post outlet and any lob over the trap.","Safety (defensive player {x5}): protect the back line and stop the breakaway layup."],
+ steps:[
+ {o:FULL0,ball:"o1",x:{x1:[300,905],x2:[140,790],x3:[360,790],x4:[250,640],x5:[250,380]},t:"1 2 1 1 diamond. Defensive player {x1}, the point, is on the inbounder. Defensive players {x2} and {x3}, the wings, are in front of the receivers. Defensive player {x4}, the middle, is in the center, and defensive player {x5}, the safety, is deep."},
+ {o:{o2:[110,855]},ball:"o2",x:{x1:[160,850]},t:"On the catch, defensive player {x1} turns {2} toward the sideline."},
+ {x:{x1:[132,838],x2:[94,818],x3:[250,768],x4:[165,665],x5:[225,400]},t:"Defensive player {x2} springs the trap with defensive player {x1}. Defensive player {x3}, the far wing, rotates to the middle. Defensive player {x4} takes the sideline outlet and the lob, and defensive player {x5} guards the back line."}
+ ]},
+{id:"pblackout",vids:[["DKh4t-Z_A24","Full court man to man trapping defense"],["wQ8lQDfXt1I","Full court press: basic denial"]],sys:"press",name:"Blackout Full",call:"BLACKOUT FULL",target:"Relentless 94 foot pressure",look:"Long floating passes for steals",court:"full",def:"fdeny",xArrows:true,
+ keys:["Pick up the full 94 feet. Deny and face guard before the inbound is thrown. Each defensive player takes the player with her number.","Switch every backcourt ball screen with a loud SWITCH! call.","Never turn your back on the ball. Force long, floating passes and go get them."],
+ steps:[
+ {o:FULL0,ball:"o1",t:"Face guard all 94 feet before the inbound. Nobody gets a clean look."},
+ {o:{o2:[125,760],o3:[380,900]},t:"{2} and {3} try to shake free. Defensive players {x2} and {x3} stay attached and deny."},
+ {o:{o4:[250,330]},t:"{4} makes a deep cut. Defensive player {x4} stays with her and never turns her back on the ball. A long floating pass is a steal chance."}
+ ]}
+];
+
+
+/* ---------- build frames ---------- */
+function buildFrames(play){
+  let pos={},ball=null,dm=play.def||"none",xman={};
+  return play.steps.map(s=>{
+    if(s.o) pos=Object.assign({},pos,s.o);
+    if(s.ball) ball=s.ball;
+    if(s.dm) dm=s.dm;
+    if(s.x) xman=Object.assign({},xman,s.x);
+    const P={}; for(const k in pos) P[k]=pos[k].slice();
+    const X= dm==="manual"?Object.assign({},xman):defCalc(dm,P,ball,play);
+    if(s.xo) Object.assign(X,s.xo);
+    for(const k in X) P[k]=X[k].slice();
+    return {P,ball,shot:!!s.shot};
+  });
+}
+
+/* ---------- court ---------- */
+function courtSVG(full){
+  const L=[];
+  const half=(yb,dir)=>{
+    const y=v=>yb+dir*v, top=Math.min(y(0),y(190));
+    L.push(`<rect x="170" y="${top}" width="160" height="190" class="pt"/>`);
+    L.push(`<path class="ln" d="M170 ${y(0)} V${y(190)} H330 V${y(0)}"/>`);
+    L.push(`<path class="ln" d="M190 ${y(190)} A60 60 0 0 ${dir>0?0:1} 310 ${y(190)}"/>`);
+    L.push(`<path class="ln dash" d="M190 ${y(190)} A60 60 0 0 ${dir>0?1:0} 310 ${y(190)}"/>`);
+    L.push(`<path class="ln" d="M52.5 ${y(0)} V${y(52)} A197.5 197.5 0 0 ${dir>0?0:1} 447.5 ${y(52)} V${y(0)}"/>`);
+    L.push(`<path class="ln" d="M220 ${y(40)} H280"/>`);
+    L.push(`<circle class="rim" cx="250" cy="${y(52)}" r="9"/>`);
+    [70,110,140,170].forEach(v=>L.push(`<path class="ln thin" d="M162 ${y(v)} H170 M330 ${y(v)} H338"/>`));
+    L.push(`<path class="ln" d="M0 ${y(0)} H500"/>`);
+  };
+  if(!full){
+    L.push(`<rect x="0" y="20" width="500" height="450" class="fl"/>`);
+    half(20,1);
+    L.push(`<path class="ln" d="M0 20 V470 H500 V20"/>`);
+    L.push(`<path class="ln" d="M190 470 A60 60 0 0 1 310 470"/>`);
+  }else{
+    L.push(`<rect x="0" y="20" width="500" height="900" class="fl"/>`);
+    half(20,1); half(920,-1);
+    L.push(`<path class="ln" d="M0 20 V920 M500 20 V920 M0 470 H500"/>`);
+    L.push(`<circle class="ln" cx="250" cy="470" r="60"/>`);
+    L.push(`<text x="12" y="955" class="lbltxt">INBOUND SIDE</text>`);
+    L.push(`<text x="488" y="462" class="lbltxt" text-anchor="end">HALF COURT</text>`);
+  }
+  return L.join("");
+}
+
+/* ---------- path helpers ---------- */
+function plen(pts){let s=0;for(let i=1;i<pts.length;i++)s+=dist(pts[i-1],pts[i]);return s}
+function pointAt(pts,t){
+  const L=plen(pts); if(L===0) return pts[0].slice();
+  let d=Math.max(0,Math.min(1,t))*L;
+  for(let i=1;i<pts.length;i++){const s=dist(pts[i-1],pts[i]); if(d<=s||i===pts.length-1){const k=s?Math.min(1,d/s):0; return [pts[i-1][0]+(pts[i][0]-pts[i-1][0])*k,pts[i-1][1]+(pts[i][1]-pts[i-1][1])*k]} d-=s;}
+  return pts[pts.length-1].slice();
+}
+function trim(pts,a,b){const L=plen(pts); if(L<a+b+4) return null; const n=[]; const steps=Math.max(2,Math.ceil(L/6)); for(let i=0;i<=steps;i++){n.push(pointAt(pts,(a+(L-a-b)*i/steps)/L))} return n}
+function simplify(pts){return pts}
+const dP=pts=>"M"+pts.map(p=>p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" L");
+function zig(pts){
+  const L=plen(pts), out=[pts[0]], body=L-16, n=Math.max(3,Math.floor(body/9));
+  for(let k=1;k<=n;k++){const t=(k/(n+1))*body/L, p=pointAt(pts,t), q=pointAt(pts,Math.min(1,t+.02)); const u=unit(sub(q,p)); const s=(k%2?1:-1)*5; out.push([p[0]-u[1]*s,p[1]+u[0]*s]);}
+  out.push(pointAt(pts,(L-10)/L)); out.push(pts[pts.length-1]); return out;
+}
+
+/* ---------- text helpers ---------- */
+// {3} is player 3 on offense, {x3} is defensive player 3
+const fmt=s=>String(s).replace(/\{x([1-5])\}/g,'<span class="dn">$1</span>').replace(/\{([1-5])\}/g,'<span class="pn">$1</span>');
+const plain=s=>String(s).replace(/\{x?([1-5])\}/g,"$1");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $=id=>document.getElementById(id);
+const NS="http://www.w3.org/2000/svg";
+const reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+const store={
+  get(k,d){try{const v=localStorage.getItem("lbPlaybook."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem("lbPlaybook."+k,JSON.stringify(v))}catch(e){}}
+};
+const ORDER=["flow","princeton","z41","man","zone","spec","press"];
+const ALL=ORDER.flatMap(s=>PLAYS.filter(p=>p.sys===s));
+const byId=id=>PLAYS.find(p=>p.id===id);
+
+/* ---------- animated court viewer ---------- */
+let vid=0;
+function Viewer(svg,opt){
+  opt=opt||{};
+  const uid="v"+(++vid);
+  let play=null,F=[],cur=0,t=0,playing=false,raf=0,hold=0,lastTs=0,restart=false;
+  let gA,gX,gO,gB,nodes={},ballNode;
+  const DUR=1600;
+  const speed=()=>opt.speed?opt.speed():1;
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+  function setup(){
+    const full=play.court==="full";
+    svg.setAttribute("viewBox",full?"-8 12 516 956":"-8 12 516 466");
+    if(opt.stage) opt.stage.classList.toggle("full",full);
+    svg.innerHTML=`<defs>
+      <marker id="${uid}ah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ahp"/></marker>
+      <marker id="${uid}ahx" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ahx"/></marker>
+    </defs>${courtSVG(full)}`;
+    gA=el("g",{},svg); gX=el("g",{},svg); gO=el("g",{},svg); gB=el("g",{},svg);
+    nodes={};
+    const ids=new Set(); F.forEach(f=>Object.keys(f.P).forEach(k=>ids.add(k)));
+    [...ids].sort().forEach(id=>{
+      if(id[0]==="o"){const g=el("g",{class:"of"},gO); el("circle",{r:13},g); const tx=el("text",{"text-anchor":"middle",y:5},g); tx.textContent=id.slice(1); nodes[id]=g;}
+      else{const g=el("g",{class:"df"},gX); el("path",{d:"M-8 -8L8 8M8 -8L-8 8"},g); const tx=el("text",{x:10,y:14},g); tx.textContent=id.slice(1); nodes[id]=g;}
+    });
+    ballNode=el("circle",{r:6.5,class:"bl"},gB);
+  }
+  function moverPath(id,i){
+    const a=F[i].P[id], b=F[i+1]&&F[i+1].P[id]; if(!a||!b) return null;
+    const via=(play.steps[i+1].via||{})[id]||[];
+    return [a,...via,b];
+  }
+  const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+  const passWin=i=>(play.steps[i+1].pass==="start")?[0,.4]:[.55,1];
+  function playerPos(id,i,tt){
+    const f=F[i].P[id]; if(!F[i+1]||tt<=0) return f||(F[i+1]&&F[i+1].P[id]);
+    const p=moverPath(id,i); if(!p) return F[i+1].P[id]||f;
+    return pointAt(p,ease(tt));
+  }
+  function holderPos(id,i,tt){const p=playerPos(id,i,tt); return p?[p[0]+9,p[1]-9]:RIM}
+  function ballPos(i,tt){
+    const f=F[i]; if(!F[i+1]||tt<=0) return f.shot?[RIM[0],RIM[1]]:holderPos(f.ball,i,0);
+    if(f.shot) return [RIM[0],RIM[1]];
+    const n=F[i+1], a=f.ball, b=n.ball;
+    if(n.shot){ if(tt<.35) return holderPos(a,i,tt); const k=(tt-.35)/.65, s=holderPos(a,i,.35); return [s[0]+(RIM[0]-s[0])*k, s[1]+(RIM[1]-s[1])*k - Math.sin(Math.PI*k)*60];}
+    if(a===b) return holderPos(a,i,tt);
+    const [w0,w1]=passWin(i);
+    if(tt<=w0) return holderPos(a,i,tt);
+    if(tt>=w1) return holderPos(b,i,tt);
+    const k=(tt-w0)/(w1-w0), s=holderPos(a,i,w0), e=holderPos(b,i,w1);
+    return [s[0]+(e[0]-s[0])*k, s[1]+(e[1]-s[1])*k];
+  }
+  function drawArrows(i){
+    gA.innerHTML="";
+    if(i>=F.length-1) return;
+    const s=play.steps[i+1], a=F[i], n=F[i+1], scr=s.scr||[];
+    const AH=`url(#${uid}ah)`, AHX=`url(#${uid}ahx)`;
+    for(const id in n.P){
+      const p=moverPath(id,i); if(!p) continue;
+      if(dist(p[0],p[p.length-1])<4&&p.length<3) continue;
+      const isX=id[0]==="x";
+      if(isX&&!play.xArrows) continue;
+      const dribble=!isX&&id===a.ball&&(a.ball===n.ball||s.pass!=="start")&&!a.shot;
+      const pts=trim(p,isX?12:15,isX?4:(scr.includes(id)?0:2)); if(!pts) continue;
+      if(scr.includes(id)){
+        el("path",{d:dP(pts),class:"mv"},gA);
+        const e=pts[pts.length-1], u=unit(sub(e,pts[pts.length-3]||pts[0]));
+        el("path",{d:`M${e[0]-u[1]*11} ${e[1]+u[0]*11} L${e[0]+u[1]*11} ${e[1]-u[0]*11}`,class:"mv",style:"stroke-width:3"},gA);
+      }else if(dribble){
+        el("path",{d:dP(zig(pts)),class:"mv","marker-end":AH},gA);
+      }else{
+        el("path",{d:dP(pts),class:"mv"+(isX?" x":""),"marker-end":isX?AHX:AH},gA);
+      }
+    }
+    if(n.shot&&!a.shot){
+      const h=a.P[a.ball]; const pts=[h,[(h[0]+RIM[0])/2, Math.min(h[1],RIM[1])+(h[1]-RIM[1])/2-40],RIM];
+      const tp=trim(pts,15,10); if(tp) el("path",{d:dP(tp),class:"mv pass","marker-end":AH},gA);
+    }else if(a.ball!==n.ball){
+      const tp=trim([a.P[a.ball],n.P[n.ball]],16,16); if(tp) el("path",{d:dP(tp),class:"mv pass","marker-end":AH},gA);
+    }
+  }
+  function render(){
+    for(const id in nodes){
+      const p=playerPos(id,cur,t);
+      if(!p){nodes[id].setAttribute("visibility","hidden");continue}
+      nodes[id].setAttribute("visibility","visible");
+      nodes[id].setAttribute("transform",`translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})`);
+    }
+    const b=ballPos(cur,t); ballNode.setAttribute("cx",b[0].toFixed(1)); ballNode.setAttribute("cy",b[1].toFixed(1));
+    gA.style.opacity=t>0?Math.max(0,1-t*2.2):1;
+    if(opt.bar) opt.bar.style.width=((cur+t)/(F.length-1||1)*100)+"%";
+  }
+  const notify=()=>{if(opt.onStep) opt.onStep(api)};
+  function tick(ts){
+    if(!lastTs) lastTs=ts;
+    const dt=Math.min(ts-lastTs,100); lastTs=ts;
+    if(hold>0){hold-=dt; raf=requestAnimationFrame(tick); return}
+    if(restart){restart=false; cur=0; t=0; drawArrows(0); render(); notify(); hold=700; raf=requestAnimationFrame(tick); return}
+    t+=dt/(reduce?250:DUR/speed());
+    if(t>=1){
+      cur++; t=0; drawArrows(cur); render(); notify();
+      if(cur>=F.length-1){
+        if(opt.loop&&playing){hold=2200; restart=true; raf=requestAnimationFrame(tick); return}
+        playing=false; stop(); notify(); return;
+      }
+      if(!playing){stop(); notify(); return}
+      hold=reduce?600:900/speed();
+    }
+    render();
+    raf=requestAnimationFrame(tick);
+  }
+  function loop(){cancelAnimationFrame(raf); lastTs=0; raf=requestAnimationFrame(tick)}
+  function stop(){cancelAnimationFrame(raf); raf=0}
+  function go(i){playing=false; restart=false; stop(); cur=Math.max(0,Math.min(F.length-1,i)); t=0; drawArrows(cur); render(); notify()}
+  const api={
+    load(p){play=p; F=buildFrames(p); setup(); go(0)},
+    go,
+    next(){if(cur>=F.length-1) return; playing=false; hold=0; notify(); loop()},
+    toggle(){
+      if(playing){playing=false; stop(); if(t>0){t=0; render()} notify(); return}
+      if(cur>=F.length-1) go(0);
+      playing=true; hold=0; notify(); loop();
+    },
+    start(){if(!playing) api.toggle()},
+    pause(){if(playing) api.toggle()},
+    get cur(){return cur}, get t(){return t}, get n(){return F.length}, get playing(){return playing}, get play(){return play}
+  };
+  return api;
+}
+
+/* ---------- progress ---------- */
+let learned=new Set(store.get("learned",[]));
+function setLearned(id,on){on?learned.add(id):learned.delete(id); store.set("learned",[...learned]); refreshProgress()}
+function refreshProgress(){
+  $("learnPill").innerHTML=`<b>${learned.size}</b> of ${ALL.length} learned`;
+  const next=ALL.find(p=>!learned.has(p.id));
+  $("startLbl").textContent=learned.size===0?"Start learning":next?"Keep going: "+next.name:"Review the plays";
+  document.querySelectorAll("[data-learn]").forEach(e=>e.classList.toggle("learned",learned.has(e.dataset.learn)));
+  document.querySelectorAll("[data-chk]").forEach(e=>e.classList.toggle("on",learned.has(e.dataset.chk)));
+  document.querySelectorAll("[data-meter]").forEach(e=>{
+    const ps=PLAYS.filter(p=>p.sys===e.dataset.meter), k=ps.filter(p=>learned.has(p.id)).length;
+    e.querySelector("i").style.width=(k/ps.length*100)+"%";
+    e.nextElementSibling.textContent=k+"/"+ps.length;
+  });
+  if(current){const on=learned.has(current.id); $("learnBtn").setAttribute("aria-pressed",on); $("learnLbl").textContent=on?"Learned":"Mark as learned"}
+}
+
+/* ---------- videos ---------- */
+const VIDS=new Map();
+ORDER.forEach(sid=>{
+  PLAYS.filter(p=>p.sys===sid).forEach(p=>(p.vids||[]).forEach(([id,title])=>{
+    if(!VIDS.has(id)) VIDS.set(id,{id,title,sys:new Set(),plays:[]});
+    const v=VIDS.get(id); v.sys.add(sid); if(!v.plays.includes(p.id)) v.plays.push(p.id);
+  }));
+  (SYSTEMS[sid].vids||[]).forEach(([id,title])=>{
+    if(!VIDS.has(id)) VIDS.set(id,{id,title,sys:new Set(),plays:[]});
+    VIDS.get(id).sys.add(sid);
+  });
+});
+function vidCard(v,tags){
+  const t=esc(v.title);
+  return `<article class="vcard">
+    <div class="yt" data-yt="${v.id}"><button type="button" aria-label="Play video: ${t}"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" onerror="this.style.visibility='hidden'"><span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></button></div>
+    <div class="vmeta"><b>${t}</b>${tags?`<div class="vtags">${tags}</div>`:""}
+    <span class="vfall">Video will not play? <a href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">Watch on YouTube</a></span></div>
+  </article>`;
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest(".yt button"); if(!b) return;
+  const box=b.parentElement, id=box.dataset.yt;
+  document.querySelectorAll(".yt iframe").forEach(f=>{const o=f.parentElement; o.innerHTML=o.dataset.idle||""});
+  box.dataset.idle=box.innerHTML;
+  box.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1" title="${esc(b.getAttribute("aria-label"))}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+  if(main) main.pause(); if(quizV) quizV.pause();
+});
+
+/* ---------- routing ---------- */
+let current=null, route="home";
+function show(view){
+  ["home","play","film","quiz"].forEach(v=>$("v-"+v).hidden=v!==view);
+  const tab=view==="play"?"plays":view;
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-current",t.dataset.go===tab?"page":"false"));
+  if(view==="home"){ if(!reduce) hero.start(); } else hero.pause();
+  if(view!=="play"&&main) main.pause();
+  if(view!=="quiz"&&quizV) quizV.pause();
+  document.querySelectorAll(".yt iframe").forEach(f=>{const o=f.parentElement; o.innerHTML=o.dataset.idle||""});
+}
+function nav(where){
+  if(where==="plays") where=(current&&current.id)||store.get("last",ALL[0].id);
+  if(location.hash.slice(1)===where) handle(); else location.hash=where;
+}
+function handle(){
+  const h=location.hash.slice(1)||"home";
+  if(h==="home"||h==="film"||h==="quiz"){
+    route=h; show(h);
+    if(h==="quiz"&&!quizV.play) newQuestion();
+    if(h==="quiz"&&quizV.play) quizV.start();
+  }else{
+    const p=byId(h); if(!p){route="home";show("home");return}
+    route="play"; show("play"); if(!current||current.id!==p.id) loadPlay(p);
+  }
+  window.scrollTo(0,0);
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]"); if(b){e.preventDefault(); nav(b.dataset.go)}});
+window.addEventListener("hashchange",handle);
+
+/* ---------- theme ---------- */
+$("themeBtn").addEventListener("click",()=>{
+  const r=document.documentElement, dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme=dark?"light":"dark"; store.set("theme",r.dataset.theme);
+});
+{const th=store.get("theme",null); if(th) document.documentElement.dataset.theme=th;}
+
+/* ---------- home ---------- */
+const hero=Viewer($("heroCourt"),{loop:true});
+const HERO_ORDER=["flow","river","point_over","z23","p21"].map(byId).filter(p=>p.court!=="full");
+let heroIdx=0;
+function heroLoad(){const p=HERO_ORDER[heroIdx%HERO_ORDER.length]; hero.load(p); $("heroName").textContent=SYSTEMS[p.sys].name+": "+p.name}
+$("heroOpen").addEventListener("click",()=>nav(HERO_ORDER[heroIdx%HERO_ORDER.length].id));
+function buildHome(){
+  $("sPlays").textContent=ALL.length; $("sSystems").textContent=ORDER.length; $("sVids").textContent=VIDS.size;
+  let html="";
+  ["Offense","Defense"].forEach(side=>{
+    const sys=ORDER.filter(s=>SYSTEMS[s].side===side), n=PLAYS.filter(p=>SYSTEMS[p.sys].side===side).length;
+    html+=`<div class="side-card"><div class="side-head${side==="Defense"?" def":""}"><h3>${side}</h3><small>${sys.length} systems, ${n} plays</small></div><ul class="sys-list">`;
+    sys.forEach(sid=>{
+      const s=SYSTEMS[sid], ps=PLAYS.filter(p=>p.sys===sid);
+      html+=`<li><div class="sys-btn">
+        <button type="button" class="sys-go" data-go="${ps[0].id}"><span class="nm">${s.name}</span><span class="ds">${s.sub}</span></button>
+        <span class="ct"><span class="meter" data-meter="${sid}"><i></i></span><span></span></span>
+        <div class="plays-inline">${ps.map(p=>`<button type="button" class="mini" data-go="${p.id}" data-learn="${p.id}">${esc(p.name)}</button>`).join("")}</div>
+      </div></li>`;
+    });
+    html+=`</ul></div>`;
+  });
+  $("sides").innerHTML=html;
+  $("startBtn").addEventListener("click",()=>{const next=ALL.find(p=>!learned.has(p.id))||ALL[0]; nav(next.id)});
+}
+
+/* ---------- play view ---------- */
+let speed=1;
+const main=Viewer($("court"),{stage:$("stage"),bar:$("bar"),speed:()=>speed,onStep:updateText});
+function updateText(v){
+  if(!current) return;
+  const n=v.n, k=Math.min(v.cur+1,n-1), s=current.steps[k], done=v.cur>=n-1;
+  $("capk").innerHTML=`Step ${k} of ${n-1}`+(s.tag?`<em>${s.tag}</em>`:"")+(done?`<em>Finished</em>`:"");
+  $("capt").innerHTML=fmt(s.t);
+  document.querySelectorAll("#stepList li").forEach((li,j)=>{const idx=j+1; li.classList.toggle("on",idx===k); li.classList.toggle("done",idx<k)});
+  $("bPrev").disabled=v.cur===0&&v.t===0;
+  $("bNext").disabled=done;
+  $("playLbl").textContent=v.playing?"Pause":(done?"Replay":"Play");
+  $("playIcon").innerHTML=v.playing?'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>':(done?'<path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/>':'<path d="M8 5v14l11-7z"/>');
+}
+function buildNav(){
+  let html=`<input class="search" id="search" type="search" placeholder="Search plays" aria-label="Search plays">`, opt="", side="";
+  ORDER.forEach(sid=>{
+    const s=SYSTEMS[sid];
+    if(s.side!==side){html+=`<h2 class="${s.side==="Defense"?"def":""}">${s.side}</h2>`; side=s.side}
+    html+=`<div class="grp" data-grp="${sid}">${s.name}</div><ul data-ul="${sid}">`;
+    opt+=`<optgroup label="${s.side}: ${s.name}">`;
+    PLAYS.filter(p=>p.sys===sid).forEach(p=>{
+      html+=`<li data-q="${esc((p.name+" "+(p.aka||"")+" "+s.name+" "+(p.call||"")).toLowerCase())}"><button type="button" data-id="${p.id}"><span>${esc(p.name)}</span><span class="chk" data-chk="${p.id}"></span></button></li>`;
+      opt+=`<option value="${p.id}">${esc(p.name)}</option>`;
+    });
+    html+="</ul>"; opt+="</optgroup>";
+  });
+  $("side").innerHTML=html; $("pick").innerHTML=opt;
+  $("search").addEventListener("input",e=>{
+    const q=e.target.value.trim().toLowerCase();
+    document.querySelectorAll("#side li").forEach(li=>li.hidden=q&&!li.dataset.q.includes(q));
+    ORDER.forEach(sid=>{const any=[...document.querySelectorAll(`[data-ul="${sid}"] li`)].some(li=>!li.hidden); document.querySelector(`[data-grp="${sid}"]`).hidden=!any});
+  });
+}
+function loadPlay(p){
+  current=p; store.set("last",p.id);
+  const sys=SYSTEMS[p.sys];
+  $("eyebrow").textContent=sys.side+" · "+sys.name;
+  $("title").textContent=p.name;
+  const chips=[];
+  if(p.call) chips.push(["Call",p.call]);
+  if(p.aka) chips.push(["Also called",p.aka]);
+  chips.push(["Use vs",p.target]);
+  chips.push([sys.side==="Offense"?"Look for":"Goal",p.look]);
+  $("chips").innerHTML=chips.map(c=>`<span class="chip"><b>${c[0]}</b>${fmt(esc(c[1]))}</span>`).join("");
+  $("setup").innerHTML=fmt(p.steps[0].t);
+  $("stepCount").textContent=(p.steps.length-1)+" steps";
+  $("stepList").innerHTML=p.steps.slice(1).map((s,j)=>`<li><button type="button" data-k="${j+1}"><span class="num">${j+1}</span><span>${s.tag?`<span class="tag">${s.tag}</span>`:""}${fmt(s.t)}</span></button></li>`).join("");
+  $("keys").innerHTML=p.keys.map(k=>`<li>${fmt(k)}</li>`).join("");
+  $("sysrules").innerHTML=`<h3>${sys.side==="Offense"?esc(sys.name)+" rules":"Defensive non negotiables"}</h3><ul>${sys.rules.map(r=>`<li>${fmt(r)}</li>`).join("")}</ul>`;
+  const ids=[...(p.vids||[]),...(sys.vids||[])].map(v=>v[0]).filter((v,i,a)=>a.indexOf(v)===i);
+  $("playVids").innerHTML=ids.map(id=>vidCard(VIDS.get(id))).join("");
+  $("filmNote").textContent=(p.sys==="flow"||p.sys==="princeton")?"These clips show the same concepts run by other teams. The animation above is our exact version.":"Our play names are our own, so the clips use different names. They show the same concept, and the animation above is our exact version.";
+  const i=ALL.indexOf(p), prev=ALL[i-1], next=ALL[i+1];
+  $("playnav").innerHTML=(prev?`<button type="button" data-go="${prev.id}"><small>Previous play</small><b>${esc(prev.name)}</b></button>`:"<span></span>")+(next?`<button type="button" data-go="${next.id}"><small>Next play</small><b>${esc(next.name)}</b></button>`:"");
+  document.querySelectorAll("#side button[data-id]").forEach(b=>b.setAttribute("aria-current",b.dataset.id===p.id?"true":"false"));
+  $("pick").value=p.id;
+  main.load(p);
+  refreshProgress();
+}
+$("side").addEventListener("click",e=>{const b=e.target.closest("button[data-id]"); if(b) nav(b.dataset.id)});
+$("pick").addEventListener("change",e=>nav(e.target.value));
+$("stepList").addEventListener("click",e=>{const b=e.target.closest("button[data-k]"); if(b) main.go(+b.dataset.k-1)});
+$("bPlay").addEventListener("click",()=>main.toggle());
+$("bNext").addEventListener("click",()=>main.next());
+$("bPrev").addEventListener("click",()=>main.go(main.t>0?main.cur:main.cur-1));
+$("bRestart").addEventListener("click",()=>main.go(0));
+$("bSpeed").addEventListener("click",()=>{speed=speed===1?0.5:speed===0.5?1.5:1; $("spd").textContent=speed+"x"});
+$("learnBtn").addEventListener("click",()=>setLearned(current.id,!learned.has(current.id)));
+document.addEventListener("keydown",e=>{
+  if(route!=="play"||e.target.closest("select,input,textarea")) return;
+  if(e.key===" "&&e.target.closest("button")) return;
+  if(e.key===" "){e.preventDefault();main.toggle()} else if(e.key==="ArrowRight") main.next(); else if(e.key==="ArrowLeft") main.go(main.cur-1);
+});
+
+/* ---------- film room ---------- */
+let filmFilter=store.get("film","all");
+function buildFilm(){
+  const opts=[["all","All film"],...ORDER.map(s=>[s,SYSTEMS[s].name])];
+  $("filters").innerHTML=opts.map(([k,l])=>`<button type="button" class="filter" data-f="${k}" aria-pressed="${k===filmFilter}">${esc(l)}</button>`).join("");
+  const list=[...VIDS.values()].filter(v=>filmFilter==="all"||v.sys.has(filmFilter));
+  $("filmGrid").innerHTML=list.map(v=>{
+    const tags=v.plays.length?v.plays.map(id=>{const p=byId(id); return `<button type="button" data-go="${id}">${esc(p.name)}</button>`}).join(""):[...v.sys].map(s=>{const first=PLAYS.find(p=>p.sys===s); return `<button type="button" data-go="${first.id}">${esc(SYSTEMS[s].name)}</button>`}).join("");
+    return vidCard(v,tags);
+  }).join("");
+}
+$("filters").addEventListener("click",e=>{const b=e.target.closest("[data-f]"); if(!b) return; filmFilter=b.dataset.f; store.set("film",filmFilter); buildFilm()});
+
+/* ---------- quiz ---------- */
+const quizV=Viewer($("qcourt"),{stage:$("qstage"),bar:$("qbar"),onStep:v=>{$("qstep").textContent=v.cur>=v.n-1?"Finished":"Step "+Math.min(v.cur+1,v.n-1)+" of "+(v.n-1)}});
+let qPool=store.get("qpool","all"), qAns=null, qDone=false, qLast=null;
+let qs=store.get("quiz",{score:0,streak:0,best:0});
+function qScore(){$("qScore").textContent=qs.score; $("qStreak").textContent=qs.streak; $("qBest").textContent=qs.best; store.set("quiz",qs)}
+function buildQFilters(){
+  const opts=[["all","All plays"],["Offense","Offense only"],["Defense","Defense only"]];
+  $("qfilters").innerHTML=opts.map(([k,l])=>`<button type="button" class="filter" data-q="${k}" aria-pressed="${k===qPool}">${l}</button>`).join("");
+}
+$("qfilters").addEventListener("click",e=>{const b=e.target.closest("[data-q]"); if(!b) return; qPool=b.dataset.q; store.set("qpool",qPool); buildQFilters(); newQuestion()});
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]} return a};
+function newQuestion(){
+  const pool=ALL.filter(p=>qPool==="all"||SYSTEMS[p.sys].side===qPool);
+  let p; do{p=pool[Math.floor(Math.random()*pool.length)]}while(pool.length>1&&p===qLast);
+  qLast=p; qAns=p; qDone=false;
+  const same=shuffle(pool.filter(x=>x!==p&&SYSTEMS[x.sys].side===SYSTEMS[p.sys].side));
+  const opts=shuffle([p,...same.slice(0,3)]);
+  $("choices").innerHTML=opts.map(o=>`<button type="button" class="choice" data-a="${o.id}"><span>${esc(o.name)}</span><small>${esc(SYSTEMS[o.sys].name)}</small></button>`).join("");
+  $("qfeed").innerHTML=""; $("qStudy").hidden=true;
+  quizV.load(p); quizV.start();
+}
+$("choices").addEventListener("click",e=>{
+  const b=e.target.closest("[data-a]"); if(!b||qDone) return;
+  qDone=true;
+  const ok=b.dataset.a===qAns.id;
+  document.querySelectorAll(".choice").forEach(c=>{c.disabled=true; if(c.dataset.a===qAns.id) c.classList.add("right")});
+  if(!ok) b.classList.add("wrong");
+  if(ok){qs.score++; qs.streak++; qs.best=Math.max(qs.best,qs.streak)} else qs.streak=0;
+  qScore();
+  const sys=SYSTEMS[qAns.sys];
+  const cheers=["Nailed it!","Bucket!","Money!","That's a Bronco!","Lights out!"];
+  $("qfeed").innerHTML=`<div class="feedback ${ok?"good":"bad"}"><b>${ok?cheers[Math.floor(Math.random()*cheers.length)]:"Not quite. It was "+esc(qAns.name)}</b>${esc(sys.name)}. ${fmt(qAns.keys[0])}</div>`;
+  $("qStudy").hidden=false;
+});
+$("qNext").addEventListener("click",newQuestion);
+$("qReplay").addEventListener("click",()=>{quizV.go(0); quizV.start()});
+$("qStudy").addEventListener("click",()=>nav(qAns.id));
+
+/* ---------- boot ---------- */
+buildHome(); buildNav(); buildFilm(); buildQFilters(); qScore();
+heroLoad();
+// rotate the hero play every few loops
+setInterval(()=>{if(route==="home"&&!reduce&&!document.hidden){heroIdx++; heroLoad(); hero.start()}},26000);
+refreshProgress();
+handle();
+})();
+</script>
+</body>
+</html>

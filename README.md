@@ -20,3 +20,18 @@ Open `index.html` in any browser, or turn on GitHub Pages (Settings, Pages, depl
 ## Editing content
 
 All lesson text lives in `assets/lessons.js`. Change a presenter, a stat, or an activity there and refresh the page.
+
+# Lady Broncos Playbook
+
+Every offense and defense the Lady Broncos run lives in `playbook/index.html`. It is one self contained page.
+
+* Home: pick offense or defense, see every system and play, and track which plays you have learned
+* Plays: an animated court for each play with play, pause, step, and speed controls, a step by step list, keys to run it, and the system rules
+* Film Room: every clip plays right on the page, filtered by system, with tags that open the matching play
+* Quiz: watch a play run with no words and name it, with score and streak tracking
+
+Players on offense are 1 through 5 (dark circles). Defenders are defensive players 1 through 5 (red X marks). The text uses the same numbers as the diagrams.
+
+With GitHub Pages or Netlify turned on, the playbook is at `/playbook/` on the site link. Videos need the page to be opened from that web link; some browsers block YouTube players when the file is opened straight from a computer.
+
+All play text and video picks live in the `SYSTEMS` and `PLAYS` lists inside the page script.
