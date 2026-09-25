@@ -21,9 +21,9 @@ Open `index.html` in any browser, or turn on GitHub Pages (Settings, Pages, depl
 
 All lesson text lives in `assets/lessons.js`. Change a presenter, a stat, or an activity there and refresh the page.
 
-# Lady Broncos Playbook
+# MHS Secret Binder
 
-Every offense and defense the Lady Broncos run lives in `playbook/index.html`. It is one self contained page.
+The MHS Secret Binder holds every offense and defense the Lady Broncos run. It lives in `playbook/index.html` as one self contained page, with a Life Skills tab linking to broncolifeskills.netlify.app.
 
 * Home: pick offense or defense, see every system and play, and track which plays you have learned
 * Plays: an animated court for each play with play, pause, step, and speed controls, a step by step list, keys to run it, and the system rules
@@ -32,6 +32,6 @@ Every offense and defense the Lady Broncos run lives in `playbook/index.html`. I
 
 Players on offense are 1 through 5 (dark circles). Defenders are defensive players 1 through 5 (red X marks). The text uses the same numbers as the diagrams.
 
-With GitHub Pages or Netlify turned on, the playbook is at `/playbook/` on the site link. Videos need the page to be opened from that web link; some browsers block YouTube players when the file is opened straight from a computer.
+With GitHub Pages or Netlify turned on, the binder is at `/playbook/` on the site link. Videos need the page to be opened from that web link; some browsers block YouTube players when the file is opened straight from a computer.
 
 All play text and video picks live in the `SYSTEMS` and `PLAYS` lists inside the page script.

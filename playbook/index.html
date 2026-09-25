@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lady Broncos Playbook</title>
-<meta name="description" content="Every offense and defense the Middleburg Lady Broncos run, animated on the court with film for every play.">
+<title>MHS Secret Binder</title>
+<meta name="description" content="The MHS Secret Binder: every offense and defense the Middleburg Lady Broncos run, animated on the court with film for every play.">
 <meta name="theme-color" content="#141116">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,11 +61,11 @@ button{font:inherit;color:inherit}
 .bar{position:sticky;top:0;z-index:20;background:var(--night);color:var(--nightink);border-bottom:4px solid #C8102E;padding-top:env(safe-area-inset-top,0px)}
 .bar-in{display:flex;align-items:center;gap:14px;min-height:62px;flex-wrap:wrap;padding-block:6px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
-.brand-mark{width:38px;height:38px;border-radius:8px;background:#C8102E;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:21px;letter-spacing:.02em;color:#fff}
+.brand-mark{min-width:46px;height:38px;padding:0 6px;border-radius:8px;background:#C8102E;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:20px;letter-spacing:.02em;color:#fff}
 .brand-name{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:22px;letter-spacing:.03em;line-height:1}
 .brand-name span{color:var(--hot)}
 .tabs{display:flex;gap:4px;flex-wrap:wrap}
-.tab{background:none;border:0;color:var(--nightmuted);font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:15px;padding:9px 12px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.tab{text-decoration:none;background:none;border:0;color:var(--nightmuted);font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:15px;padding:9px 12px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
 .tab svg{width:17px;height:17px;fill:currentColor}
 .tab:hover{color:#fff;background:rgba(255,255,255,.08)}
 .tab[aria-current="page"]{color:#fff;background:#C8102E}
@@ -300,12 +300,13 @@ button{font:inherit;color:inherit}
 
 <header class="bar">
   <div class="wrap bar-in">
-    <a class="brand" href="#home" aria-label="Lady Broncos Playbook home"><span class="brand-mark">LB</span><span class="brand-name">Lady Broncos <span>Playbook</span></span></a>
+    <a class="brand" href="#home" aria-label="MHS Secret Binder home"><span class="brand-mark">MHS</span><span class="brand-name">Secret <span>Binder</span></span></a>
     <nav class="tabs" aria-label="Sections">
       <button class="tab" data-go="home"><svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg><span class="tl">Home</span></button>
       <button class="tab" data-go="plays"><svg viewBox="0 0 24 24"><path d="M3 4h18v16H3zm2 2v12h6V6zm8 0v12h6V6zm-5 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg><span class="tl">Plays</span></button>
       <button class="tab" data-go="film"><svg viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm6 4v6l5-3z"/></svg><span class="tl">Film Room</span></button>
       <button class="tab" data-go="quiz"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 16h-2v-2h2zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.3a2 2 0 1 0-3.4-1.4H8a4 4 0 1 1 7.1 2.3z"/></svg><span class="tl">Quiz</span></button>
+      <a class="tab" href="https://broncolifeskills.netlify.app" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.9V17h2V9zM5 13.2V17l7 4 7-4v-3.8L12 17z"/></svg><span class="tl">Life Skills</span></a>
     </nav>
     <div class="bar-tools">
       <span class="pill" id="learnPill"><b>0</b> of 0 learned</span>
@@ -319,8 +320,8 @@ button{font:inherit;color:inherit}
   <section class="hero">
     <div class="wrap hero-in">
       <div>
-        <div class="eyebrow">Middleburg High School Girls Basketball</div>
-        <h1>Lady Broncos <span>Playbook</span></h1>
+        <div class="eyebrow">Middleburg Lady Broncos Girls Basketball</div>
+        <h1>MHS <span>Secret Binder</span></h1>
         <p class="lede">Every offense and defense we run, drawn on the court. Pick a set, press play, and watch each cut, pass, and screen one step at a time. Then watch the film and test yourself.</p>
         <div class="cta">
           <button class="big red" id="startBtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span id="startLbl">Start learning</span></button>
@@ -381,7 +382,7 @@ button{font:inherit;color:inherit}
       <button class="shortcut" data-go="quiz"><b>Name that play</b><span>Watch a play run with no words and pick its name. Build your streak.</span><span class="go">Start the quiz</span></button>
     </div>
   </section>
-  <footer class="wrap foot"><span>Middleburg Lady Broncos Girls Basketball</span><span>Know the play. Run the play. Win the play.</span></footer>
+  <footer class="wrap foot"><span>MHS Secret Binder · Middleburg Lady Broncos Girls Basketball</span><span>Know the play. Run the play. Win the play.</span></footer>
 </main>
 
 <!-- PLAY -->
@@ -447,11 +448,11 @@ button{font:inherit;color:inherit}
   <section class="section wrap">
     <div class="eyebrow">Film Room</div>
     <h2>Watch it done right</h2>
-    <p class="sub">Every clip from the playbook, playing right here on the page. Our play names are our own, so the clips may call things by different names. Tap a tag to open the play it teaches.</p>
+    <p class="sub">Every clip in the binder, playing right here on the page. Our play names are our own, so the clips may call things by different names. Tap a tag to open the play it teaches.</p>
     <div class="filters" id="filters"></div>
     <div class="vgrid" id="filmGrid"></div>
   </section>
-  <footer class="wrap foot"><span>Middleburg Lady Broncos Girls Basketball</span><span>Know the play. Run the play. Win the play.</span></footer>
+  <footer class="wrap foot"><span>MHS Secret Binder · Middleburg Lady Broncos Girls Basketball</span><span>Know the play. Run the play. Win the play.</span></footer>
 </main>
 
 <!-- QUIZ -->
