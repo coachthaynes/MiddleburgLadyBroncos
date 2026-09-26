@@ -23,8 +23,7 @@ const { saveChannel, listChannels } = await import("../lib/store.mjs");
 if (process.env.MOCK_PUBLISH && !(await listChannels()).length) {
   for (const ch of [
     { id: "facebook_demo", platform: "facebook", remoteId: "demo", name: "Demo Facebook Page" },
-    { id: "instagram_demo", platform: "instagram", remoteId: "demo", name: "@demo_instagram" },
-    { id: "x_demo", platform: "x", remoteId: "demo", name: "@demo_x" }
+    { id: "instagram_demo", platform: "instagram", remoteId: "demo", name: "@demo_instagram" }
   ]) await saveChannel({ ...ch, avatar: null, token: "demo", connectedAt: new Date().toISOString() });
 }
 

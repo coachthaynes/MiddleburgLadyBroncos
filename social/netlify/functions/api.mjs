@@ -6,7 +6,6 @@ import {
 } from "../../lib/store.mjs";
 import { publishDue, publishPost } from "../../lib/publish.mjs";
 import { metaConfigured } from "../../lib/platforms/meta.mjs";
-import { xConfigured } from "../../lib/platforms/x.mjs";
 
 const MAX_MEDIA_BYTES = 5 * 1024 * 1024;
 const EDITABLE = ["text", "variants", "channels", "mediaId", "link", "scheduledAt", "status", "title", "source"];
@@ -51,7 +50,7 @@ export default async (req) => {
       return json({
         loggedIn: isLoggedIn(req),
         passwordSet: !!process.env.ADMIN_PASSWORD,
-        providers: { meta: metaConfigured(), x: xConfigured() }
+        providers: { meta: metaConfigured() }
       });
     }
 

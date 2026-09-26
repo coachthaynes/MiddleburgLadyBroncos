@@ -6,8 +6,8 @@ This folder is its own app. It does not touch the lesson site in the rest of thi
 
 ## What it does
 
-* Connect Facebook Pages, Instagram professional accounts, and X accounts
-* Write a post once and send it to several accounts, with an optional shorter version for X
+* Connect Facebook Pages and Instagram professional accounts
+* Write a post once and send it to several accounts
 * Attach a photo (resized and converted automatically; Instagram requires one)
 * Add to queue (next open time slot), pick an exact time, post now, or save a draft
 * Weekly queue times you control on the Settings page
@@ -26,7 +26,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:8888 and sign in with `letmein`. Three demo accounts are loaded and publishing is simulated, so nothing is really posted.
+Open http://localhost:8888 and sign in with `letmein`. Two demo accounts are loaded and publishing is simulated, so nothing is really posted.
 
 ## Put it online (Netlify, free tier works)
 
@@ -40,8 +40,6 @@ Open http://localhost:8888 and sign in with `letmein`. Three demo accounts are l
 | `SESSION_SECRET` | Any long random string (40+ characters) |
 | `META_APP_ID` | From your Meta app (step below) |
 | `META_APP_SECRET` | From your Meta app |
-| `X_CLIENT_ID` | From your X app (step below) |
-| `X_CLIENT_SECRET` | From your X app |
 
 Optional: `META_CONFIG_ID` if your Meta app uses Facebook Login for Business, `META_GRAPH_VERSION` to pin a Graph API version (default `v23.0`), and `PUBLIC_URL` if you use a custom domain.
 
@@ -61,20 +59,11 @@ Scheduled publishing only runs on the live Netlify site, not in the local previe
 
 While the Meta app is in **Development** mode it works for anyone listed as an admin or tester on the app, which is all you need to post to your own Page. To let other people connect their accounts you must complete Meta App Review and business verification.
 
-## Connect X
-
-1. Go to https://developer.x.com and create a Project and App.
-2. In **User authentication settings**: turn on OAuth 2.0, app type **Web App**, permissions **Read and write**.
-3. Callback URL: `https://YOUR-SITE.netlify.app/oauth/x/callback`. Website URL: your site address.
-4. Copy the OAuth 2.0 Client ID and Client Secret into Netlify.
-5. In the scheduler, open **Channels** and click **Connect** under X.
-
-Note: X limits how many posts the free API tier can create each month, and may require a paid tier for heavier use. Check your plan in the X developer portal.
-
 ## Networks not included yet
 
 * **TikTok**: its posting API only allows private posts until TikTok audits the app.
 * **LinkedIn company pages**: need LinkedIn Community Management API approval.
+* **X**: left out on purpose. It can be added back later.
 * **Threads**: possible to add with the Threads API; ask if you want it.
 
 ## How it is built
@@ -84,5 +73,5 @@ Note: X limits how many posts the free API tier can create each month, and may r
 * `netlify/functions/oauth.mjs` handles connecting accounts
 * `netlify/functions/scheduler.mjs` runs every 5 minutes and publishes posts that are due
 * `netlify/functions/media.mjs` serves uploaded images at public addresses so Instagram and Facebook can fetch them
-* `lib/platforms/` holds the Facebook, Instagram, and X publishing code
+* `lib/platforms/meta.mjs` holds the Facebook and Instagram publishing code
 * Data (posts, accounts, settings, images) lives in Netlify Blobs, so there is no database to set up

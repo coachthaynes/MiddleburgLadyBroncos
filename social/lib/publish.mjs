@@ -1,7 +1,6 @@
 // Sends one post to every channel it targets and records the outcome per channel.
-import { getChannel, getMedia, getPost, listPosts, savePost } from "./store.mjs";
+import { getChannel, getPost, listPosts, savePost } from "./store.mjs";
 import { publishFacebook, publishInstagram } from "./platforms/meta.mjs";
-import { publishX } from "./platforms/x.mjs";
 
 export function textFor(post, platform) {
   const custom = post.variants?.[platform];
@@ -20,10 +19,6 @@ async function publishToChannel(post, channel, siteUrl) {
       return publishFacebook(channel, { text, imageUrl, link: post.link });
     case "instagram":
       return publishInstagram(channel, { text, imageUrl });
-    case "x": {
-      const image = post.mediaId ? await getMedia(post.mediaId) : null;
-      return publishX(channel, { text, image });
-    }
     default:
       throw new Error(`Unknown platform ${channel.platform}`);
   }

@@ -3,8 +3,8 @@
 (function () {
   "use strict";
 
-  var LIMITS = { facebook: 63206, instagram: 2200, x: 280 };
-  var PLATFORM_NAME = { facebook: "Facebook", instagram: "Instagram", x: "X" };
+  var LIMITS = { facebook: 63206, instagram: 2200 };
+  var PLATFORM_NAME = { facebook: "Facebook", instagram: "Instagram" };
   var DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   var app = document.getElementById("app");
@@ -64,17 +64,7 @@
     return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + "T" + pad(d.getHours()) + ":" + pad(d.getMinutes());
   }
 
-  // X counts every link as 23 characters and most emoji and CJK characters as 2.
-  function xLength(text) {
-    var t = text.replace(/https?:\/\/\S+/g, "xxxxxxxxxxxxxxxxxxxxxxx");
-    var n = 0;
-    for (var ch of t) {
-      var cp = ch.codePointAt(0);
-      n += (cp <= 0x10ff || (cp >= 0x2000 && cp <= 0x200d) || (cp >= 0x2010 && cp <= 0x201f) || (cp >= 0x2032 && cp <= 0x2037)) ? 1 : 2;
-    }
-    return n;
-  }
-  function lengthFor(platform, text) { return platform === "x" ? xLength(text) : Array.from(text).length; }
+  function lengthFor(platform, text) { return Array.from(text).length; }
 
   // Next open queue slot, using the weekly times in Settings.
   function nextSlot(ignoreId) {
@@ -213,7 +203,7 @@
   function postCard(p, t) {
     var chs = (p.channels || []).map(function (id) {
       var c = channelById(id);
-      return c ? '<span class="pbadge ' + c.platform + '" title="' + esc(c.name) + '">' + esc(c.name) + "</span>" : '<span class="pbadge x" style="opacity:.5">Removed channel</span>';
+      return c ? '<span class="pbadge ' + c.platform + '" title="' + esc(c.name) + '">' + esc(c.name) + "</span>" : '<span class="pbadge" style="background:var(--muted)">Removed channel</span>';
     }).join("");
     var results = "";
     if (p.results && Object.keys(p.results).length && p.status !== "scheduled") {
@@ -241,7 +231,7 @@
 
   /* ---------- composer ---------- */
   function blankDraft() {
-    return { id: null, text: "", variants: {}, channels: S.channels.map(function (c) { return c.id; }), mediaId: null, link: "", useX: false, when: "queue", at: null };
+    return { id: null, text: "", channels: S.channels.map(function (c) { return c.id; }), mediaId: null, link: "", when: "queue", at: null };
   }
 
   function renderCompose(id) {
@@ -249,8 +239,8 @@
       var existing = id ? S.posts.filter(function (p) { return p.id === id; })[0] : null;
       if (id && !existing) { location.hash = "#queue"; return; }
       S.draft = existing ? {
-        id: existing.id, text: existing.text || "", variants: Object.assign({}, existing.variants || {}), channels: (existing.channels || []).slice(),
-        mediaId: existing.mediaId || null, link: existing.link || "", useX: !!(existing.variants && existing.variants.x),
+        id: existing.id, text: existing.text || "", channels: (existing.channels || []).slice(),
+        mediaId: existing.mediaId || null, link: existing.link || "",
         when: existing.status === "scheduled" ? "custom" : "queue", at: existing.scheduledAt || null
       } : blankDraft();
     }
@@ -258,16 +248,13 @@
     var chips = S.channels.length ? S.channels.map(function (c) {
       var on = d.channels.indexOf(c.id) >= 0;
       return '<button type="button" class="chip ' + (on ? "on" : "") + '" aria-pressed="' + on + '" data-chan="' + esc(c.id) + '">' + avatar(c) + esc(c.name) + "</button>";
-    }).join("") : '<p class="hint">No channels connected. <a href="#channels">Connect Facebook, Instagram, or X.</a></p>';
+    }).join("") : '<p class="hint">No channels connected. <a href="#channels">Connect Facebook and Instagram.</a></p>';
 
-    var hasX = selectedPlatforms().indexOf("x") >= 0;
     var slot = nextSlot(d.id);
     var html = "<h1>" + (d.id ? "Edit post" : "Create post") + '</h1><p class="sub">Write once, publish everywhere you pick.</p><div class="grid2"><div class="card">' +
       '<label class="field">Post to</label><div class="chips">' + chips + "</div>" +
       '<label class="field" for="text">Text</label><textarea id="text" placeholder="What do you want to share?">' + esc(d.text) + "</textarea>" +
       '<div class="counters" id="counters"></div>' +
-      (hasX ? '<label class="row" style="margin-top:12px;font-size:14px"><input type="checkbox" id="useX"' + (d.useX ? " checked" : "") + "> Write a shorter version for X</label>" +
-        (d.useX ? '<textarea id="xtext" style="min-height:100px;margin-top:8px" placeholder="Text for X only">' + esc(d.variants.x || "") + "</textarea>" : "") : "") +
       '<label class="field">Image</label><div class="media">' +
       (d.mediaId ? '<img class="thumb" alt="Attached image" src="/media/' + esc(d.mediaId) + '.jpg"><button class="btn small danger" type="button" data-act="removeImage">Remove image</button>'
         : '<label class="drop" id="drop" tabindex="0">Drop a photo here or click to choose<br><span class="hint">JPEG or PNG. Required for Instagram.</span><input type="file" id="file" accept="image/jpeg,image/png" hidden></label>') +
@@ -296,7 +283,7 @@
   }
   function textFor(platform) {
     var d = S.draft;
-    return platform === "x" && d.useX && d.variants.x && d.variants.x.trim() ? d.variants.x : d.text;
+    return d.text;
   }
 
   function problems() {
@@ -337,14 +324,6 @@
   function wireCompose() {
     var ta = document.getElementById("text");
     ta.addEventListener("input", function () { S.draft.text = ta.value; refreshCompose(); });
-    var xt = document.getElementById("xtext");
-    if (xt) xt.addEventListener("input", function () { S.draft.variants.x = xt.value; refreshCompose(); });
-    var useX = document.getElementById("useX");
-    if (useX) useX.addEventListener("change", function () {
-      S.draft.useX = useX.checked;
-      if (useX.checked && !S.draft.variants.x) S.draft.variants.x = S.draft.text;
-      renderCompose(S.draft.id);
-    });
     document.getElementById("link").addEventListener("input", function (e) { S.draft.link = e.target.value; });
     Array.prototype.forEach.call(document.querySelectorAll('input[name="when"]'), function (r) {
       r.addEventListener("change", function () { S.draft.when = r.value; renderCompose(S.draft.id); });
@@ -373,7 +352,7 @@
 
   function draftPayload(status) {
     var d = S.draft;
-    var body = { text: d.text, channels: d.channels, mediaId: d.mediaId, link: d.link.trim(), variants: d.useX && d.variants.x ? { x: d.variants.x } : {}, status: status };
+    var body = { text: d.text, channels: d.channels, mediaId: d.mediaId, link: d.link.trim(), status: status };
     if (status === "scheduled") {
       if (d.when === "queue") {
         var slot = nextSlot(d.id);
@@ -427,7 +406,6 @@
     var html = '<h1>Channels</h1><p class="sub">Connect the accounts you want to publish to.</p>' + msg +
       '<div class="connect" style="margin-top:16px">' +
       connectCard("meta", "Facebook and Instagram", "Connects your Facebook Pages and any Instagram professional accounts linked to them.", p.meta) +
-      connectCard("x", "X", "Connects an X account for posting text and images.", p.x) +
       '</div><div class="card" style="margin-top:20px"><h2>Connected</h2>' +
       (S.channels.length ? S.channels.map(function (c) {
         return '<div class="channel">' + avatar(c) + '<div class="grow"><div style="font-weight:600">' + esc(c.name) + '</div><div class="hint">' + PLATFORM_NAME[c.platform] +
@@ -504,7 +482,7 @@
       }).catch(function (err) { toast(err.message); });
     } else if (act === "duplicate") {
       var src = S.posts.filter(function (p) { return p.id === pid; })[0];
-      S.draft = { id: null, text: src.text, variants: Object.assign({}, src.variants || {}), channels: src.channels.slice(), mediaId: src.mediaId, link: src.link || "", useX: !!(src.variants && src.variants.x), when: "queue", at: null };
+      S.draft = { id: null, text: src.text, channels: src.channels.slice(), mediaId: src.mediaId, link: src.link || "", when: "queue", at: null };
       location.hash = "#compose";
     } else if (act === "disconnect") {
       if (!confirm("Disconnect this account? Scheduled posts for it will fail until it is reconnected.")) return;
