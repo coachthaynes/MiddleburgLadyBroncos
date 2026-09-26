@@ -47,7 +47,7 @@
     $("#tagline").value = s.tagline;
     $("#story").value = s.story;
     $("#approval").checked = !!s.requirePhotoApproval;
-    if (!s.logo) $$("img[data-logo]").forEach((i) => { i.src = "/brand/logo.svg"; });
+    if (!s.logo) $$("img[data-logo]").forEach((i) => { i.src = "/brand/logo.png"; });
 
     // Photo approvals
     const pending = players.filter((p) => p.pendingPhoto);
