@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lady Broncos Fundraiser</title>
+<meta name="description" content="Support the Middleburg High School Lady Broncos. Every gift goes straight to our school through the official payment portal.">
+<meta property="og:title" content="Support the Middleburg Lady Broncos">
+<meta property="og:description" content="Help us reach our season goal. Every gift goes straight to Middleburg High School.">
+<meta name="theme-color" content="#c8102e">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="nav wrap">
+  <div class="glass">
+    <a class="brand" href="/"><img data-logo src="/brand/logo.svg" alt=""><span><span data-team>Lady Broncos</span><span class="hide-sm"> Fundraiser</span></span></a>
+    <nav class="nav-links">
+      <a class="hide-sm" href="#players">Players</a>
+      <a class="hide-sm" href="#leaders">Leaderboard</a>
+      <a href="/portal">Player login</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="soon" class="notice warn hidden" style="margin-top:20px">Online donations open very soon. Please check back shortly, and thank you for your support!</div>
+
+  <section class="hero">
+    <div class="glass hero-main fade-in">
+      <img class="hero-logo" data-logo src="/brand/logo.svg" alt="Middleburg High School logo">
+      <span class="eyebrow" data-school>Middleburg High School</span>
+      <h1>Support the <span class="red" data-team>Lady Broncos</span></h1>
+      <p class="lead" id="tagline">Help our girls chase a championship season.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-big" id="donateBtn" href="/go/team">Donate now</a>
+        <a class="btn btn-glass btn-big" href="#share">Share</a>
+      </div>
+    </div>
+
+    <aside class="glass hero-side fade-in" style="animation-delay:.1s">
+      <div class="raised"><span id="raised">$0</span><small>raised of <b id="goal">$10,000</b> goal</small></div>
+      <div>
+        <div class="bar" role="progressbar" aria-label="Progress toward goal" aria-valuemin="0" aria-valuemax="100" id="barWrap"><i id="bar"></i></div>
+        <div class="bar-meta"><span id="pct">0% there</span><span id="ends">Ends February 1, 2027</span></div>
+      </div>
+      <div class="countdown" id="countdown" aria-label="Time left"></div>
+      <div class="stat-row">
+        <div class="stat"><b id="sDonate">0</b><span>Donation clicks</span></div>
+        <div class="stat"><b id="sShare">0</b><span>Shares</span></div>
+        <div class="stat"><b id="sPlayers">0</b><span>Players</span></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="block">
+    <div class="glass card story">
+      <div>
+        <span class="eyebrow">Our story</span>
+        <h2 style="margin-top:10px">Why we are raising funds</h2>
+        <p id="story"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="section-head"><div><span class="eyebrow">How it works</span><h2 style="margin-top:10px">Giving takes one minute</h2></div></div>
+    <div class="steps">
+      <div class="glass step"><div class="num">1</div><h3>Pick a player</h3><p>Choose a Lady Bronco below, or give to the whole team.</p></div>
+      <div class="glass step"><div class="num">2</div><h3>Tap Donate</h3><p>You go straight to the secure MySchoolBucks school payment portal.</p></div>
+      <div class="glass step"><div class="num">3</div><h3>Share the love</h3><p>Send the link to friends and family so the team gets even closer to the goal.</p></div>
+    </div>
+  </section>
+
+  <section class="block" id="players">
+    <div class="section-head">
+      <div><span class="eyebrow">Meet the team</span><h2 style="margin-top:10px">Choose a player to support</h2></div>
+      <p class="muted">Every gift counts toward the team goal.</p>
+    </div>
+    <div class="roster" id="roster">
+      <div class="glass player-card"><div class="ph skeleton"></div></div>
+      <div class="glass player-card"><div class="ph skeleton"></div></div>
+      <div class="glass player-card"><div class="ph skeleton"></div></div>
+      <div class="glass player-card"><div class="ph skeleton"></div></div>
+    </div>
+  </section>
+
+  <section class="block" id="leaders">
+    <div class="section-head">
+      <div><span class="eyebrow">Leaderboard</span><h2 style="margin-top:10px">Top team spirit</h2></div>
+      <p class="muted" id="leaderNote">Ranked by supporters sent to donate from each player page.</p>
+    </div>
+    <div class="glass leader"><ol id="leaderboard"></ol></div>
+  </section>
+
+  <section class="block" id="share">
+    <div class="glass card">
+      <span class="eyebrow">Spread the word</span>
+      <h2 style="margin-top:10px">Share our fundraiser</h2>
+      <p class="muted">Sharing is just as powerful as giving. Pick one below to send the team page.</p>
+      <div class="share-grid" id="shareBox"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site wrap">
+  <div class="glass">
+    <span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Payments are made securely through MySchoolBucks. This site never sees your card.</span>
+    <span><a href="/portal">Player login</a> · <a href="/coach">Coach login</a></span>
+  </div>
+</footer>
+
+<script src="/js/common.js"></script>
+<script src="/js/home.js"></script>
+</body>
+</html>

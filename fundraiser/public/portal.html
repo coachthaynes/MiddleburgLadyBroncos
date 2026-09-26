@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Player Portal</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#c8102e">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="nav wrap">
+  <div class="glass">
+    <a class="brand" href="/"><img data-logo src="/brand/logo.svg" alt=""><span>Player Portal</span></a>
+    <nav class="nav-links">
+      <a class="hide-sm" href="/">Team page</a>
+      <a href="#" id="logout" class="hidden">Log out</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Step 1: log in -->
+  <section id="login" class="glass center-card hidden fade-in">
+    <img class="hero-logo" data-logo src="/brand/logo.svg" alt="" style="width:72px;height:72px">
+    <span class="eyebrow">Lady Broncos</span>
+    <h2 style="margin-top:10px">Player login</h2>
+    <p class="muted">Type the 6 character code your coach gave you.</p>
+    <form class="form" id="loginForm">
+      <input class="code-input" id="code" type="text" maxlength="8" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" aria-label="Login code" required>
+      <p class="error" id="loginErr"></p>
+      <button class="btn btn-primary btn-big" type="submit">Log in</button>
+    </form>
+    <p class="muted" style="margin:18px 0 0;font-size:.9rem">Lost your code? Ask your coach for a new one.</p>
+  </section>
+
+  <!-- Step 2: permission -->
+  <section id="consent" class="glass center-card wide hidden fade-in">
+    <span class="eyebrow">Before your page goes live</span>
+    <h2 style="margin-top:10px">Permission and promise</h2>
+    <p class="muted">Please read these with your parent or guardian. Your page stays private until this is done.</p>
+    <form class="form" id="consentForm">
+      <label class="check"><input type="checkbox" id="c1"><span>My parent or guardian says it is okay to show my <b>first name, last initial, jersey number and a photo I choose</b> on this fundraiser site.</span></label>
+      <label class="check"><input type="checkbox" id="c2"><span>I will only share my page with people I know, like family, friends, neighbors and family friends.</span></label>
+      <label class="check"><input type="checkbox" id="c3"><span>I will be respectful, only upload an appropriate photo of myself, and never post personal information like my address, school schedule or phone number.</span></label>
+      <label class="field">Parent or guardian full name<input type="text" id="guardian" autocomplete="off" required></label>
+      <p class="error" id="consentErr"></p>
+      <button class="btn btn-primary btn-big" type="submit">I agree, set up my page</button>
+    </form>
+  </section>
+
+  <!-- Step 3: dashboard -->
+  <section id="dash" class="hidden">
+    <div class="glass card fade-in" style="margin-top:28px">
+      <div class="section-head" style="margin:0">
+        <div>
+          <span class="eyebrow">Welcome back</span>
+          <h1 style="margin:10px 0 6px;font-size:clamp(2rem,5vw,3rem)">Hi, <span id="hiName"></span>!</h1>
+          <div id="status"></div>
+        </div>
+        <a class="btn btn-primary" id="viewPage" href="#" target="_blank" rel="noopener">View my page</a>
+      </div>
+      <div class="linkbox" style="margin-top:18px"><code id="myLink"></code><button class="btn btn-glass btn-small" id="copyLink">Copy</button></div>
+    </div>
+
+    <div class="dash">
+      <div class="glass card">
+        <h3>My numbers</h3>
+        <div class="stat-row" style="margin-top:12px">
+          <div class="stat"><b id="mViews">0</b><span>Page visits</span></div>
+          <div class="stat"><b id="mShares">0</b><span>Shares</span></div>
+          <div class="stat"><b id="mDonate">0</b><span>Donation clicks</span></div>
+        </div>
+        <p class="muted" style="margin:14px 0 0;font-size:.9rem">Donation clicks count people who tapped Donate on your page. Your coach updates dollar totals from school reports.</p>
+      </div>
+
+      <div class="glass card">
+        <h3>My photo</h3>
+        <div class="photo-edit" style="margin-top:12px">
+          <div id="photoPreview"></div>
+          <div>
+            <p class="muted" id="photoNote" style="font-size:.92rem"></p>
+            <input type="file" id="photoFile" accept="image/*" class="hidden">
+            <div class="btn-row">
+              <button class="btn btn-primary btn-small" id="pickPhoto">Upload photo</button>
+              <button class="btn btn-danger btn-small hidden" id="removePhoto">Remove</button>
+            </div>
+            <p class="error" id="photoErr" style="margin-top:8px"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass card span">
+        <h3>My page</h3>
+        <form class="form" id="profileForm" style="margin-top:12px">
+          <label class="field">My message to supporters <small>Tell people why this team matters to you.</small>
+            <textarea id="message" maxlength="600" placeholder="Hi everyone! This season means so much to me..."></textarea>
+          </label>
+          <div class="two">
+            <label class="field">Jersey number<input type="text" id="number" maxlength="3" inputmode="numeric"></label>
+            <label class="field">Position<input type="text" id="position" maxlength="30" placeholder="Outside hitter, Guard, Pitcher..."></label>
+          </div>
+          <div><button class="btn btn-primary" type="submit">Save my page</button></div>
+        </form>
+      </div>
+
+      <div class="glass card span">
+        <h3>Share my page</h3>
+        <p class="muted">Tap one to send your page. Messages come from your own phone, so friends and family know it is really you.</p>
+        <div class="share-grid" id="shareBox"></div>
+        <div style="margin-top:14px"><button class="btn btn-glass btn-small" id="qrToggle"></button></div>
+        <div class="qr-box" id="qrBox"><div id="qr"></div><p class="muted" style="margin:10px 0">Show this at games or print it on a flyer.</p><a class="btn btn-glass btn-small" id="qrDownload" download="LadyBroncosQR.png">Download QR code</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site wrap">
+  <div class="glass"><span>Need help? Talk to your coach.</span><span><a href="/">Team page</a></span></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/portal.js"></script>
+</body>
+</html>

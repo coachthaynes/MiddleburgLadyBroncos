@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coach Dashboard</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#c8102e">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="nav wrap">
+  <div class="glass">
+    <a class="brand" href="/"><img data-logo src="/brand/logo.svg" alt=""><span>Coach Dashboard</span></a>
+    <nav class="nav-links">
+      <a class="hide-sm" href="/" target="_blank" rel="noopener">View site</a>
+      <a href="#" id="logout" class="hidden">Log out</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="login" class="glass center-card hidden fade-in">
+    <span class="eyebrow">Coaches only</span>
+    <h2 style="margin-top:10px">Coach login</h2>
+    <form class="form" id="loginForm">
+      <label class="field">Password<input type="password" id="password" autocomplete="current-password" required></label>
+      <p class="error" id="loginErr"></p>
+      <button class="btn btn-primary btn-big" type="submit">Log in</button>
+    </form>
+  </section>
+
+  <section id="dash" class="hidden">
+    <div class="dash">
+      <div class="glass card span fade-in">
+        <div class="section-head" style="margin:0 0 14px">
+          <div><span class="eyebrow">Fundraiser at a glance</span><h2 style="margin-top:10px"><span id="oRaised">$0</span> <span class="muted" style="font-size:1rem;font-weight:600">of <span id="oGoal">$10,000</span></span></h2></div>
+          <span id="linkStatus"></span>
+        </div>
+        <div class="bar"><i id="bar"></i></div>
+        <div class="stat-row" style="margin-top:16px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr))">
+          <div class="stat"><b id="oDonate">0</b><span>Donation clicks</span></div>
+          <div class="stat"><b id="oViews">0</b><span>Page visits</span></div>
+          <div class="stat"><b id="oShares">0</b><span>Shares</span></div>
+          <div class="stat"><b id="oLive">0</b><span>Live players</span></div>
+        </div>
+      </div>
+
+      <div class="glass card span hidden" id="approvalsCard">
+        <h3>Photos waiting for approval</h3>
+        <div class="approvals" id="approvals" style="margin-top:12px"></div>
+      </div>
+
+      <div class="glass card span">
+        <div class="section-head" style="margin-bottom:10px">
+          <div><h3 style="margin:0">Players</h3><p class="muted" style="font-size:.9rem">Add each player, then give her the login code. Codes are shown only once, but you can make a new one any time.</p></div>
+          <button class="btn btn-glass btn-small" id="csv">Download stats</button>
+        </div>
+        <form class="form" id="addForm" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));align-items:end">
+          <label class="field">First name<input type="text" id="aFirst" required maxlength="30"></label>
+          <label class="field">Last name<input type="text" id="aLast" maxlength="30"></label>
+          <label class="field">Jersey number<input type="text" id="aNum" maxlength="3"></label>
+          <label class="field">Position<input type="text" id="aPos" maxlength="30"></label>
+          <button class="btn btn-primary" type="submit">Add player</button>
+        </form>
+        <div class="table-wrap" style="margin-top:16px">
+          <table class="players">
+            <thead><tr><th>Player</th><th>Status</th><th>Visits</th><th>Shares</th><th>Donation clicks</th><th>Raised</th><th>Actions</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="glass card">
+        <h3>Donations and goal</h3>
+        <form class="form" id="moneyForm" style="margin-top:12px">
+          <label class="field">MySchoolBucks donation link <small>Paste the link to the team's MySchoolBucks item. Every Donate button goes here.</small>
+            <input type="url" id="donateUrl" placeholder="https://www.myschoolbucks.com/...">
+          </label>
+          <label class="field">Team total raised <small>Update this from your MySchoolBucks report.</small><input type="number" id="raised" min="0" step="0.01"></label>
+          <div class="two">
+            <label class="field">Goal<input type="number" id="goal" min="1" step="1"></label>
+            <label class="field">End date<input type="date" id="endDate"></label>
+          </div>
+          <div><button class="btn btn-primary" type="submit">Save</button></div>
+        </form>
+      </div>
+
+      <div class="glass card">
+        <h3>Team page</h3>
+        <form class="form" id="pageForm" style="margin-top:12px">
+          <div class="two">
+            <label class="field">Team name<input type="text" id="teamName" maxlength="60"></label>
+            <label class="field">School name<input type="text" id="schoolName" maxlength="80"></label>
+          </div>
+          <label class="field">Tagline<input type="text" id="tagline" maxlength="140"></label>
+          <label class="field">Our story<textarea id="story" maxlength="2000"></textarea></label>
+          <label class="switch"><input type="checkbox" id="approval"> Coach approves player photos before they go live</label>
+          <div><button class="btn btn-primary" type="submit">Save</button></div>
+        </form>
+      </div>
+
+      <div class="glass card span">
+        <h3>Logo</h3>
+        <div class="photo-edit" style="margin-top:12px;grid-template-columns:120px 1fr">
+          <img data-logo src="/brand/logo.svg" alt="Current logo" style="width:110px;height:110px;object-fit:contain">
+          <div>
+            <p class="muted" style="font-size:.92rem">Upload the official Middleburg High School logo. A PNG with a see through background looks best.</p>
+            <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp" class="hidden">
+            <div class="btn-row"><button class="btn btn-primary btn-small" id="pickLogo">Upload logo</button><button class="btn btn-danger btn-small" id="resetLogo">Use default</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="codeTitle">
+  <div class="glass">
+    <span class="eyebrow">Login code</span>
+    <h3 id="codeTitle" style="margin-top:10px"></h3>
+    <div class="big-code" id="codeValue"></div>
+    <p class="muted" style="font-size:.92rem">She logs in at <b id="codeUrl"></b> with this code. Write it down now. For safety it will not be shown again.</p>
+    <div class="btn-row" style="justify-content:center"><button class="btn btn-glass" id="codeCopy">Copy</button><button class="btn btn-primary" id="codeClose">Done</button></div>
+  </div>
+</div>
+
+<footer class="site wrap"><div class="glass"><span>Lady Broncos Coach Dashboard</span><span><a href="/">Team page</a></span></div></footer>
+
+<script src="/js/common.js"></script>
+<script src="/js/coach.js"></script>
+</body>
+</html>

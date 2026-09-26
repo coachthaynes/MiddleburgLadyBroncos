@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Support a Lady Bronco</title>
+<meta name="description" content="Support a Middleburg High School Lady Bronco. Every gift goes straight to our school.">
+<meta name="theme-color" content="#c8102e">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="nav wrap">
+  <div class="glass">
+    <a class="brand" href="/"><img data-logo src="/brand/logo.svg" alt=""><span><span data-team>Lady Broncos</span><span class="hide-sm"> Fundraiser</span></span></a>
+    <nav class="nav-links">
+      <a class="hide-sm" href="/#players">All players</a>
+      <a href="/portal">Player login</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="soon" class="notice warn hidden" style="margin-top:20px">Online donations open very soon. Please check back shortly, and thank you for your support!</div>
+  <div id="missing" class="glass center-card hidden">
+    <h2>Page not found</h2>
+    <p class="muted" id="missingMsg">We could not find that player page.</p>
+    <a class="btn btn-primary" href="/">Go to the team page</a>
+  </div>
+
+  <section class="profile hidden" id="profile">
+    <div class="glass photo fade-in" id="photo"></div>
+    <div class="glass info fade-in" style="animation-delay:.1s">
+      <div>
+        <span class="eyebrow" data-school>Middleburg High School</span>
+        <h1 style="margin-top:10px" id="name"></h1>
+        <p class="muted" id="meta" style="margin:0;font-weight:600"></p>
+      </div>
+      <blockquote class="quote" id="message"></blockquote>
+      <a class="btn btn-primary btn-big" id="donateBtn" href="#">Donate</a>
+      <div>
+        <div class="bar" role="progressbar" aria-label="Team progress" aria-valuemin="0" aria-valuemax="100" id="barWrap"><i id="bar"></i></div>
+        <div class="bar-meta"><span id="teamLine"></span><span id="ends"></span></div>
+      </div>
+      <p class="muted" style="margin:0;font-size:.9rem">Every gift goes to the team through the official school payment portal. If the portal has a note or comment box, add <b id="noteName"></b> so we know who sent you.</p>
+    </div>
+  </section>
+
+  <section class="block hidden" id="shareSection">
+    <div class="glass card">
+      <span class="eyebrow">Help <span class="nameFirst"></span></span>
+      <h2 style="margin-top:10px">Share this page</h2>
+      <p class="muted">Can't give right now? Sharing helps just as much.</p>
+      <div class="share-grid" id="shareBox"></div>
+      <div style="margin-top:14px"><button class="btn btn-glass btn-small" id="qrToggle"></button></div>
+      <div class="qr-box" id="qrBox"><div id="qr"></div><p class="muted" style="margin:10px 0 0">Scan to open this page</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site wrap">
+  <div class="glass">
+    <span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Payments are made securely through MySchoolBucks. This site never sees your card.</span>
+    <span><a href="/">Team page</a> · <a href="/portal">Player login</a></span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/player.js"></script>
+</body>
+</html>

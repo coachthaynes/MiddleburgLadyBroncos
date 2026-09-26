@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Middleburg Broncos">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ef3452"/>
+      <stop offset="0.55" stop-color="#c8102e"/>
+      <stop offset="1" stop-color="#7d0a1c"/>
+    </linearGradient>
+  </defs>
+  <path d="M60 4 L108 18 V58 C108 86 88 106 60 116 C32 106 12 86 12 58 V18 Z" fill="url(#g)"/>
+  <path d="M60 12 L100 24 V58 C100 81 84 98 60 107 C36 98 20 81 20 58 V24 Z" fill="none" stroke="#fff" stroke-width="3" opacity="0.9"/>
+  <path d="M34 82 V36 H46 L60 60 L74 36 H86 V82 H75 V55 L60 79 L45 55 V82 Z" fill="#fff"/>
+</svg>

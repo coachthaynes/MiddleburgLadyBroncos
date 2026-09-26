@@ -1,0 +1,29 @@
+[build]
+  publish = "public"
+  command = "echo ready"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/p/:slug"
+  to = "/player.html"
+  status = 200
+
+[[redirects]]
+  from = "/portal"
+  to = "/portal.html"
+  status = 200
+
+[[redirects]]
+  from = "/coach"
+  to = "/coach.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
