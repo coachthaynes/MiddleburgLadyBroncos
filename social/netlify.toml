@@ -1,0 +1,15 @@
+# Deploy this folder as its own Netlify site (Base directory: social).
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+  command = "npm install"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "same-origin"
+    X-Content-Type-Options = "nosniff"
