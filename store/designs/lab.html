@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../public/fonts.css">
+<style>body{margin:0;font-family:Oswald,sans-serif;background:#f3f1ee}.grid{display:grid;gap:16px;padding:16px}.cell{background:#fff;border-radius:16px;padding:10px;text-align:center}.cell svg{display:block;width:100%;height:auto}h2{margin:16px}</style>
+<script src="../public/js/art.js"></script></head><body>
+<div id="designs" class="grid" style="grid-template-columns:repeat(4,1fr)"></div>
+<div id="garments" class="grid" style="grid-template-columns:repeat(3,1fr)"></div>
+<script>
+const A = BroncoArt;
+document.fonts.ready.then(()=>{});
+const d = document.getElementById("designs");
+for (const k of Object.keys(A.DESIGNS)) for (const cw of ["white","red","black","gray"])
+  d.insertAdjacentHTML("beforeend", `<div class="cell" data-design="${k}-${cw}">${A.designSvg(k, cw, 400, A.COLORWAYS[cw].garment)}<div>${A.DESIGNS[k].name} · ${A.COLORWAYS[cw].name}</div></div>`);
+const g = document.getElementById("garments");
+const plan = [["tee","varsity","white"],["longsleeve","horsepower","black"],["crewneck","badge","gray"],["hoodie","stacked","red"],["jacket","chest","black"],["hat","chest","white"],["warmupjacket","chest","black"],["warmuppants","chest","black"],["jersey","varsity","red"]];
+for (const [gk, dk, cw] of plan) g.insertAdjacentHTML("beforeend", `<div class="cell" data-garment="${gk}">${A.mockupSvg(gk, dk, cw)}<div>${A.GARMENTS[gk].name}</div></div>`);
+</script></body></html>

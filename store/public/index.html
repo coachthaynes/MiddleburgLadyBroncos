@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lady Broncos Team Store</title>
+<meta name="description" content="Official Lady Bronco Basketball gear, made by our coaches. 30% of every purchase goes back to the Middleburg Lady Broncos.">
+<meta name="theme-color" content="#c8102e">
+<link rel="icon" href="/brand/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="/brand/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/fonts.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/store.css">
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="nav wrap">
+  <div class="glass">
+    <a class="brand" href="/"><img src="/brand/logo.png" alt=""><span>Lady Broncos<span class="hide-sm"> Team Store</span></span></a>
+    <nav class="nav-links">
+      <a class="hide-sm" href="#shop">Shop</a>
+      <a class="hide-sm" id="fundLink" href="#">Fundraiser</a>
+      <button class="cart-btn" id="openCart" aria-label="Open cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+        <span id="cartCount">0</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- Hero with a garment that turns as you scroll -->
+  <section class="hero-store wrap">
+    <div class="hero-copy fade-in">
+      <span class="eyebrow">Lady Bronco Basketball</span>
+      <h1>Rep the <span class="red">Horsepower</span>.</h1>
+      <p class="lead">Official Lady Broncos gear, made to order by our coaches. <b><span class="pct">30</span>% of every purchase</b> goes straight back to the team.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-big" href="#shop">Shop the gear</a>
+        <a class="btn btn-glass btn-big" id="fundLink2" href="#">Support the fundraiser</a>
+      </div>
+      <div class="give-pill glass"><b><span class="pct">30</span>%</b> of every order is gifted back to the Lady Broncos</div>
+    </div>
+    <div class="turntable-wrap fade-in" aria-hidden="true">
+      <div class="turntable" id="turntable">
+        <div class="face front" id="ttFront"></div>
+        <div class="face back" id="ttBack"></div>
+      </div>
+      <div class="turntable-floor"></div>
+    </div>
+  </section>
+
+  <!-- 3D ring of every product, rotated by scrolling -->
+  <section class="ring-section" id="ringSection">
+    <div class="ring-sticky">
+      <div class="wrap ring-head">
+        <span class="eyebrow">The collection</span>
+        <h2>Nine pieces. One team.</h2>
+        <p class="muted" id="ringName">Keep scrolling to spin the collection.</p>
+      </div>
+      <div class="ring-stage"><div class="ring" id="ring"></div></div>
+    </div>
+  </section>
+
+  <section class="wrap block" id="shop">
+    <div class="section-head">
+      <div><span class="eyebrow">Shop</span><h2 style="margin-top:10px">Pick your gear</h2></div>
+      <div class="filters" id="filters"></div>
+    </div>
+    <div class="products" id="products"></div>
+  </section>
+
+  <section class="wrap block">
+    <div class="glass card how">
+      <div><div class="num">1</div><h3>Order online</h3><p class="muted">Choose your design, color and size.</p></div>
+      <div><div class="num">2</div><h3>We make it</h3><p class="muted">Coaches print each piece by hand, usually within two weeks.</p></div>
+      <div><div class="num">3</div><h3>The team wins</h3><p class="muted"><span class="pct">30</span>% of your order goes back to the Lady Broncos.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site wrap">
+  <div class="glass">
+    <span>Lady Bronco Basketball Team Store · Middleburg, Florida</span>
+    <span><a id="fundLink3" href="#">Lady Broncos Fundraiser</a></span>
+  </div>
+</footer>
+
+<!-- Product details -->
+<div class="modal" id="productModal" role="dialog" aria-modal="true" aria-labelledby="pmName">
+  <div class="glass product-sheet">
+    <button class="close-x" data-close aria-label="Close">×</button>
+    <div class="pm-grid">
+      <div class="pm-view">
+        <div class="pm-stage" id="pmStage"><div class="pm-card" id="pmCard"><div class="face front" id="pmFront"></div><div class="face back" id="pmBack"></div></div></div>
+        <div class="btn-row" style="justify-content:center"><button class="btn btn-glass btn-small" id="pmFlip">Turn around</button></div>
+      </div>
+      <div class="pm-info">
+        <span class="eyebrow">Lady Bronco Basketball</span>
+        <h2 id="pmName" style="margin-top:8px"></h2>
+        <div class="pm-price" id="pmPrice"></div>
+        <p class="muted" id="pmBlurb"></p>
+        <div class="opt"><span class="opt-label">Design</span><div class="chips" id="pmDesigns"></div></div>
+        <div class="opt"><span class="opt-label">Color</span><div class="swatches" id="pmColors"></div></div>
+        <div class="opt"><span class="opt-label">Size</span><div class="chips" id="pmSizes"></div></div>
+        <div class="opt hidden" id="pmNumberWrap"><label class="field">Jersey number<input type="text" id="pmNumber" maxlength="2" inputmode="numeric" value="23"></label></div>
+        <div class="opt"><span class="opt-label">Quantity</span><div class="qty"><button id="qMinus" aria-label="Less">−</button><span id="pmQty">1</span><button id="qPlus" aria-label="More">+</button></div></div>
+        <p class="error" id="pmErr"></p>
+        <button class="btn btn-primary btn-big" id="pmAdd" style="width:100%">Add to cart</button>
+        <p class="muted give-note"><span class="pct">30</span>% goes to the Lady Broncos</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cart -->
+<aside class="drawer" id="cart" aria-label="Cart">
+  <div class="glass drawer-inner">
+    <div class="section-head" style="margin:0 0 10px"><h2 style="margin:0">Your cart</h2><button class="close-x static" data-close-cart aria-label="Close cart">×</button></div>
+    <div id="cartItems"></div>
+    <div id="cartSummary"></div>
+    <form class="form hidden" id="checkout" name="orders">
+      <h3 style="margin:10px 0 0">Your info</h3>
+      <label class="field">Full name<input type="text" name="name" required autocomplete="name"></label>
+      <div class="two">
+        <label class="field">Email<input type="email" name="email" required autocomplete="email"></label>
+        <label class="field">Phone<input type="tel" name="phone" autocomplete="tel"></label>
+      </div>
+      <label class="field">Supporting a player? <small>Optional</small><input type="text" name="player"></label>
+      <div class="opt"><span class="opt-label">Delivery</span>
+        <label class="check"><input type="radio" name="delivery" value="pickup" checked><span>Pick up from a coach (free)</span></label>
+        <label class="check"><input type="radio" name="delivery" value="ship"><span>Ship to me (+<span id="shipCost">$6</span>)</span></label>
+      </div>
+      <label class="field hidden" id="addrWrap">Shipping address<textarea name="address" rows="3" autocomplete="street-address"></textarea></label>
+      <p class="error" id="coErr"></p>
+      <button class="btn btn-primary btn-big" type="submit" id="placeOrder">Place order</button>
+    </form>
+  </div>
+</aside>
+<div class="scrim" id="scrim"></div>
+
+<!-- Netlify reads this hidden copy to set up order collection -->
+<form name="orders" data-netlify="true" netlify-honeypot="company" hidden>
+  <input name="name"><input name="email"><input name="phone"><input name="player"><input name="delivery"><textarea name="address"></textarea>
+  <textarea name="items"></textarea><input name="subtotal"><input name="shipping"><input name="total"><input name="giveback"><input name="company">
+</form>
+
+<script src="/js/config.js"></script>
+<script src="/js/art.js"></script>
+<script src="/js/store.js"></script>
+</body>
+</html>
