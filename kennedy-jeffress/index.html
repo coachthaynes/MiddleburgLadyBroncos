@@ -1,0 +1,1044 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kennedy Jeffress #2</title>
+<meta name="description" content="Kennedy Jeffress, #2 guard for the Middleburg Lady Broncos, Class of 2029. Highlights, stats, film, NIL partnerships and licensed photos.">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="Kennedy Jeffress #2 | Middleburg Lady Broncos">
+<meta property="og:description" content="Highlights, stats, film, NIL partnerships and licensed photos.">
+<meta property="og:image" content="media/poster.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #050608;
+  --surface: #0d1017;
+  --surface-2: #151a24;
+  --line: #232a38;
+  --ink: #f3f5fa;
+  --muted: #9aa3b6;
+  --faint: #5d6679;
+  --accent: #ff7a2f;
+  --accent-2: #ffb36b;
+  --accent-glow: rgba(255, 122, 47, 0.35);
+  --navy: #16213b;
+  --good: #5cc98f;
+  --display: "Anton", "Barlow Condensed", Impact, sans-serif;
+  --cond: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --radius: 14px;
+  --gutter: clamp(16px, 4vw, 48px);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; }
+img, video { display: block; max-width: 100%; }
+.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ============ HERO ============ */
+.hero { position: relative; height: 320vh; background: #000; }
+.stage {
+  position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #000;
+}
+.reveal {
+  position: absolute; inset: 0;
+  clip-path: circle(0px at 50% 50%);
+  will-change: clip-path;
+}
+.reveal video, .reveal .fallback {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.reveal video { transform: scale(var(--zoom, 1.08)); transition: opacity .6s ease; }
+.reveal .shade {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 28%, rgba(0,0,0,0) 55%, rgba(0,0,0,.8) 100%),
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%);
+}
+/* Arena light fallback when no highlight video is present yet */
+.fallback {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255,160,90,.55), transparent 32%),
+    radial-gradient(circle at 80% 10%, rgba(255,210,160,.4), transparent 30%),
+    radial-gradient(ellipse at 50% 110%, rgba(255,122,47,.45), transparent 55%),
+    linear-gradient(180deg, #1a2440 0%, #0b1020 55%, #2a1407 100%);
+  display: none;
+}
+.fallback::before, .fallback::after {
+  content: ""; position: absolute; inset: -20%;
+  background: conic-gradient(from 200deg at 50% -10%, transparent 0 40%, rgba(255,220,180,.18) 45%, transparent 50% 100%);
+  animation: sweep 7s ease-in-out infinite alternate;
+}
+.fallback::after { animation-duration: 9s; animation-direction: alternate-reverse; opacity: .7; }
+@keyframes sweep { from { transform: rotate(-18deg); } to { transform: rotate(18deg); } }
+.fallback .court {
+  position: absolute; left: 50%; bottom: -30vh; width: 140vw; height: 70vh; transform: translateX(-50%) perspective(600px) rotateX(62deg);
+  border: 2px solid rgba(255,190,140,.35); border-radius: 50% 50% 0 0;
+  box-shadow: 0 0 80px rgba(255,122,47,.3) inset;
+}
+.no-video .fallback { display: block; }
+.no-video .reveal video { display: none; }
+
+.ring {
+  position: absolute; left: 50%; top: 50%; width: 0; height: 0; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 1px rgba(255,179,107,.55), 0 0 40px 6px var(--accent-glow), inset 0 0 40px 4px rgba(255,122,47,.18);
+  pointer-events: none; opacity: 0;
+}
+.spark {
+  position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 20px 6px #fff, 0 0 60px 20px var(--accent);
+  opacity: 0; pointer-events: none;
+}
+
+.title {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 var(--gutter) clamp(64px, 12vh, 140px); pointer-events: none;
+  will-change: transform, opacity;
+}
+.title .num {
+  position: absolute; right: var(--gutter); top: 50%; transform: translateY(-58%);
+  font-family: var(--display); font-size: clamp(180px, 38vw, 520px); line-height: .8;
+  color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,.28);
+  letter-spacing: -.02em; user-select: none;
+}
+.title .num span { display: inline-block; }
+.kicker {
+  font-family: var(--cond); font-weight: 600; text-transform: uppercase; letter-spacing: .32em;
+  font-size: clamp(12px, 1.4vw, 16px); color: var(--accent-2); margin: 0 0 14px;
+  display: flex; align-items: center; gap: 14px;
+}
+.kicker::before { content: ""; width: 44px; height: 2px; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+.name {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase; margin: 0;
+  font-size: clamp(64px, 14vw, 210px); line-height: .86; letter-spacing: .005em;
+  text-shadow: 0 6px 40px rgba(0,0,0,.45);
+}
+.name .line { display: block; overflow: hidden; }
+.name .ch { display: inline-block; transform: translateY(110%); opacity: 0; }
+.name .last { color: transparent; -webkit-text-stroke: 2px #fff; }
+.meta {
+  display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: 22px;
+  font-family: var(--cond); font-weight: 600; text-transform: uppercase; letter-spacing: .14em;
+  font-size: clamp(14px, 1.7vw, 20px);
+}
+.meta span { display: inline-flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(12px); }
+.meta b { color: var(--accent-2); font-weight: 700; }
+@media (max-width: 560px) { .meta { flex-direction: column; gap: 6px; } .meta span + span::before { display: none; } }
+.meta span + span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 16px; box-shadow: 0 0 10px var(--accent); }
+
+.cue {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  font-family: var(--cond); text-transform: uppercase; letter-spacing: .3em; font-size: 12px; color: var(--muted);
+  display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0;
+}
+.cue i { width: 2px; height: 38px; background: linear-gradient(var(--accent), transparent); animation: drip 1.8s ease-in-out infinite; }
+@keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+.sound {
+  position: absolute; right: var(--gutter); bottom: 22px; z-index: 3;
+  background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 999px;
+  font: 600 12px/1 var(--cond); letter-spacing: .2em; text-transform: uppercase; padding: 10px 16px; cursor: pointer;
+  backdrop-filter: blur(6px); opacity: 0; transition: opacity .4s;
+}
+.sound:hover { border-color: var(--accent); }
+.no-video .sound { display: none; }
+.outro {
+  position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; opacity: 0;
+  font-family: var(--cond); text-transform: uppercase; letter-spacing: .5em; color: var(--faint); font-size: 13px;
+}
+
+/* ============ NAV ============ */
+.nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 50; transform: translateY(-100%); transition: transform .45s ease;
+  background: rgba(5,6,8,.78); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line);
+}
+.nav.show { transform: none; }
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 62px; }
+.brand { font-family: var(--display); font-size: 22px; letter-spacing: .02em; text-decoration: none; text-transform: uppercase; white-space: nowrap; }
+.brand em { font-style: normal; color: var(--accent); }
+.nav ul { display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; }
+.nav ul a { text-decoration: none; font: 600 14px var(--cond); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.nav ul a:hover { color: var(--ink); }
+.nav .cta { padding: 9px 16px; border-radius: 999px; background: var(--accent); color: #140800; font: 700 13px var(--cond); letter-spacing: .14em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+@media (max-width: 860px) { .nav ul { display: none; } }
+
+/* ============ SECTIONS ============ */
+main { position: relative; }
+section.block { position: relative; padding: clamp(80px, 12vw, 150px) 0; border-top: 1px solid rgba(255,255,255,.04); }
+.glow {
+  position: fixed; left: 0; top: 0; width: 700px; height: 700px; margin: -350px 0 0 -350px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,122,47,.10), transparent 62%); pointer-events: none; z-index: 0;
+  transition: opacity .4s; opacity: 0;
+}
+section.block > .wrap { position: relative; z-index: 1; }
+.eyebrow { font: 600 13px var(--cond); letter-spacing: .32em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+h2 {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase; margin: 0 0 20px;
+  font-size: clamp(44px, 7vw, 92px); line-height: .92; letter-spacing: .005em;
+}
+h2 .lit { color: transparent; -webkit-text-stroke: 1.5px var(--ink); }
+h3 { font-family: var(--cond); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 24px; margin: 0 0 10px; }
+.lede { font-size: clamp(18px, 1.8vw, 21px); color: var(--muted); max-width: 62ch; margin: 0 0 40px; }
+.fade { opacity: 0; transform: translateY(28px); transition: opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+.fade.in { opacity: 1; transform: none; }
+
+/* Profile */
+.profile { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(28px, 5vw, 70px); align-items: center; }
+@media (max-width: 860px) { .profile { grid-template-columns: 1fr; } }
+.profile > *, .cols2 > *, .film > * { min-width: 0; }
+.portrait {
+  position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius); overflow: hidden;
+  background: linear-gradient(160deg, #1b2442, #0a0c12 60%, #2b1306);
+  border: 1px solid var(--line);
+}
+.portrait img { width: 100%; height: 100%; object-fit: cover; }
+.portrait .tag {
+  position: absolute; left: 16px; bottom: 16px; right: 16px; display: flex; justify-content: space-between; align-items: end;
+  font-family: var(--cond); text-transform: uppercase; letter-spacing: .14em; font-weight: 600;
+}
+.portrait .tag strong { font-family: var(--display); font-size: 88px; line-height: .8; letter-spacing: 0; color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); }
+.portrait .ph { position: absolute; inset: 0; display: grid; place-items: center; color: var(--faint); font: 600 14px var(--cond); letter-spacing: .2em; text-transform: uppercase; }
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.fact { background: var(--surface); padding: 20px 22px; }
+.fact dt { font: 600 12px var(--cond); letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
+.fact dd { margin: 4px 0 0; font-family: var(--display); font-size: clamp(22px, 5vw, 30px); line-height: 1.1; text-transform: uppercase; }
+
+/* Stats */
+.bigstats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 26px; }
+@media (max-width: 900px) { .bigstats { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 520px) { .bigstats { grid-template-columns: repeat(2, 1fr); } }
+.stat {
+  position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px 20px 20px; overflow: hidden;
+}
+.stat::after { content: ""; position: absolute; inset: auto 0 0 0; height: 3px; background: linear-gradient(90deg, var(--accent), transparent); }
+.stat .v { font-family: var(--display); font-size: clamp(46px, 6vw, 72px); line-height: 1; letter-spacing: .01em; }
+.stat .l { font: 600 13px var(--cond); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.stat.hot { background: linear-gradient(160deg, #2a1407, var(--surface) 70%); border-color: #5a2a10; }
+.stat.hot .v { color: var(--accent-2); text-shadow: 0 0 26px var(--accent-glow); }
+.total {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; padding: 22px 24px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--line); margin-bottom: 40px;
+}
+.total .v { font-family: var(--display); font-size: 54px; line-height: 1; color: var(--accent); }
+.total p { margin: 0; color: var(--muted); }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; min-width: 560px; font-variant-numeric: tabular-nums; }
+th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--line); }
+thead th { font: 600 12px var(--cond); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); }
+tbody th { font: 700 15px var(--cond); letter-spacing: .12em; text-transform: uppercase; }
+tbody tr:last-child > * { border-bottom: 0; }
+td.now { color: var(--accent-2); font-weight: 700; }
+td.soon { color: var(--faint); font-style: italic; }
+.split { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 18px; }
+@media (max-width: 760px) { .split { grid-template-columns: repeat(2, 1fr); } }
+.meter { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
+.meter .row { display: flex; justify-content: space-between; align-items: baseline; }
+.meter .pct { font-family: var(--display); font-size: 34px; }
+.meter .att { font-size: 14px; color: var(--muted); }
+.meter .bar { height: 6px; border-radius: 3px; background: var(--surface-2); margin-top: 10px; overflow: hidden; }
+.meter .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 3px; transition: width 1.4s cubic-bezier(.2,.7,.2,1); }
+.meter .lbl { font: 600 12px var(--cond); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+.subhead { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-top: 56px; }
+.subhead small { color: var(--faint); font-size: 14px; }
+
+/* Measurables */
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 760px) { .grid3 { grid-template-columns: repeat(2, 1fr); } }
+.chip { background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); padding: 18px 20px; }
+.chip.set { border-style: solid; }
+.chip .k { font: 600 12px var(--cond); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.chip .v { font-family: var(--display); font-size: 30px; margin-top: 4px; }
+.chip .v.pending { font-family: var(--cond); font-size: 18px; font-weight: 600; color: var(--faint); letter-spacing: .1em; text-transform: uppercase; }
+.cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 64px); }
+@media (max-width: 860px) { .cols2 { grid-template-columns: 1fr; } }
+.note { margin-top: 18px; color: var(--muted); font-size: 15px; }
+
+/* Film */
+.film { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; }
+@media (max-width: 860px) { .film { grid-template-columns: 1fr; } }
+.player-frame { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--line); }
+.player-frame video { width: 100%; height: 100%; object-fit: cover; }
+.player-frame .ph { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--muted); padding: 20px; background: radial-gradient(circle at 50% 40%, #1b2442, #000 70%); }
+.links { display: grid; gap: 12px; align-content: start; }
+.link {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--line); text-decoration: none; transition: border-color .2s, transform .2s, background .2s;
+}
+.link:hover { border-color: var(--accent); transform: translateX(4px); background: #141820; }
+.link b { font: 700 20px var(--cond); letter-spacing: .08em; text-transform: uppercase; }
+.link span { color: var(--muted); font-size: 14px; display: block; }
+.link svg { flex: none; color: var(--accent); }
+.link.pending { opacity: .55; pointer-events: none; }
+
+/* NIL */
+.nil { background: radial-gradient(ellipse at 20% 0%, rgba(255,122,47,.14), transparent 55%), radial-gradient(ellipse at 90% 100%, rgba(22,33,59,.9), transparent 60%), var(--bg); }
+.offer { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 56px; }
+@media (max-width: 900px) { .offer { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .offer { grid-template-columns: 1fr; } }
+.card {
+  position: relative; background: rgba(13,16,23,.85); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px;
+  overflow: hidden; transition: border-color .25s, transform .25s;
+}
+.card:hover { border-color: #6b3413; transform: translateY(-3px); }
+.card::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(255,122,47,.16), transparent 60%);
+}
+.card:hover::before { opacity: 1; }
+.card .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: #2a1407; color: var(--accent-2); margin-bottom: 18px; }
+.card p { margin: 0; color: var(--muted); font-size: 16px; }
+.why { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 0 0 56px; }
+@media (max-width: 860px) { .why { grid-template-columns: repeat(2, 1fr); } }
+.why div { border-left: 2px solid var(--accent); padding: 4px 0 4px 16px; }
+.why strong { display: block; font-family: var(--display); font-size: 40px; line-height: 1; }
+.why span { color: var(--muted); font-size: 15px; }
+.rules { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; }
+.rules ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.rules li { display: flex; gap: 12px; color: var(--muted); font-size: 16px; }
+.rules li::before { content: ""; flex: none; width: 8px; height: 8px; margin-top: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+form.inquiry { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+form.inquiry .full { grid-column: 1 / -1; }
+@media (max-width: 620px) { form.inquiry { grid-template-columns: 1fr; } }
+label { display: grid; gap: 6px; font: 600 12px var(--cond); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+input, select, textarea {
+  width: 100%; font: 400 16px var(--body); color: var(--ink); background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 13px 14px; letter-spacing: 0; text-transform: none;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,122,47,.2); }
+textarea { min-height: 120px; resize: vertical; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; border: 0; text-decoration: none;
+  background: var(--accent); color: #140800; font: 700 15px var(--cond); letter-spacing: .18em; text-transform: uppercase;
+  padding: 16px 26px; border-radius: 999px; box-shadow: 0 10px 40px rgba(255,122,47,.25); transition: transform .2s, box-shadow .2s;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 14px 50px rgba(255,122,47,.4); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+.btn.ghost:hover { border-color: var(--accent); }
+.form-status { color: var(--good); font-weight: 600; min-height: 1.6em; margin: 0; }
+
+/* Photo vault */
+.filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 26px; }
+.filters button {
+  background: var(--surface); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 10px 18px; cursor: pointer;
+  font: 600 13px var(--cond); letter-spacing: .18em; text-transform: uppercase;
+}
+.filters button[aria-pressed="true"] { background: var(--accent); color: #140800; border-color: var(--accent); }
+.gallery { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 220px; grid-auto-flow: dense; gap: 14px; }
+@media (max-width: 960px) { .gallery { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 640px) { .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; } }
+.shot { position: relative; border-radius: var(--radius); overflow: hidden; background: var(--surface); border: 1px solid var(--line); cursor: zoom-in; }
+.shot.tall { grid-row: span 2; }
+.shot.wide { grid-column: span 2; }
+.shot img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1), filter .5s; filter: saturate(.9); }
+.shot:hover img { transform: scale(1.05); filter: saturate(1.1); }
+.shot .cap {
+  position: absolute; inset: auto 0 0 0; padding: 40px 14px 12px; display: flex; justify-content: space-between; align-items: end; gap: 8px;
+  background: linear-gradient(transparent, rgba(0,0,0,.85)); font-size: 14px;
+}
+.shot .cap b { font: 700 16px var(--cond); letter-spacing: .08em; text-transform: uppercase; display: block; }
+.badge { flex: none; font: 700 11px var(--cond); letter-spacing: .16em; text-transform: uppercase; padding: 5px 9px; border-radius: 999px; }
+.badge.nil { background: var(--accent); color: #140800; }
+.badge.ed { background: rgba(255,255,255,.14); color: #fff; }
+.shot .empty {
+  position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 10px; text-align: center; padding: 16px;
+  background: repeating-linear-gradient(135deg, #0d1017 0 14px, #10141c 14px 28px); color: var(--faint);
+  font: 600 12px var(--cond); letter-spacing: .2em; text-transform: uppercase;
+}
+.license { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 40px; }
+@media (max-width: 760px) { .license { grid-template-columns: 1fr; } }
+.license .card p + p { margin-top: 10px; }
+
+.lightbox {
+  position: fixed; inset: 0; z-index: 80; background: rgba(0,0,0,.92); display: none; place-items: center; padding: 24px;
+}
+.lightbox.open { display: grid; }
+.lightbox figure { margin: 0; max-width: min(1100px, 100%); display: grid; gap: 14px; }
+.lightbox img { max-height: 76vh; width: auto; margin: 0 auto; border-radius: 10px; }
+.lightbox figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.lightbox .x { position: absolute; top: 16px; right: 16px; background: none; border: 1px solid var(--line); color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 22px; cursor: pointer; }
+
+/* Contact */
+.contacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 860px) { .contacts { grid-template-columns: 1fr; } }
+.contacts .card a { text-decoration: none; color: var(--ink); }
+.contacts .card a:hover { color: var(--accent-2); }
+.contacts .role { font: 600 12px var(--cond); letter-spacing: .24em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.contacts .who { font-family: var(--display); font-size: 30px; text-transform: uppercase; line-height: 1.1; margin-bottom: 12px; }
+.contacts .card p { display: grid; gap: 4px; }
+
+footer { padding: 50px 0 60px; border-top: 1px solid var(--line); color: var(--faint); font-size: 14px; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade { opacity: 1; transform: none; transition: none; }
+  .fallback::before, .fallback::after, .cue i { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<header class="hero" id="top">
+  <div class="stage" id="stage">
+    <div class="reveal" id="reveal">
+      <!--
+        Drop the professional highlight video at media/highlight.mp4 (and a still at media/poster.jpg).
+        Until it exists, an animated arena light scene plays instead.
+      -->
+      <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="media/poster.jpg">
+        <source src="media/highlight.mp4" type="video/mp4">
+      </video>
+      <div class="fallback" aria-hidden="true"><div class="court"></div></div>
+      <div class="shade"></div>
+    </div>
+    <div class="ring" id="ring"></div>
+    <div class="spark" id="spark"></div>
+
+    <div class="title" id="title">
+      <div class="num" aria-hidden="true"><span>2</span></div>
+      <p class="kicker" id="kicker">Middleburg Lady Broncos</p>
+      <h1 class="name" id="name" aria-label="Kennedy Jeffress">
+        <span class="line" data-split>Kennedy</span>
+        <span class="line last" data-split>Jeffress</span>
+      </h1>
+      <div class="meta" id="meta">
+        <span><b>#2</b></span>
+        <span>Guard</span>
+        <span>Middleburg High School</span>
+        <span>Class of <b>2029</b></span>
+      </div>
+    </div>
+
+    <div class="cue" id="cue">Scroll<i></i></div>
+    <button class="sound" id="sound" type="button" aria-pressed="false">Sound off</button>
+    <div class="outro" id="outro">The story continues</div>
+  </div>
+</header>
+
+<nav class="nav" id="nav" aria-label="Sections">
+  <div class="wrap">
+    <a class="brand" href="#top">K<em>.</em>Jeffress <em>#2</em></a>
+    <ul>
+      <li><a href="#profile">Profile</a></li>
+      <li><a href="#stats">Stats</a></li>
+      <li><a href="#combine">Combine</a></li>
+      <li><a href="#film">Film</a></li>
+      <li><a href="#photos">Photos</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a class="cta" href="#nil">NIL Inquiry</a>
+  </div>
+</nav>
+
+<div class="glow" id="glow" aria-hidden="true"></div>
+
+<main>
+
+<!-- ==================== PROFILE ==================== -->
+<section class="block" id="profile">
+  <div class="wrap profile">
+    <div class="portrait fade">
+      <img src="media/photos/portrait.jpg" alt="Kennedy Jeffress portrait" onerror="this.remove()">
+      <div class="ph" aria-hidden="true">Portrait coming soon</div>
+      <div class="tag"><span>Lady Broncos<br>Basketball</span><strong>2</strong></div>
+    </div>
+    <div class="fade">
+      <p class="eyebrow">Player profile</p>
+      <h2>Kennedy <span class="lit">Jeffress</span></h2>
+      <p class="lede">A fearless scorer with quick hands on defense. As a freshman Kennedy led the Lady Broncos attack, pouring in 380 points while averaging 17.3 points and 3.2 steals per game.</p>
+      <dl class="facts">
+        <div class="fact"><dt>Jersey</dt><dd>#2</dd></div>
+        <div class="fact"><dt>Position</dt><dd>Guard</dd></div>
+        <div class="fact"><dt>Class</dt><dd>2029</dd></div>
+        <div class="fact"><dt>Height</dt><dd>5'6"</dd></div>
+        <div class="fact"><dt>School</dt><dd>Middleburg HS</dd></div>
+        <div class="fact"><dt>Location</dt><dd>Middleburg, FL</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== STATS ==================== -->
+<section class="block" id="stats">
+  <div class="wrap">
+    <p class="eyebrow fade">Season stats</p>
+    <h2 class="fade">Freshman <span class="lit">Season</span></h2>
+
+    <div class="total fade">
+      <span class="v" data-count="380">380</span>
+      <p>total points scored in her freshman season.</p>
+    </div>
+
+    <div class="bigstats fade">
+      <div class="stat hot"><div class="v" data-count="17.3">17.3</div><div class="l">Points</div></div>
+      <div class="stat"><div class="v" data-count="4.1">4.1</div><div class="l">Rebounds</div></div>
+      <div class="stat hot"><div class="v" data-count="3.2">3.2</div><div class="l">Steals</div></div>
+      <div class="stat"><div class="v" data-count="2.3">2.3</div><div class="l">Assists</div></div>
+      <div class="stat"><div class="v" data-count="0.2">0.2</div><div class="l">Blocks</div></div>
+    </div>
+
+    <div class="table-wrap fade">
+      <table>
+        <caption class="sr">Per game averages by season</caption>
+        <thead>
+          <tr><th scope="col">Per game</th><th scope="col">Freshman</th><th scope="col">Sophomore</th><th scope="col">Junior</th><th scope="col">Senior</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Points</th><td class="now">17.3</td><td class="soon">Upcoming</td><td class="soon">Upcoming</td><td class="soon">Upcoming</td></tr>
+          <tr><th scope="row">Rebounds</th><td class="now">4.1</td><td class="soon">Upcoming</td><td class="soon">Upcoming</td><td class="soon">Upcoming</td></tr>
+          <tr><th scope="row">Steals</th><td class="now">3.2</td><td class="soon">Upcoming</td><td class="soon">Upcoming</td><td class="soon">Upcoming</td></tr>
+          <tr><th scope="row">Assists</th><td class="now">2.3</td><td class="soon">Upcoming</td><td class="soon">Upcoming</td><td class="soon">Upcoming</td></tr>
+          <tr><th scope="row">Blocks</th><td class="now">0.2</td><td class="soon">Upcoming</td><td class="soon">Upcoming</td><td class="soon">Upcoming</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="subhead fade">
+      <h3>Hot start: first five games</h3>
+      <small>Source: Hudl team report</small>
+    </div>
+    <div class="bigstats fade" style="margin-top:18px">
+      <div class="stat hot"><div class="v">106</div><div class="l">Points</div></div>
+      <div class="stat hot"><div class="v">21.2</div><div class="l">Points per game</div></div>
+      <div class="stat"><div class="v">148</div><div class="l">Minutes</div></div>
+      <div class="stat"><div class="v">+9</div><div class="l">Plus minus</div></div>
+      <div class="stat"><div class="v">41.5%</div><div class="l">Effective FG</div></div>
+    </div>
+    <div class="split fade">
+      <div class="meter"><div class="row"><span class="pct">38.7%</span><span class="att">41 of 106</span></div><div class="bar"><i data-w="38.7"></i></div><div class="lbl">Field goals</div></div>
+      <div class="meter"><div class="row"><span class="pct">45.5%</span><span class="att">35 of 77</span></div><div class="bar"><i data-w="45.5"></i></div><div class="lbl">Two pointers</div></div>
+      <div class="meter"><div class="row"><span class="pct">20.7%</span><span class="att">6 of 29</span></div><div class="bar"><i data-w="20.7"></i></div><div class="lbl">Three pointers</div></div>
+      <div class="meter"><div class="row"><span class="pct">60.0%</span><span class="att">18 of 30</span></div><div class="bar"><i data-w="60"></i></div><div class="lbl">Free throws</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== COMBINE / ACADEMICS ==================== -->
+<section class="block" id="combine">
+  <div class="wrap">
+    <p class="eyebrow fade">Measurables and academics</p>
+    <h2 class="fade">By the <span class="lit">Numbers</span></h2>
+    <p class="lede fade">Preseason testing is scheduled for October 10. Numbers post here as soon as they are recorded.</p>
+    <div class="cols2">
+      <div class="fade">
+        <h3>Measurables</h3>
+        <div class="grid3">
+          <div class="chip set"><div class="k">Height</div><div class="v">5'6"</div></div>
+          <div class="chip"><div class="k">Weight</div><div class="v pending">Pending</div></div>
+          <div class="chip"><div class="k">Standing reach</div><div class="v pending">Pending</div></div>
+          <div class="chip"><div class="k">Wingspan</div><div class="v pending">Pending</div></div>
+          <div class="chip"><div class="k">Shoe size</div><div class="v pending">Pending</div></div>
+        </div>
+        <h3 style="margin-top:34px">Athletic testing</h3>
+        <div class="grid3">
+          <div class="chip"><div class="k">Standing vertical</div><div class="v pending">Oct 10</div></div>
+          <div class="chip"><div class="k">Max vertical</div><div class="v pending">Oct 10</div></div>
+          <div class="chip"><div class="k">Bench / Dead / Squat</div><div class="v pending">Oct 10</div></div>
+          <div class="chip"><div class="k">Lane agility</div><div class="v pending">Oct 10</div></div>
+          <div class="chip"><div class="k">Shuttle run</div><div class="v pending">Oct 10</div></div>
+          <div class="chip"><div class="k">Three quarter sprint</div><div class="v pending">Oct 10</div></div>
+        </div>
+      </div>
+      <div class="fade">
+        <h3>Academics</h3>
+        <div class="grid3" style="grid-template-columns:repeat(2,1fr)">
+          <div class="chip"><div class="k">GPA</div><div class="v pending">On request</div></div>
+          <div class="chip"><div class="k">SAT</div><div class="v pending">On request</div></div>
+          <div class="chip"><div class="k">ACT</div><div class="v pending">On request</div></div>
+          <div class="chip"><div class="k">Dual enrollment</div><div class="v pending">On request</div></div>
+          <div class="chip"><div class="k">NCAA ID</div><div class="v pending">On request</div></div>
+          <div class="chip"><div class="k">Current offers</div><div class="v pending">On request</div></div>
+        </div>
+        <p class="note">College coaches can request transcripts and academic details through Coach Haynes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FILM ==================== -->
+<section class="block" id="film">
+  <div class="wrap">
+    <p class="eyebrow fade">Highlights and game film</p>
+    <h2 class="fade">Watch <span class="lit">Her Play</span></h2>
+    <div class="film">
+      <div class="player-frame fade">
+        <video id="filmVideo" controls playsinline preload="metadata" poster="media/poster.jpg">
+          <source src="media/highlight.mp4" type="video/mp4">
+        </video>
+        <div class="ph" id="filmPh" hidden>Full highlight reel coming soon.<br>Use the film links for game footage.</div>
+      </div>
+      <div class="links fade">
+        <!-- Replace each href="#" with the real profile link. Links left as "#" show as coming soon. -->
+        <a class="link" href="#" data-film>
+          <div><b>Hudl</b><span>Full game film and highlights</span></div>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </a>
+        <a class="link" href="#" data-film>
+          <div><b>Field Level</b><span>Recruiting profile</span></div>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </a>
+        <a class="link" href="#" data-film>
+          <div><b>MaxPreps</b><span>Box scores and season stats</span></div>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </a>
+        <a class="link" href="#" data-film>
+          <div><b>YouTube</b><span>Highlights and game film</span></div>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== NIL ==================== -->
+<section class="block nil" id="nil">
+  <div class="wrap">
+    <p class="eyebrow fade">Name, Image and Likeness</p>
+    <h2 class="fade">Partner with <span class="lit">Kennedy</span></h2>
+    <p class="lede fade">Kennedy is open to NIL partnerships with local businesses and brands that share her values: hard work, community and showing young girls what is possible on the court. Every opportunity is reviewed with her family.</p>
+
+    <div class="why fade">
+      <div><strong>#2</strong><span>Starting guard for the Lady Broncos</span></div>
+      <div><strong>17.3</strong><span>Points per game as a freshman</span></div>
+      <div><strong>4 yrs</strong><span>Of high school runway ahead through 2029</span></div>
+      <div><strong>Clay Co.</strong><span>Rooted in the Middleburg community</span></div>
+    </div>
+
+    <div class="offer">
+      <article class="card fade">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></div>
+        <h3>Social content</h3>
+        <p>Sponsored posts, reels and stories featuring your product or business.</p>
+      </article>
+      <article class="card fade">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></div>
+        <h3>Local business ads</h3>
+        <p>Print, digital and in store campaigns using licensed NIL ready photos.</p>
+      </article>
+      <article class="card fade">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></div>
+        <h3>Appearances</h3>
+        <p>Grand openings, community events, autograph sessions and meet and greets.</p>
+      </article>
+      <article class="card fade">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div>
+        <h3>Camps and clinics</h3>
+        <p>Youth skills camps and guest coaching for younger players.</p>
+      </article>
+      <article class="card fade">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7 12 3 4 7v10l8 4 8-4V7z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg></div>
+        <h3>Product partners</h3>
+        <p>Gear, apparel, nutrition and training products she actually uses.</p>
+      </article>
+      <article class="card fade">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/></svg></div>
+        <h3>Community causes</h3>
+        <p>Charity drives and nonprofit campaigns that give back to Clay County.</p>
+      </article>
+    </div>
+
+    <div class="cols2">
+      <div class="fade">
+        <h3>How it works</h3>
+        <div class="rules">
+          <ul>
+            <li>Send an inquiry with the opportunity, dates and compensation.</li>
+            <li>Kennedy's parent reviews every request. Coach Haynes is copied for scheduling around practice and games.</li>
+            <li>A simple written agreement is signed by a parent or guardian before any content goes live.</li>
+            <li>Partners receive licensed photos from the Photo Vault below for the agreed campaign.</li>
+            <li>Following FHSAA rules, partner content may not use Middleburg High School or Clay County District Schools names, logos, uniforms or facilities, and deals cannot be tied to recruiting or athletic performance.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="fade">
+        <h3>Send an inquiry</h3>
+        <form class="inquiry" name="nil-inquiry" method="POST" data-netlify="true" netlify-honeypot="company-url" id="nilForm">
+          <input type="hidden" name="form-name" value="nil-inquiry">
+          <p class="sr"><label>Leave this empty <input name="company-url"></label></p>
+          <label>Your name<input name="name" required autocomplete="name"></label>
+          <label>Business or brand<input name="business" autocomplete="organization"></label>
+          <label>Email<input type="email" name="email" required autocomplete="email"></label>
+          <label>Phone<input type="tel" name="phone" autocomplete="tel"></label>
+          <label>Opportunity
+            <select name="type">
+              <option>Social content</option>
+              <option>Local business ad</option>
+              <option>Appearance</option>
+              <option>Camp or clinic</option>
+              <option>Product partnership</option>
+              <option>Community cause</option>
+              <option>Something else</option>
+            </select>
+          </label>
+          <label>Budget
+            <select name="budget">
+              <option>Product or trade</option>
+              <option>Under $250</option>
+              <option>$250 to $1,000</option>
+              <option>$1,000 or more</option>
+              <option>Let's talk</option>
+            </select>
+          </label>
+          <label class="full">Tell us about it<textarea name="message" required placeholder="Dates, deliverables and anything else we should know"></textarea></label>
+          <div class="full" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+            <button class="btn" type="submit">Send inquiry</button>
+            <a class="btn ghost" id="mailFallback" href="mailto:kennedyjeffress0@gmail.com?cc=coachthaynes@gmail.com&amp;subject=NIL%20opportunity%20for%20Kennedy%20Jeffress">Email instead</a>
+          </div>
+          <p class="form-status full" id="formStatus" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PHOTO VAULT ==================== -->
+<section class="block" id="photos">
+  <div class="wrap">
+    <p class="eyebrow fade">Photo vault</p>
+    <h2 class="fade">Pro Photos <span class="lit">for NIL</span></h2>
+    <p class="lede fade">Professional, high resolution photos of Kennedy. Photos marked <strong style="color:var(--accent-2)">NIL Ready</strong> are free of school marks and can be licensed for partner campaigns. <strong>Editorial</strong> photos are for media, recruiting and news use only.</p>
+    <div class="filters fade" role="group" aria-label="Filter photos">
+      <button type="button" data-filter="all" aria-pressed="true">All</button>
+      <button type="button" data-filter="nil" aria-pressed="false">NIL Ready</button>
+      <button type="button" data-filter="editorial" aria-pressed="false">Editorial</button>
+    </div>
+    <div class="gallery" id="gallery"></div>
+
+    <div class="license">
+      <div class="card fade">
+        <h3>NIL Ready license</h3>
+        <p>Approved partners may use these photos in the campaign named in their signed agreement, for the agreed dates. Do not crop out the photographer credit where one is shown, alter her likeness, or imply an endorsement beyond the agreement.</p>
+        <p>Downloads are for review. Final use requires a signed agreement with Kennedy's parent or guardian.</p>
+      </div>
+      <div class="card fade">
+        <h3>Editorial use</h3>
+        <p>Game and uniform photos may be used by media outlets, college coaches and recruiting services with credit. They may not be used in advertising or any commercial NIL campaign.</p>
+        <p>Need a specific shot? Ask in your inquiry and we will set up a session.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CONTACT ==================== -->
+<section class="block" id="contact">
+  <div class="wrap">
+    <p class="eyebrow fade">Contact</p>
+    <h2 class="fade">Get in <span class="lit">Touch</span></h2>
+    <div class="contacts">
+      <div class="card fade">
+        <div class="role">Player</div>
+        <div class="who">Kennedy Jeffress</div>
+        <p>
+          <a href="tel:+19046256270">(904) 625 6270</a>
+          <a href="mailto:kennedyjeffress0@gmail.com">kennedyjeffress0@gmail.com</a>
+        </p>
+      </div>
+      <div class="card fade">
+        <div class="role">Parent</div>
+        <div class="who">Earl Jeffress</div>
+        <p>
+          <a href="tel:+13096222112">(309) 622 2112</a>
+        </p>
+      </div>
+      <div class="card fade">
+        <div class="role">Head Coach</div>
+        <div class="who">Tenise Haynes</div>
+        <p>
+          <a href="tel:+19042900261">(904) 290 0261</a>
+          <a href="mailto:coachthaynes@gmail.com">coachthaynes@gmail.com</a>
+          <a href="mailto:tenise.haynes@myoneclay.net">tenise.haynes@myoneclay.net</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Kennedy Jeffress #2 · Middleburg Lady Broncos · Class of 2029</span>
+    <span>All photos and video licensed. Please ask before use.</span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo preview">
+  <button class="x" type="button" id="lbClose" aria-label="Close">&times;</button>
+  <figure>
+    <img id="lbImg" alt="">
+    <figcaption>
+      <div><b id="lbTitle" style="font:700 20px var(--cond);letter-spacing:.08em;text-transform:uppercase"></b><div id="lbUse" style="color:var(--muted);font-size:15px"></div></div>
+      <a class="btn" id="lbDownload" download>Download</a>
+    </figcaption>
+  </figure>
+</div>
+
+<script>
+/* ---------- Photo vault data ----------
+   Put photos in media/photos/ using these file names (or edit the list).
+   use: "nil" = NIL Ready (no school logos or uniform), "editorial" = media and recruiting only.
+   size: "tall", "wide" or "" for the grid layout. */
+const PHOTOS = [
+  { file: "portrait.jpg",   title: "Studio portrait",      use: "nil",       size: "tall" },
+  { file: "action_drive.jpg", title: "Drive to the rim",   use: "editorial", size: "wide" },
+  { file: "ballhandling.jpg", title: "Handles",            use: "nil",       size: "" },
+  { file: "jumper.jpg",     title: "Pull up jumper",       use: "editorial", size: "" },
+  { file: "lifestyle.jpg",  title: "Lifestyle",            use: "nil",       size: "tall" },
+  { file: "steal.jpg",      title: "Lockdown defense",     use: "editorial", size: "" },
+  { file: "brand_hold.jpg", title: "Product hold",         use: "nil",       size: "" },
+  { file: "headshot.jpg",   title: "Headshot",             use: "nil",       size: "" },
+  { file: "celebration.jpg",title: "Bench energy",         use: "editorial", size: "wide" }
+];
+
+(function () {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  const easeIO = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+
+  /* ---------- Hero video availability ---------- */
+  const heroVideo = $("#heroVideo"), filmVideo = $("#filmVideo");
+  const noVideo = () => {
+    document.body.classList.add("no-video");
+    filmVideo.style.display = "none";
+    $("#filmPh").hidden = false;
+  };
+  const src = heroVideo.querySelector("source");
+  src.addEventListener("error", noVideo);
+  heroVideo.addEventListener("error", noVideo);
+  filmVideo.querySelector("source").addEventListener("error", () => { filmVideo.style.display = "none"; $("#filmPh").hidden = false; });
+  // The error may fire before this script runs, so also check the current state
+  const checkVideo = () => { if (heroVideo.networkState === 3 || heroVideo.error) noVideo(); };
+  checkVideo();
+  setTimeout(checkVideo, 1500);
+
+  const sound = $("#sound");
+  sound.addEventListener("click", () => {
+    heroVideo.muted = !heroVideo.muted;
+    if (!heroVideo.muted) heroVideo.play().catch(() => {});
+    sound.textContent = heroVideo.muted ? "Sound off" : "Sound on";
+    sound.setAttribute("aria-pressed", String(!heroVideo.muted));
+  });
+
+  /* ---------- Split name into letters ---------- */
+  $$("[data-split]").forEach(el => {
+    const text = el.textContent;
+    el.textContent = "";
+    [...text].forEach(c => { const s = document.createElement("span"); s.className = "ch"; s.textContent = c; el.appendChild(s); });
+  });
+  const letters = $$(".name .ch"), metas = $$("#meta span");
+
+  /* ---------- Hero: opening + scroll ---------- */
+  const hero = $("#top"), reveal = $("#reveal"), ring = $("#ring"), spark = $("#spark");
+  const title = $("#title"), cue = $("#cue"), outro = $("#outro"), nav = $("#nav"), kicker = $("#kicker");
+  let open = reduce ? 1 : 0;        // 0 to 1 opening sequence
+  let introDone = reduce;
+  let W = innerWidth, H = innerHeight, halfDiag = Math.hypot(W, H) / 2;
+  addEventListener("resize", () => { W = innerWidth; H = innerHeight; halfDiag = Math.hypot(W, H) / 2; render(); });
+
+  function progress() {
+    const total = hero.offsetHeight - H;
+    return clamp(-hero.getBoundingClientRect().top / total);
+  }
+
+  function render() {
+    const p = progress();
+    // Circle radius: opening grows it, scroll shrinks it back to nothing
+    const close = easeIO(clamp(p / 0.82));
+    const r = halfDiag * 1.02 * ease(open) * (1 - close);
+    reveal.style.clipPath = `circle(${r.toFixed(1)}px at 50% 50%)`;
+    reveal.style.opacity = String(1 - smooth(0.55, 0.9, p));
+    reveal.style.setProperty("--zoom", (1.08 + p * 0.25).toFixed(3));
+    // Glowing edge only while the circle is not full screen
+    const edge = (open < 1 ? Math.sin(open * Math.PI) : 0) + smooth(0.02, 0.2, p) * (1 - smooth(0.7, 0.86, p));
+    ring.style.width = ring.style.height = (r * 2).toFixed(1) + "px";
+    ring.style.opacity = String(clamp(edge));
+    // Title rides up and fades as the circle closes
+    const tFade = smooth(0, 0.35, p);
+    title.style.opacity = String(1 - tFade);
+    title.style.transform = `translateY(${(-p * 120).toFixed(1)}px) scale(${(1 - tFade * 0.08).toFixed(3)})`;
+    cue.style.opacity = introDone ? String(1 - smooth(0, 0.08, p)) : "0";
+    $("#sound").style.opacity = introDone ? String(1 - smooth(0.3, 0.5, p)) : "0";
+    outro.style.opacity = String(smooth(0.86, 0.95, p) * (1 - smooth(0.97, 1, p)));
+    nav.classList.toggle("show", p > 0.96 || hero.getBoundingClientRect().bottom < H * 0.5);
+    if (p > 0.95) heroVideo.pause(); else if (heroVideo.paused && introDone && !document.body.classList.contains("no-video")) heroVideo.play().catch(() => {});
+  }
+
+  function intro() {
+    if (reduce) {
+      letters.forEach(l => { l.style.transform = "none"; l.style.opacity = 1; });
+      metas.forEach(m => { m.style.transform = "none"; m.style.opacity = 1; });
+      render();
+      return;
+    }
+    const t0 = performance.now();
+    const SPARK = 700, OPEN = 1900;
+    function frame(now) {
+      const t = now - t0;
+      // 1. A single point of light appears in the dark
+      const s = clamp(t / SPARK);
+      spark.style.opacity = String(s < 1 ? s : Math.max(0, 1 - (t - SPARK) / 400));
+      spark.style.transform = `scale(${(0.4 + s * 0.8).toFixed(2)})`;
+      // 2. The light opens into a circle that reveals the highlight video
+      open = clamp((t - SPARK * 0.8) / OPEN);
+      // 3. Name, number, school and position arrive
+      const tt = t - SPARK - OPEN * 0.45;
+      letters.forEach((l, i) => {
+        const k = ease(clamp((tt - i * 45) / 700));
+        l.style.transform = `translateY(${(110 * (1 - k)).toFixed(1)}%)`;
+        l.style.opacity = String(k);
+      });
+      kicker.style.opacity = String(clamp((tt + 200) / 600));
+      metas.forEach((m, i) => {
+        const k = ease(clamp((tt - 500 - i * 110) / 600));
+        m.style.transform = `translateY(${(12 * (1 - k)).toFixed(1)}px)`;
+        m.style.opacity = String(k);
+      });
+      if (t > SPARK + OPEN + 1300) introDone = true;
+      render();
+      if (!introDone) requestAnimationFrame(frame);
+    }
+    kicker.style.opacity = 0;
+    requestAnimationFrame(frame);
+  }
+
+  let ticking = false;
+  addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { render(); ticking = false; });
+  }, { passive: true });
+
+  // Start the sequence once the page is ready (video or fallback)
+  if (document.readyState === "complete") intro(); else addEventListener("load", intro);
+
+  /* ---------- Reveal on view + count up ---------- */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("in");
+      $$("[data-w]", e.target).forEach(b => b.style.width = b.dataset.w + "%");
+      $$("[data-count]", e.target).forEach(countUp);
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.18 });
+  $$(".fade").forEach(el => io.observe(el));
+
+  function countUp(el) {
+    if (reduce || el.dataset.done) return;
+    el.dataset.done = 1;
+    const end = parseFloat(el.dataset.count), dec = (el.dataset.count.split(".")[1] || "").length;
+    const t0 = performance.now(), dur = 1400;
+    (function step(now) {
+      const k = ease(clamp((now - t0) / dur));
+      el.textContent = (end * k).toFixed(dec);
+      if (k < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  /* ---------- Cursor light ---------- */
+  const glow = $("#glow");
+  if (!reduce && matchMedia("(pointer: fine)").matches) {
+    addEventListener("pointermove", e => {
+      glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      glow.style.opacity = progress() >= 1 ? "1" : "0";
+    }, { passive: true });
+    $$(".card").forEach(c => c.addEventListener("pointermove", e => {
+      const b = c.getBoundingClientRect();
+      c.style.setProperty("--mx", (e.clientX - b.left) + "px");
+      c.style.setProperty("--my", (e.clientY - b.top) + "px");
+    }));
+  }
+
+  /* ---------- Film links: mark placeholders ---------- */
+  $$("[data-film]").forEach(a => {
+    if (a.getAttribute("href") === "#") {
+      a.classList.add("pending");
+      a.querySelector("span").textContent = "Link coming soon";
+      a.setAttribute("aria-disabled", "true");
+    } else {
+      a.target = "_blank"; a.rel = "noopener";
+    }
+  });
+
+  /* ---------- Photo vault ---------- */
+  const gallery = $("#gallery");
+  const label = u => u === "nil" ? "NIL Ready" : "Editorial";
+  PHOTOS.forEach(ph => {
+    const fig = document.createElement("figure");
+    fig.className = "shot fade " + (ph.size || "");
+    fig.style.margin = 0;
+    fig.dataset.use = ph.use;
+    const path = "media/photos/" + ph.file;
+    fig.innerHTML = `
+      <div class="empty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h3l2-3h6l2 3h3v13H4z"/><circle cx="12" cy="13" r="4"/></svg>Photo coming soon</div>
+      <img src="${path}" alt="Kennedy Jeffress, ${ph.title}" loading="lazy">
+      <figcaption class="cap"><div><b>${ph.title}</b></div><span class="badge ${ph.use === "nil" ? "nil" : "ed"}">${label(ph.use)}</span></figcaption>`;
+    const img = fig.querySelector("img");
+    img.addEventListener("error", () => { img.remove(); fig.style.cursor = "default"; fig.dataset.missing = 1; });
+    fig.addEventListener("click", () => {
+      if (fig.dataset.missing) return;
+      $("#lbImg").src = path;
+      $("#lbImg").alt = img.alt;
+      $("#lbTitle").textContent = ph.title;
+      $("#lbUse").textContent = ph.use === "nil" ? "NIL Ready: licensed partner use with a signed agreement" : "Editorial: media and recruiting use only";
+      const dl = $("#lbDownload");
+      dl.href = path;
+      dl.setAttribute("download", "Kennedy_Jeffress_" + ph.file);
+      $("#lightbox").classList.add("open");
+      $("#lbClose").focus();
+    });
+    gallery.appendChild(fig);
+    io.observe(fig);
+  });
+  $$(".filters button").forEach(b => b.addEventListener("click", () => {
+    $$(".filters button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    $$(".shot").forEach(s => s.style.display = (b.dataset.filter === "all" || s.dataset.use === b.dataset.filter) ? "" : "none");
+  }));
+  const closeLb = () => $("#lightbox").classList.remove("open");
+  $("#lbClose").addEventListener("click", closeLb);
+  $("#lightbox").addEventListener("click", e => { if (e.target.id === "lightbox") closeLb(); });
+  addEventListener("keydown", e => { if (e.key === "Escape") closeLb(); });
+
+  /* ---------- NIL form (Netlify Forms, with email fallback) ---------- */
+  const form = $("#nilForm"), status = $("#formStatus");
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const data = new URLSearchParams(new FormData(form)).toString();
+    try {
+      const res = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: data });
+      if (!res.ok) throw new Error(res.status);
+      form.reset();
+      status.textContent = "Thank you. Kennedy's family will be in touch soon.";
+    } catch (err) {
+      const f = new FormData(form);
+      const body = `Name: ${f.get("name")}\nBusiness: ${f.get("business")}\nEmail: ${f.get("email")}\nPhone: ${f.get("phone")}\nOpportunity: ${f.get("type")}\nBudget: ${f.get("budget")}\n\n${f.get("message")}`;
+      location.href = $("#mailFallback").href + "&body=" + encodeURIComponent(body);
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -20,3 +20,7 @@ Open `index.html` in any browser, or turn on GitHub Pages (Settings, Pages, depl
 ## Editing content
 
 All lesson text lives in `assets/lessons.js`. Change a presenter, a stat, or an activity there and refresh the page.
+
+## Player sites
+
+* `kennedy-jeffress/`: cinematic player profile for Kennedy Jeffress #2 with highlight video hero, stats, film, NIL partnership inquiries and a licensed photo vault. See `kennedy-jeffress/README.md` for adding video and photos.
