@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Madi Visuals Dashboard</title>
+<meta name="description" content="Media dashboard for Elevate Her Illumination player sites.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #07070a;
+  --surface: #111118;
+  --surface-2: #1a1a24;
+  --line: #262635;
+  --ink: #f4f3f8;
+  --muted: #a09fb2;
+  --faint: #636277;
+  --accent: #f2c14e;
+  --accent-ink: #1a1405;
+  --accent-soft: rgba(242, 193, 78, .14);
+  --live: #4cd18a;
+  --danger: #ff6b6b;
+  --display: "Anton", "Barlow Condensed", Impact, sans-serif;
+  --cond: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --radius: 14px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--body); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+.hide { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; cursor: pointer; border-radius: 999px; padding: 11px 20px; background: var(--accent); color: var(--accent-ink); font: 700 14px var(--cond); letter-spacing: .14em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn.ghost:hover { border-color: var(--accent); }
+.btn.small { padding: 7px 12px; font-size: 12px; }
+.btn.danger { background: transparent; color: var(--danger); border: 1px solid #4a2530; }
+input, select, textarea { width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+label { display: grid; gap: 6px; font: 600 12px var(--cond); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.brandmark { font-family: var(--display); font-size: 26px; letter-spacing: .02em; text-transform: uppercase; line-height: 1; }
+.brandmark em { font-style: normal; color: var(--accent); }
+.tagline { font: 600 12px var(--cond); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+
+/* Login */
+.login { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 50% 30%, rgba(242,193,78,.12), transparent 50%), var(--bg); }
+.login form { width: min(420px, 100%); display: grid; gap: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 34px; }
+.login .err { color: var(--danger); min-height: 1.4em; margin: 0; }
+
+/* App layout */
+.top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 22px; background: rgba(7,7,10,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.top .l { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.top .r { display: flex; align-items: center; gap: 10px; }
+.layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 62px); }
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } .side { border-right: 0; border-bottom: 1px solid var(--line); } }
+.side { border-right: 1px solid var(--line); padding: 20px 16px; display: grid; align-content: start; gap: 12px; }
+.side h2 { margin: 0 6px; font: 600 12px var(--cond); letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
+.plist { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.plist button { width: 100%; text-align: left; background: none; border: 1px solid transparent; border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+.plist button:hover { background: var(--surface); }
+.plist button[aria-current="true"] { background: var(--surface); border-color: var(--line); box-shadow: inset 3px 0 0 var(--accent); }
+.plist b { display: block; font: 700 17px var(--cond); letter-spacing: .06em; text-transform: uppercase; }
+.plist span { font-size: 13px; color: var(--faint); }
+main { padding: 26px clamp(16px, 3vw, 36px) 80px; min-width: 0; }
+.empty { border: 1px dashed var(--line); border-radius: var(--radius); padding: 50px 24px; text-align: center; color: var(--muted); }
+.empty h3 { color: var(--ink); font: 700 22px var(--cond); letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+
+.phead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 22px; }
+.phead h1 { font-family: var(--display); font-weight: 400; font-size: clamp(38px, 5vw, 60px); line-height: .95; margin: 4px 0 0; text-transform: uppercase; letter-spacing: .02em; }
+.phead .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 18px; }
+.panel h3 { margin: 0 0 14px; font: 700 18px var(--cond); letter-spacing: .12em; text-transform: uppercase; }
+.check { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+@media (max-width: 1100px) { .check { grid-template-columns: repeat(2, 1fr); } }
+.check div { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; gap: 10px; align-items: center; font-size: 15px; }
+.check i { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 13px; border: 1px solid var(--line); color: var(--faint); }
+.check .ok i { background: var(--live); border-color: var(--live); color: #04140b; }
+.check small { display: block; color: var(--faint); font-size: 12px; }
+
+.up { display: grid; grid-template-columns: 1fr 260px; gap: 18px; }
+@media (max-width: 900px) { .up { grid-template-columns: 1fr; } }
+.drop { border: 2px dashed var(--line); border-radius: var(--radius); padding: 36px 20px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
+.drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+.drop b { display: block; font: 700 22px var(--cond); letter-spacing: .08em; text-transform: uppercase; }
+.drop span { color: var(--muted); font-size: 14px; }
+.opts { display: grid; gap: 14px; align-content: start; }
+.tick { display: flex; align-items: center; gap: 10px; text-transform: none; letter-spacing: 0; font: 500 15px var(--body); color: var(--ink); }
+.tick input { width: 18px; height: 18px; accent-color: var(--accent); }
+.queue { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+.queue li { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 14px; }
+.queue .bar { grid-column: 1 / -1; height: 5px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.queue .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+.queue .done .bar i { background: var(--live); }
+.queue .bad { color: var(--danger); }
+
+.group { margin-top: 30px; }
+.group header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 14px; margin-bottom: 12px; }
+.group h3 { margin: 0; font: 700 20px var(--cond); letter-spacing: .1em; text-transform: uppercase; }
+.group header p { margin: 0; color: var(--faint); font-size: 14px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.asset { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+.asset.live { border-color: #22523a; }
+.thumb { position: relative; aspect-ratio: 4 / 3; background: #000; display: grid; place-items: center; }
+.thumb img, .thumb video { width: 100%; height: 100%; object-fit: cover; }
+.thumb .doc { font: 700 20px var(--cond); letter-spacing: .12em; color: var(--muted); }
+.status { position: absolute; left: 10px; top: 10px; font: 700 11px var(--cond); letter-spacing: .16em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; background: rgba(0,0,0,.7); color: var(--muted); }
+.asset.live .status { background: var(--live); color: #04140b; }
+.asset .body { padding: 12px; display: grid; gap: 10px; }
+.asset .body input, .asset .body select { padding: 8px 10px; font-size: 14px; }
+.asset .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.asset .meta { font-size: 12px; color: var(--faint); }
+.switch { position: relative; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font: 600 12px var(--cond); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.switch input { position: absolute; opacity: 0; }
+.switch i { width: 38px; height: 22px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); position: relative; transition: background .2s; }
+.switch i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--muted); transition: transform .2s, background .2s; }
+.switch input:checked + i { background: #1d4d33; border-color: var(--live); }
+.switch input:checked + i::after { transform: translateX(16px); background: var(--live); }
+.switch input:focus-visible + i { box-shadow: 0 0 0 3px var(--accent-soft); }
+.iconbtns { display: flex; gap: 6px; }
+
+dialog { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--ink); padding: 28px; width: min(520px, calc(100vw - 32px)); }
+dialog::backdrop { background: rgba(0,0,0,.7); }
+dialog form { display: grid; gap: 14px; }
+dialog h3 { margin: 0; font: 700 22px var(--cond); letter-spacing: .08em; text-transform: uppercase; }
+dialog .hint { color: var(--faint); font-size: 13px; text-transform: none; letter-spacing: 0; font-family: var(--body); font-weight: 400; }
+.toast { position: fixed; right: 20px; bottom: 20px; z-index: 50; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+.toast.bad { border-color: #4a2530; color: var(--danger); }
+</style>
+</head>
+<body>
+
+<!-- ============ Sign in ============ -->
+<section class="login" id="loginView">
+  <form id="loginForm">
+    <div>
+      <div class="brandmark">Madi <em>Visuals</em></div>
+      <div class="tagline" style="margin-top:8px">Media dashboard for Elevate Her Illumination sites</div>
+    </div>
+    <label>Dashboard password<input type="password" name="password" required autocomplete="current-password" autofocus></label>
+    <button class="btn" type="submit">Sign in</button>
+    <p class="err" id="loginErr" role="alert"></p>
+  </form>
+</section>
+
+<!-- ============ App ============ -->
+<div id="appView" class="hide">
+  <header class="top">
+    <div class="l">
+      <div class="brandmark">Madi <em>Visuals</em></div>
+      <span class="tagline">× Elevate Her Illumination</span>
+    </div>
+    <div class="r">
+      <a class="btn ghost small" href="https://elevateherhoopsreport.netlify.app" target="_blank" rel="noopener">Elevate Her site</a>
+      <button class="btn ghost small" id="signOut" type="button">Sign out</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="side">
+      <h2>Player sites</h2>
+      <ul class="plist" id="plist"></ul>
+      <button class="btn ghost" id="addPlayer" type="button">Add player site</button>
+    </aside>
+
+    <main id="main">
+      <div class="empty" id="noPlayer">
+        <h3>Pick a player site</h3>
+        Choose a player on the left, or add a new Illumination site to start uploading.
+      </div>
+
+      <div id="playerView" class="hide">
+        <div class="phead">
+          <div>
+            <div class="tagline" id="pMeta"></div>
+            <h1 id="pName"></h1>
+          </div>
+          <div class="acts">
+            <a class="btn ghost small" id="pSite" target="_blank" rel="noopener">Open live site</a>
+            <a class="btn ghost small" id="pFeed" target="_blank" rel="noopener">Media feed</a>
+            <button class="btn ghost small" id="pEdit" type="button">Edit details</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Site readiness</h3>
+          <div class="check" id="checklist"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Upload</h3>
+          <div class="up">
+            <div>
+              <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose files to upload">
+                <b>Drop files here</b>
+                <span>or click to choose. JPG, PNG, WEBP, MP4, MOV, WEBM and PDF. Large videos are fine.</span>
+              </div>
+              <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/avif,video/mp4,video/webm,video/quicktime,application/pdf" class="hide">
+              <ul class="queue" id="queue"></ul>
+            </div>
+            <div class="opts">
+              <label>Upload as
+                <select id="upRole">
+                  <option value="">Decide for me</option>
+                </select>
+              </label>
+              <label class="tick"><input type="checkbox" id="upLive" checked> Make live on the site right away</label>
+              <p class="tagline" style="margin:0;line-height:1.6;letter-spacing:.08em;text-transform:none;font-family:var(--body);font-weight:400;font-size:13px">Decide for me puts videos in Highlight reel, PDFs in Marketing kit and photos in Photo vault Editorial. You can move anything after it uploads.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="groups"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<dialog id="playerDialog">
+  <form method="dialog" id="playerForm">
+    <h3 id="playerDialogTitle">Add player site</h3>
+    <label>Player name<input name="name" required placeholder="Kennedy Jeffress"></label>
+    <label>Slug <span class="hint">Lowercase, used in the site config as media.slug</span><input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="kennedy-jeffress"></label>
+    <label>Live site address<input name="siteUrl" type="url" placeholder="https://kennedyjeffress.netlify.app"></label>
+    <label>School<input name="school" placeholder="Middleburg High School"></label>
+    <label>Class<input name="classYear" placeholder="2029"></label>
+    <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
+      <button class="btn danger small" type="button" id="deletePlayer">Delete site media</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn ghost" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn" value="save">Save</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function () {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const ROLES = [
+    { id: "hero", label: "Opening video", help: "Plays inside the circle reveal at the top of the site. Muted loop, landscape, 10 to 30 seconds. Upload an MP4, and a WEBM too if you have one." },
+    { id: "film", label: "Highlight reel", help: "The full reel in the Watch Her Play section, with sound." },
+    { id: "poster", label: "Poster still", help: "Shows while the video loads and as the preview image when the link is shared." },
+    { id: "portrait", label: "Portrait", help: "Profile section photo. Vertical, 4 by 5 works best." },
+    { id: "nil", label: "Photo vault: NIL Ready", help: "No school names, logos, uniforms or gym. Partners can license these." },
+    { id: "editorial", label: "Photo vault: Editorial", help: "Game and uniform photos for media and recruiting." },
+    { id: "kit", label: "Marketing kit", help: "Flyers, social graphics and PDFs. Available in the media feed, not shown on the site." }
+  ];
+  const roleLabel = id => ROLES.find(r => r.id === id)?.label || id;
+  $("#upRole").insertAdjacentHTML("beforeend", ROLES.map(r => `<option value="${r.id}">${esc(r.label)}</option>`).join(""));
+
+  let token = null;
+  try { token = localStorage.getItem("mv_token"); } catch (e) {}
+  let players = [], current = null, assets = [];
+
+  function toast(msg, bad) {
+    const t = document.createElement("div");
+    t.className = "toast" + (bad ? " bad" : "");
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), bad ? 6000 : 3000);
+  }
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path, { ...opts, headers: { ...(opts.headers || {}), Authorization: `Bearer ${token}` } });
+    if (res.status === 401) { signOut(); throw new Error("Please sign in again"); }
+    const data = res.status === 204 ? {} : await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+    return data;
+  }
+  const send = (path, method, body) => api(path, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+
+  /* ---------- Sign in ---------- */
+  $("#loginForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    $("#loginErr").textContent = "";
+    const res = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: e.target.password.value }) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { $("#loginErr").textContent = data.error || "Could not sign in"; return; }
+    token = data.token;
+    try { localStorage.setItem("mv_token", token); } catch (e) {}
+    e.target.reset();
+    start();
+  });
+  function signOut() {
+    token = null;
+    try { localStorage.removeItem("mv_token"); } catch (e) {}
+    $("#appView").classList.add("hide");
+    $("#loginView").classList.remove("hide");
+  }
+  $("#signOut").addEventListener("click", signOut);
+
+  async function start() {
+    $("#loginView").classList.add("hide");
+    $("#appView").classList.remove("hide");
+    await loadPlayers();
+    const wanted = new URLSearchParams(location.search).get("player") || (() => { try { return localStorage.getItem("mv_player"); } catch (e) { return null; } })();
+    const p = players.find(x => x.slug === wanted) || (players.length === 1 ? players[0] : null);
+    if (p) openPlayer(p.slug);
+  }
+
+  /* ---------- Players ---------- */
+  async function loadPlayers() {
+    players = (await api("/api/players")).players;
+    $("#plist").innerHTML = players.length ? players.map(p => `
+      <li><button type="button" data-slug="${esc(p.slug)}" aria-current="${current?.slug === p.slug}">
+        <b>${esc(p.name)}</b><span>${esc([p.school, p.classYear && "Class of " + p.classYear].filter(Boolean).join(" · ") || p.slug)}</span>
+      </button></li>`).join("") : `<li class="tagline" style="padding:6px">No player sites yet</li>`;
+  }
+  $("#plist").addEventListener("click", e => { const b = e.target.closest("button[data-slug]"); if (b) openPlayer(b.dataset.slug); });
+
+  async function openPlayer(slug) {
+    current = players.find(p => p.slug === slug);
+    if (!current) return;
+    try { localStorage.setItem("mv_player", slug); } catch (e) {}
+    $$("#plist button").forEach(b => b.setAttribute("aria-current", String(b.dataset.slug === slug)));
+    $("#noPlayer").classList.add("hide");
+    $("#playerView").classList.remove("hide");
+    $("#pName").textContent = current.name;
+    $("#pMeta").textContent = [current.school, current.classYear && "Class of " + current.classYear, "slug: " + current.slug].filter(Boolean).join(" · ");
+    const site = $("#pSite");
+    site.classList.toggle("hide", !current.siteUrl);
+    site.href = current.siteUrl || "#";
+    $("#pFeed").href = `/api/sites/${current.slug}`;
+    await loadAssets();
+  }
+
+  const dlg = $("#playerDialog"), pf = $("#playerForm");
+  function editPlayer(p) {
+    pf.reset();
+    $("#playerDialogTitle").textContent = p ? "Edit player site" : "Add player site";
+    $("#deletePlayer").classList.toggle("hide", !p);
+    if (p) { for (const k of ["name", "slug", "siteUrl", "school", "classYear"]) pf[k].value = p[k] || ""; }
+    pf.slug.readOnly = !!p;
+    dlg.showModal();
+  }
+  $("#addPlayer").addEventListener("click", () => editPlayer(null));
+  $("#pEdit").addEventListener("click", () => editPlayer(current));
+  pf.name.addEventListener("input", () => { if (!pf.slug.readOnly) pf.slug.value = pf.name.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); });
+  dlg.addEventListener("close", async () => {
+    if (dlg.returnValue !== "save") return;
+    try {
+      const { player } = await send("/api/players", "POST", Object.fromEntries(new FormData(pf)));
+      await loadPlayers();
+      openPlayer(player.slug);
+      toast("Saved");
+    } catch (err) { toast(err.message, true); }
+  });
+  $("#deletePlayer").addEventListener("click", async () => {
+    if (!current || !confirm(`Delete ${current.name} and every file uploaded for this site? This cannot be undone.`)) return;
+    dlg.close();
+    try {
+      await api(`/api/players?slug=${encodeURIComponent(current.slug)}`, { method: "DELETE" });
+      current = null;
+      $("#playerView").classList.add("hide");
+      $("#noPlayer").classList.remove("hide");
+      await loadPlayers();
+      toast("Player site removed");
+    } catch (err) { toast(err.message, true); }
+  });
+
+  /* ---------- Assets ---------- */
+  async function loadAssets() {
+    assets = (await api(`/api/assets?slug=${encodeURIComponent(current.slug)}`)).assets;
+    renderAssets();
+  }
+
+  const fileUrl = a => `/media/${a.id}`;
+  const thumbUrl = a => `/.netlify/images?url=${encodeURIComponent(fileUrl(a))}&w=480&q=70`;
+  const sizeText = n => n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB";
+
+  function renderChecklist() {
+    const live = assets.filter(a => a.live && a.status === "ready");
+    const count = r => live.filter(a => a.role === r).length;
+    const vault = count("nil") + count("editorial");
+    const items = [
+      ["Opening video", count("hero") > 0, "Top of the site"],
+      ["Poster still", count("poster") > 0, "Loading and share image"],
+      ["Portrait", count("portrait") > 0, "Profile section"],
+      ["Photo vault", vault >= 6 && count("nil") >= 3, `${vault} live, ${count("nil")} NIL Ready (aim for 6 and 3)`],
+      ["Marketing kit", count("kit") > 0, `${count("kit")} files`]
+    ];
+    $("#checklist").innerHTML = items.map(([t, ok, s]) => `<div class="${ok ? "ok" : ""}"><i>${ok ? "✓" : ""}</i><span>${esc(t)}<small>${esc(s)}</small></span></div>`).join("");
+  }
+
+  function preview(a) {
+    if (a.status !== "ready") return `<div class="doc">Incomplete</div>`;
+    if (a.type.startsWith("image/")) return `<img src="${thumbUrl(a)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${fileUrl(a)}'">`;
+    if (a.type.startsWith("video/")) return `<video src="${fileUrl(a)}#t=0.5" preload="metadata" muted playsinline></video>`;
+    return `<div class="doc">PDF</div>`;
+  }
+
+  function renderAssets() {
+    renderChecklist();
+    $("#groups").innerHTML = ROLES.map(r => {
+      const list = assets.filter(a => a.role === r.id);
+      return `<section class="group"><header><h3>${esc(r.label)} <span class="tagline">(${list.length})</span></h3><p>${esc(r.help)}</p></header>
+        ${list.length ? `<div class="grid">${list.map(card).join("")}</div>` : `<div class="empty" style="padding:22px">Nothing here yet</div>`}</section>`;
+    }).join("");
+  }
+
+  function card(a) {
+    const photo = a.role === "nil" || a.role === "editorial";
+    return `<article class="asset${a.live && a.status === "ready" ? " live" : ""}" data-id="${esc(a.id)}">
+      <div class="thumb">${preview(a)}<span class="status">${a.status !== "ready" ? "Upload failed" : a.live ? "Live" : "Draft"}</span></div>
+      <div class="body">
+        <input data-f="title" value="${esc(a.title)}" aria-label="Title">
+        <select data-f="role" aria-label="Where it goes">${ROLES.map(r => `<option value="${r.id}"${r.id === a.role ? " selected" : ""}>${esc(r.label)}</option>`).join("")}</select>
+        ${photo ? `<select data-f="layout" aria-label="Grid size"><option value=""${a.layout === "" ? " selected" : ""}>Standard tile</option><option value="tall"${a.layout === "tall" ? " selected" : ""}>Tall tile</option><option value="wide"${a.layout === "wide" ? " selected" : ""}>Wide tile</option></select>` : ""}
+        <div class="row">
+          <label class="switch"><input type="checkbox" data-f="live"${a.live ? " checked" : ""}${a.status !== "ready" ? " disabled" : ""}><i></i>Live</label>
+          <div class="iconbtns">
+            ${a.status === "ready" ? `<a class="btn ghost small" href="${fileUrl(a)}?download=1">Save</a>` : ""}
+            <button class="btn danger small" type="button" data-act="delete">Delete</button>
+          </div>
+        </div>
+        <div class="meta">${esc(a.name)} · ${sizeText(a.size)}</div>
+      </div>
+    </article>`;
+  }
+
+  async function patch(id, fields) {
+    try {
+      const { asset } = await send("/api/assets", "PATCH", { slug: current.slug, id, ...fields });
+      assets = assets.map(a => a.id === id ? asset : a);
+      renderAssets();
+    } catch (err) { toast(err.message, true); loadAssets(); }
+  }
+  $("#groups").addEventListener("change", e => {
+    const el = e.target.closest("[data-f]"), card = e.target.closest(".asset");
+    if (!el || !card) return;
+    const f = el.dataset.f;
+    patch(card.dataset.id, { [f]: f === "live" ? el.checked : el.value });
+  });
+  $("#groups").addEventListener("click", async e => {
+    const b = e.target.closest('[data-act="delete"]');
+    if (!b) return;
+    const id = b.closest(".asset").dataset.id;
+    const a = assets.find(x => x.id === id);
+    if (!confirm(`Delete ${a.title}? It will disappear from the live site.`)) return;
+    try {
+      await api(`/api/assets?slug=${encodeURIComponent(current.slug)}&id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      assets = assets.filter(x => x.id !== id);
+      renderAssets();
+    } catch (err) { toast(err.message, true); }
+  });
+
+  /* ---------- Uploads ---------- */
+  const drop = $("#drop"), input = $("#fileInput");
+  drop.addEventListener("click", () => input.click());
+  drop.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.click(); } });
+  drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("over"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+  drop.addEventListener("drop", e => { e.preventDefault(); drop.classList.remove("over"); uploadAll([...e.dataTransfer.files]); });
+  input.addEventListener("change", () => { uploadAll([...input.files]); input.value = ""; });
+
+  async function uploadAll(files) {
+    if (!current || !files.length) return;
+    const slug = current.slug, role = $("#upRole").value, live = $("#upLive").checked;
+    for (const f of files) await uploadOne(f, slug, role, live);
+    if (current?.slug === slug) loadAssets();
+  }
+
+  async function uploadOne(file, slug, role, live) {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${esc(file.name)}</span><span class="pct">0%</span><div class="bar"><i></i></div>`;
+    $("#queue").prepend(li);
+    const setPct = p => { li.querySelector(".pct").textContent = p + "%"; li.querySelector(".bar i").style.width = p + "%"; };
+    const type = file.type || (/\.mov$/i.test(file.name) ? "video/quicktime" : "");
+    try {
+      const { id, chunkSize, chunks } = await send("/api/upload/start", "POST", { slug, name: file.name, type, size: file.size, role: role || undefined });
+      let next = 0, done = 0;
+      const worker = async () => {
+        while (next < chunks) {
+          const n = next++;
+          const part = file.slice(n * chunkSize, Math.min(file.size, (n + 1) * chunkSize));
+          for (let attempt = 1; ; attempt++) {
+            try {
+              await api(`/api/upload/chunk?slug=${encodeURIComponent(slug)}&id=${id}&n=${n}`, { method: "PUT", headers: { "Content-Type": "application/octet-stream" }, body: part });
+              break;
+            } catch (err) { if (attempt >= 3) throw err; await new Promise(r => setTimeout(r, 1000 * attempt)); }
+          }
+          setPct(Math.round(++done / chunks * 100));
+        }
+      };
+      await Promise.all(Array.from({ length: Math.min(3, chunks) }, worker));
+      await send("/api/upload/finish", "POST", { slug, id });
+      if (live) await send("/api/assets", "PATCH", { slug, id, live: true });
+      li.classList.add("done");
+      li.querySelector(".pct").textContent = live ? "Live" : "Uploaded";
+    } catch (err) {
+      li.querySelector(".pct").textContent = "Failed";
+      li.querySelector(".pct").classList.add("bad");
+      toast(`${file.name}: ${err.message}`, true);
+    }
+  }
+
+  if (token) start().catch(() => signOut());
+})();
+</script>
+</body>
+</html>

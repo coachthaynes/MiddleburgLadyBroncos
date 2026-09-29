@@ -1,0 +1,12 @@
+{
+  "name": "madi-visuals-dashboard",
+  "private": true,
+  "type": "module",
+  "description": "Madi Visuals media dashboard for Elevate Her Illumination player sites",
+  "dependencies": {
+    "@netlify/blobs": "^11.1.1"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^6.0.0"
+  }
+}
