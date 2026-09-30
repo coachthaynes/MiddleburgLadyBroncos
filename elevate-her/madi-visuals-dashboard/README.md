@@ -15,7 +15,9 @@ Media dashboard for Elevate Her Illumination player sites. Live at https://madiv
 
 `GET /api/sites/<slug>` returns the live media for one player (opening video sources, highlight reel, poster, portrait, photo vault, marketing kit). It is the only endpoint open to other sites. Files are served from `/media/<id>` with byte range support so video streams and seeks.
 
-## Settings (Netlify environment variables, functions scope)
+## Settings (Netlify environment variables, functions scope, production context)
+
+Set these as secret variables with the Production deploy context. Netlify does not save secret variables set for all contexts. Redeploy after changing either one.
 
 | Name | Purpose |
 | --- | --- |
