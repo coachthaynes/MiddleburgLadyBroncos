@@ -185,6 +185,7 @@ dialog .hint { color: var(--faint); font-size: 13px; text-transform: none; lette
             <a class="btn ghost small" id="pSite" target="_blank" rel="noopener">Open live site</a>
             <a class="btn ghost small" id="pFeed" target="_blank" rel="noopener">Media feed</a>
             <button class="btn ghost small" id="pEdit" type="button">Edit details</button>
+            <button class="btn small" id="pNotify" type="button">Send To Illumination</button>
           </div>
         </div>
 
@@ -344,6 +345,14 @@ dialog .hint { color: var(--faint); font-size: 13px; text-transform: none; lette
   }
   $("#addPlayer").addEventListener("click", () => editPlayer(null));
   $("#pEdit").addEventListener("click", () => editPlayer(current));
+  $("#pNotify").addEventListener("click", async () => {
+    if (!current) return;
+    if (!confirm(`Send ${current.name}'s design to the Elevate Her coach for review? This does not publish anything, it just puts it in their approval queue.`)) return;
+    try {
+      await send("/api/notify-illumination", "POST", { slug: current.slug });
+      toast("Sent, waiting on the coach's approval");
+    } catch (err) { toast(err.message, true); }
+  });
   pf.name.addEventListener("input", () => { if (!pf.slug.readOnly) pf.slug.value = pf.name.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); });
   dlg.addEventListener("close", async () => {
     if (dlg.returnValue !== "save") return;
