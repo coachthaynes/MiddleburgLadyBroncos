@@ -417,7 +417,7 @@
       }
     });
   }
-  wireForm($("#nilForm"), $("#formStatus"), `Thank you. ${approver} will share your inquiry with ${P.first}'s family and be in touch soon.`, `NIL opportunity for ${fullName}`);
+  wireForm($("#nilForm"), $("#formStatus"), `Thank you. ${approver} will review your inquiry and be in touch soon.`, `NIL opportunity for ${fullName}`);
   wireForm($("#contactForm"), $("#contactStatus"), `Request received. ${approver} will review it and email you directly.`, `Contact request for ${fullName}`);
 
   render();

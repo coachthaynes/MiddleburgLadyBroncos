@@ -23,4 +23,5 @@ All lesson text lives in `assets/lessons.js`. Change a presenter, a stat, or an 
 
 ## Player sites
 
-* `kennedy-jeffress/`: cinematic player profile for Kennedy Jeffress #2 with highlight video hero, stats, film, NIL partnership inquiries and a licensed photo vault. See `kennedy-jeffress/README.md` for adding video and photos.
+* `kennedy-jeffress/` and `aiyana-haynes/`: Elevate Her Illumination player sites. Content lives in each folder's `site.js`; media comes from the Madi Visuals dashboard.
+* `elevate-her/`: the Illumination template, the Madi Visuals dashboard and the scripts for launching new player sites. Start with `elevate-her/README.md`.
