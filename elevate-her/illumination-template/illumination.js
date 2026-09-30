@@ -103,6 +103,8 @@
 
   /* ---------- Hero video availability ---------- */
   const heroVideo = $("#heroVideo"), filmVideo = $("#filmVideo");
+  const setBackdrop = url => { if (url) $("#backdrop").style.setProperty("--poster", `url("${String(url).replace(/"/g, "%22")}")`); };
+  setBackdrop(heroVideo.poster);
   let heroFailed = false;
   const noVideo = () => { heroFailed = true; document.body.classList.add("no-video"); };
   const noFilm = () => { filmVideo.style.display = "none"; $("#filmPh").hidden = false; };
@@ -119,7 +121,7 @@
   setTimeout(() => { if (dead(heroVideo)) noVideo(); if (dead(filmVideo)) noFilm(); }, 2500);
   function setSources(video, list, poster, onFail) {
     video.innerHTML = list.map(s => `<source src="${esc(s.url)}"${s.type ? ` type="${esc(s.type)}"` : ""}>`).join("");
-    if (poster) video.poster = poster;
+    if (poster) { video.poster = poster; if (video === heroVideo) setBackdrop(poster); }
     watchSources(video, onFail);
     video.load();
   }
@@ -380,7 +382,7 @@
         document.body.classList.remove("no-video");
         setSources(heroVideo, data.hero, data.poster, noVideo);
         if (introDone) heroVideo.play().catch(() => {});
-      } else if (data.poster) heroVideo.poster = data.poster;
+      } else if (data.poster) { heroVideo.poster = data.poster; setBackdrop(data.poster); }
       const film = data.film?.length ? data.film : data.hero;
       if (film?.length) {
         filmVideo.style.display = "";
