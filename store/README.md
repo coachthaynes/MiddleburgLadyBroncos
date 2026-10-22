@@ -7,32 +7,37 @@ A made to order store for Lady Bronco Basketball gear. Coaches print each piece,
 | Path | What it is |
 | --- | --- |
 | `public/` | The store website (deploy this folder) |
-| `public/js/config.js` | Prices, sizes, shipping cost, give back percent and the payment link. Edit this file to change the store |
-| `public/js/art.js` | Every design and garment mockup, drawn in code so colors change live |
-| `designs/print/` | Print ready PNG files with see through backgrounds, one per design and color |
-| `designs/design_board.png` | All six designs in all four colors |
-| `designs/mockup_board.png` | All nine garments |
-| `designs/lab.html` | Open in a browser to preview every design and garment |
+| `public/js/config.js` | Product list, prices, sizes, shipping cost, give back percent and the payment link |
+| `public/js/collection.js` | The Bronco Built 26/27 artwork, garments (front and back) and where each print goes |
+| `public/js/art.js` | The horseshoe traced from the official logo, plus the earlier classic designs |
+| `designs/print/` | Print ready PNG files with see through backgrounds, about 300 dpi at print size |
+| `designs/design_board.png` | Every print on its garment color |
+| `designs/mockup_board.png` | Every product, front and back |
+| `designs/collection.html` | Open in a browser to preview every print and product |
 
-## Designs (26/27 season)
+## Bronco Built 26/27 collection
 
-All designs use the horseshoe traced from the official Middleburg logo, each in White, Bronco Red, Black and Heather Gray.
-
-| Design | Style | Notes |
+| Product | Color | Prints (file in `designs/print/`) |
 | --- | --- | --- |
-| Bronco Built | Streetwear | BRONCO BUILT, team saying, #HORSEPOWER, 26/27 |
-| Horsepower Repeat | Streetwear | HORSEPOWER three times with the horseshoe, LADY BRONCOS BASKETBALL 26/27 strip |
-| Varsity Arch | Varsity | Arched LADY BRONCOS, 26 and 27 beside the horseshoe, BASKETBALL |
-| Bronco Badge | Varsity | MIDDLEBURG badge with BRONCO BUILT and the team saying |
-| Minimal Wordmark | Minimal | Horseshoe beside LADY BRONCOS, team saying, BASKETBALL 26/27 |
-| Left Chest Mark | Minimal | Horseshoe with LB 26/27, used on jackets, hats and pants |
+| Signature Tee | Black | Front: `signature.png` |
+| Battle Tested Tee | White | Front: `battletested.png` |
+| Team Tee | Bronco red | Front: `nomercy.png` |
+| Season Tee | White | Left chest: `chest.png`; back: `season.png` |
+| United as One Hoodie | Heather gray | Front: `united.png` |
+| Fear the Herd Hoodie | Black | Left chest: `chest.png`; left sleeve: `sleeveWhite.png`; back: `fearherd.png` |
+| Long Sleeve Warmup | Black with red and white sleeve stripes | Front: `champions.png` |
+| Warmup Jacket | Black with red panels | Left chest: `chest.png` |
+| Basketball Shorts | Black with red and white side stripes | Left leg: `chest.png`; right leg: `seasonMark.png` |
+| Sweatpants | Heather gray | Left leg: `sleeveBlack.png` |
+| Hat | Black | Front: `chest.png` (embroidery); side: `seasonMark.png` |
 
-Team sayings (buyers pick one on designs that show it): No Mercy. All Heart. / United as One. / Battle Tested.
-Change them or the season in `public/js/config.js` (`sayings` and `season`).
+`banner.png` is the Bronco Built wordmark for stickers, banners or the gym.
 
-Buyers can add an optional player name, printed down the left sleeve (on the front hem for practice jerseys).
+Suggested print widths: chest and back prints about 12 inches (Fear the Herd back about 13), left chest and leg marks about 4 inches, sleeve and leg strips about 3 inches wide by 13 inches tall.
 
-Print files are named `design_saying_on_color.png`, for example `built_battletested_on_black.png`.
+Buyers can add an optional player name printed down the right sleeve on tees, the United as One hoodie, the long sleeve warmup and the warmup jacket.
+
+The concept had a Nike swoosh on the warmup jacket. It is left off on purpose: put it on only with written approval from your Nike rep.
 
 ## Orders
 

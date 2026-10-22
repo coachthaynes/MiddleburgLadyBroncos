@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../public/fonts.css">
+<style>body{margin:0;font-family:Oswald,sans-serif;background:#ececee}.grid{display:grid;gap:16px;padding:16px}.cell{background:#fff;border-radius:16px;padding:10px;text-align:center;font-size:18px}.cell svg{display:block;width:100%;height:auto}</style>
+<script src="../public/js/art.js"></script><script src="../public/js/collection.js"></script></head><body>
+<div id="prints" class="grid" style="grid-template-columns:repeat(4,1fr)"></div>
+<div id="products" class="grid" style="grid-template-columns:repeat(4,1fr)"></div>
+<script>
+const C = BroncoCollection;
+const pr = document.getElementById("prints");
+for (const [k, p] of Object.entries(C.PRINTS)) pr.insertAdjacentHTML("beforeend", `<div class="cell" ${k==="banner"?'style="grid-column:span 2"':""}>${C.printSvg(k, 600, p.on)}<div>${p.name}</div></div>`);
+const pd = document.getElementById("products");
+for (const [k, p] of Object.entries(C.PRODUCTS)) {
+  pd.insertAdjacentHTML("beforeend", `<div class="cell">${C.productSvg(k, "front", { name: C.takesName(k) ? "BRONCO" : "" })}<div>${p.name}</div></div>`);
+  if (C.hasBack(k)) pd.insertAdjacentHTML("beforeend", `<div class="cell">${C.productSvg(k, "back")}<div>${p.name} (back)</div></div>`);
+}
+</script></body></html>

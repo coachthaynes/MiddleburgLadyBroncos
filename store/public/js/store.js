@@ -1,23 +1,30 @@
 (function () {
   const S = window.STORE;
-  const A = window.BroncoArt;
   const $ = (q, r = document) => r.querySelector(q);
   const $$ = (q, r = document) => Array.from(r.querySelectorAll(q));
   const money = (n) => "$" + Number(n).toFixed(2).replace(/\.00$/, "");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const CATEGORIES = { All: null, Tees: ["tee", "longsleeve"], "Fleece and jackets": ["crewneck", "hoodie", "jacket"], Warmups: ["warmupjacket", "warmuppants"], "Hats and jerseys": ["hat", "jersey"] };
-  const backDesign = (d) => (d === "built" ? "horsepower" : "built");
+  const C = window.BroncoCollection;
+  const CATEGORIES = { All: null, Tees: "tees", Hoodies: "hoodies", Warmups: "warmups", Bottoms: "bottoms", Hats: "hats" };
   const sizesFor = (p) => p.sizes || [...S.youth, ...S.adult];
+  const art = (key, view, extra = {}) => C.productSvg(key, view, extra);
+  const printsLabel = (key) => {
+    const P = C.PRODUCTS[key];
+    const spots = new Set((P.front || []).map(([, slot]) => slot).concat((P.back || []).map(() => "back")));
+    const words = { chest: "front", leftChest: "left chest", leftSleeve: "sleeve", back: "back", leftLeg: "leg", rightLeg: "leg", front: "front", side: "side" };
+    const list = [...new Set([...spots].map((x) => words[x] || x))];
+    return list.length > 1 ? `${list.slice(0, -1).join(", ")} and ${list[list.length - 1]} prints` : `${list[0]} print`;
+  };
 
   $$(".pct").forEach((el) => { el.textContent = S.giveBackPercent; });
   ["#fundLink", "#fundLink2", "#fundLink3"].forEach((id) => { $(id).href = S.fundraiserUrl; });
   $("#shipCost").textContent = money(S.shipping);
 
   // ---------- hero turntable ----------
-  $("#ttFront").innerHTML = A.mockupSvg("tee", "varsity", "white", { season: S.season });
-  $("#ttBack").innerHTML = A.mockupSvg("tee", "built", "white", { season: S.season });
+  $("#ttFront").innerHTML = art("fearherd", "front");
+  $("#ttBack").innerHTML = art("fearherd", "back");
   let tilt = { x: 0, y: 0 };
   const tt = $("#turntable");
   function spinHero() {
@@ -33,7 +40,7 @@
   // ---------- scroll ring ----------
   const ring = $("#ring");
   const step = 360 / S.products.length;
-  ring.innerHTML = S.products.map((p, i) => `<div class="ring-item" data-i="${i}"><div class="glass">${A.mockupSvg(p.garment, p.design, p.colorway, { season: S.season })}</div></div>`).join("");
+  ring.innerHTML = S.products.map((p, i) => `<div class="ring-item" data-i="${i}"><div class="glass">${art(p.key, "front")}</div></div>`).join("");
   function layoutRing() {
     const w = ring.offsetWidth;
     const radius = Math.round(w / (2 * Math.tan(Math.PI / S.products.length)) + w * 0.18);
@@ -71,12 +78,12 @@
   });
 
   function renderProducts() {
-    const list = S.products.filter((p) => !CATEGORIES[filter] || CATEGORIES[filter].includes(p.key));
+    const list = S.products.filter((p) => !CATEGORIES[filter] || CATEGORIES[filter] === p.cat);
     $("#products").innerHTML = list.map((p) => `
       <button class="glass product" data-key="${p.key}">
-        <div class="pv">${A.mockupSvg(p.garment, p.design, p.colorway, { season: S.season })}</div>
+        <div class="pv">${art(p.key, "front")}</div>
         <h3>${esc(p.name)}</h3>
-        <div class="row"><span class="price">${money(p.price)}</span><span class="dots">${Object.values(A.COLORWAYS).map((c) => `<i style="background:${c.garment}"></i>`).join("")}</span></div>
+        <div class="row"><span class="price">${money(p.price)}</span><span class="tag">${esc(printsLabel(p.key))}</span></div>
       </button>`).join("");
   }
   $("#products").addEventListener("click", (e) => {
@@ -97,32 +104,26 @@
   });
 
   // ---------- product sheet ----------
-  const pm = { p: null, design: "", colorway: "", size: "", saying: S.sayings[0], qty: 1, flipped: false, spin: 0 };
+  const pm = { p: null, size: "", qty: 1, flipped: false, spin: 0 };
   const cleanName = (v) => String(v || "").replace(/[^A-Za-z .\'-]/g, "").slice(0, 14).trim();
-  const artOpts = (extra = {}) => ({ season: S.season, saying: pm.saying, name: cleanName($("#pmPlayer").value), ...extra });
   function drawSheet() {
-    const num = $("#pmNumber").value.replace(/\D/g, "").slice(0, 2) || "00";
-    $("#pmFront").innerHTML = A.mockupSvg(pm.p.garment, pm.design, pm.colorway, artOpts({ number: num }));
-    $("#pmBack").innerHTML = A.mockupSvg(pm.p.garment, pm.p.number ? pm.design : backDesign(pm.design), pm.colorway, artOpts({ number: num, name: "" }));
-    const sayable = !pm.p.number && A.DESIGNS[pm.design].usesSaying;
-    $("#pmSayingWrap").classList.toggle("hidden", !sayable);
-    $("#pmSayings").innerHTML = S.sayings.map((t) => `<button data-y="${esc(t)}" class="${t === pm.saying ? "on" : ""}">${esc(t)}</button>`).join("");
-    $("#pmNameWrap").classList.toggle("hidden", !A.GARMENTS[pm.p.garment].nameSlot);
-    $("#pmNameHint").textContent = pm.p.number ? "Optional, printed on the front hem" : "Optional, printed on the sleeve";
-    $("#pmDesigns").innerHTML = pm.p.number ? "" : Object.entries(A.DESIGNS).map(([k, d]) => `<button data-d="${k}" class="${k === pm.design ? "on" : ""}">${d.name}</button>`).join("");
-    $("#pmDesigns").parentElement.classList.toggle("hidden", !!pm.p.number);
-    $("#pmColors").innerHTML = Object.entries(A.COLORWAYS).map(([k, c]) => `<button data-c="${k}" class="${k === pm.colorway ? "on" : ""}" style="background:${c.garment}" aria-label="${c.name}" title="${c.name}"></button>`).join("");
+    const key = pm.p.key;
+    const player = C.takesName(key) ? cleanName($("#pmPlayer").value) : "";
+    $("#pmFront").innerHTML = art(key, "front", { name: player });
+    $("#pmBack").innerHTML = art(key, "back");
+    $("#pmNameWrap").classList.toggle("hidden", !C.takesName(key));
     $("#pmSizes").innerHTML = sizesFor(pm.p).map((s) => `<button data-s="${s}" class="${s === pm.size ? "on" : ""}">${s}</button>`).join("");
     $("#pmQty").textContent = pm.qty;
     $("#pmPrice").textContent = money(pm.p.price);
     $("#pmCard").style.transform = `rotateY(${pm.spin + (pm.flipped ? 180 : 0)}deg)`;
   }
   function openProduct(p) {
-    Object.assign(pm, { p, design: p.design, colorway: p.colorway, size: p.sizes ? p.sizes[0] : "", saying: S.sayings[0], qty: 1, flipped: false, spin: 0 });
+    Object.assign(pm, { p, size: p.sizes ? p.sizes[0] : "", qty: 1, flipped: false, spin: 0 });
     $("#pmPlayer").value = "";
     $("#pmName").textContent = p.name;
     $("#pmBlurb").textContent = p.blurb;
-    $("#pmNumberWrap").classList.toggle("hidden", !p.number);
+    $("#pmPrints").textContent = printsLabel(p.key);
+    $("#pmFlip").textContent = C.hasBack(p.key) ? "See the back" : "Turn around";
     $("#pmErr").textContent = "";
     drawSheet();
     $("#productModal").classList.add("open");
@@ -134,14 +135,9 @@
   }
   $("#productModal").addEventListener("click", (e) => {
     if (e.target.id === "productModal" || e.target.closest("[data-close]")) return closeProduct();
-    const d = e.target.closest("[data-d]"), c = e.target.closest("[data-c]"), s = e.target.closest("[data-s]"), y = e.target.closest("[data-y]");
-    if (y) { pm.saying = y.dataset.y; drawSheet(); }
-    if (d) pm.design = d.dataset.d;
-    if (c) pm.colorway = c.dataset.c;
-    if (s) pm.size = s.dataset.s;
-    if (d || c || s) { $("#pmErr").textContent = ""; drawSheet(); }
+    const s = e.target.closest("[data-s]");
+    if (s) { pm.size = s.dataset.s; $("#pmErr").textContent = ""; drawSheet(); }
   });
-  $("#pmNumber").addEventListener("input", drawSheet);
   $("#pmPlayer").addEventListener("input", drawSheet);
   $("#pmFlip").addEventListener("click", () => { pm.flipped = !pm.flipped; drawSheet(); });
   $("#qMinus").addEventListener("click", () => { pm.qty = Math.max(1, pm.qty - 1); drawSheet(); });
@@ -166,13 +162,10 @@
   $("#pmAdd").addEventListener("click", () => {
     if (!pm.size) { $("#pmErr").textContent = "Please pick a size."; return; }
     const item = {
-      key: pm.p.key, name: pm.p.name, price: pm.p.price, garment: pm.p.garment,
-      design: pm.design, colorway: pm.colorway, size: pm.size, qty: pm.qty,
-      number: pm.p.number ? ($("#pmNumber").value.replace(/\D/g, "").slice(0, 2) || "00") : "",
-      saying: !pm.p.number && A.DESIGNS[pm.design].usesSaying ? pm.saying : "",
-      name: A.GARMENTS[pm.p.garment].nameSlot ? cleanName($("#pmPlayer").value) : "",
+      key: pm.p.key, title: pm.p.name, price: pm.p.price, size: pm.size, qty: pm.qty,
+      player: C.takesName(pm.p.key) ? cleanName($("#pmPlayer").value) : "",
     };
-    const same = cart.find((i) => i.key === item.key && i.design === item.design && i.colorway === item.colorway && i.size === item.size && i.number === item.number && i.saying === item.saying && i.name === item.name);
+    const same = cart.find((i) => i.key === item.key && i.size === item.size && i.player === item.player);
     if (same) same.qty = Math.min(20, same.qty + item.qty); else cart.push(item);
     saveCart();
     closeProduct();
@@ -182,13 +175,13 @@
   // ---------- cart ----------
   let cart = [];
   try { cart = JSON.parse(localStorage.getItem("lb_cart") || "[]"); } catch { cart = []; }
-  // Drop items saved before the designs were renamed.
-  cart = Array.isArray(cart) ? cart.filter((i) => i && A.DESIGNS[i.design] && A.COLORWAYS[i.colorway]) : [];
+  // Drop items saved from older versions of the store.
+  cart = Array.isArray(cart) ? cart.filter((i) => i && C.PRODUCTS[i.key] && i.title && S.products.some((p) => p.key === i.key)) : [];
   function saveCart() {
     try { localStorage.setItem("lb_cart", JSON.stringify(cart)); } catch { /* private mode */ }
     renderCart();
   }
-  const describe = (i) => `${A.DESIGNS[i.design].name}${i.saying ? ` (${i.saying})` : ""}, ${A.COLORWAYS[i.colorway].name}, size ${i.size}${i.number ? `, #${i.number}` : ""}${i.name ? `, name ${i.name}` : ""}`;
+  const describe = (i) => `size ${i.size}${i.player ? `, sleeve name ${i.player}` : ""}`;
   function totals() {
     const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
     const ship = cart.length && $('#checkout [name="delivery"]:checked')?.value === "ship" ? S.shipping : 0;
@@ -204,8 +197,8 @@
     }
     $("#cartItems").innerHTML = cart.map((i, n) => `
       <div class="line">
-        <div class="pv">${A.mockupSvg(i.garment, i.design, i.colorway, { number: i.number || "23", saying: i.saying, season: S.season, name: i.name })}</div>
-        <div><b>${esc(i.name)}</b><small>${esc(describe(i))}</small><small>Qty ${i.qty} · ${money(i.price * i.qty)}</small></div>
+        <div class="pv">${art(i.key, "front", { name: i.player })}</div>
+        <div><b>${esc(i.title)}</b><small>${esc(describe(i))}</small><small>Qty ${i.qty} · ${money(i.price * i.qty)}</small></div>
         <button class="rm" data-rm="${n}">Remove</button>
       </div>`).join("");
     const t = totals();
@@ -242,7 +235,7 @@
       "form-name": "orders",
       name: f.name.value, email: f.email.value, phone: f.phone.value, player: f.player.value,
       delivery: f.delivery.value, address: f.address.value,
-      items: cart.map((i) => `${i.qty} x ${i.name} (${describe(i)}) ${money(i.price * i.qty)}`).join("\n"),
+      items: cart.map((i) => `${i.qty} x ${i.title} (${describe(i)}) ${money(i.price * i.qty)}`).join("\n"),
       subtotal: money(t.subtotal), shipping: money(t.ship), total: money(t.total), giveback: money(t.give),
     });
     const btn = $("#placeOrder");
