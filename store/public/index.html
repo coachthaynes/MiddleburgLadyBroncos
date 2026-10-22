@@ -59,7 +59,7 @@
     <div class="ring-sticky">
       <div class="wrap ring-head">
         <span class="eyebrow">The collection</span>
-        <h2>Bronco Built. Eleven pieces.</h2>
+        <img class="ring-banner" src="/img/products/banner.jpg" alt="Bronco Built. Girls Basketball 26/27">
         <p class="muted" id="ringName">Keep scrolling to spin the collection.</p>
       </div>
       <div class="ring-stage"><div class="ring" id="ring"></div></div>
@@ -97,7 +97,8 @@
     <div class="pm-grid">
       <div class="pm-view">
         <div class="pm-stage" id="pmStage"><div class="pm-card" id="pmCard"><div class="face front" id="pmFront"></div><div class="face back" id="pmBack"></div></div></div>
-        <div class="btn-row" style="justify-content:center"><button class="btn btn-glass btn-small" id="pmFlip">Turn around</button></div>
+        <div class="thumbs" id="pmThumbs"></div>
+        <div class="btn-row" style="justify-content:center"><button class="btn btn-glass btn-small" id="pmFlip">See the back</button></div>
       </div>
       <div class="pm-info">
         <span class="eyebrow">Lady Bronco Basketball</span>
@@ -106,7 +107,7 @@
         <p class="muted" id="pmBlurb"></p>
         <span class="pill" id="pmPrints"></span>
         <div class="opt"><span class="opt-label">Size</span><div class="chips" id="pmSizes"></div></div>
-        <div class="opt hidden" id="pmNameWrap"><label class="field">Player name <small id="pmNameHint">Optional, printed on the sleeve</small><input type="text" id="pmPlayer" maxlength="14" autocomplete="off" placeholder="Last name"></label></div>
+        <div class="opt hidden" id="pmNameWrap"><label class="field">Player name <small id="pmNameHint">Optional, printed down the sleeve</small><input type="text" id="pmPlayer" maxlength="14" autocomplete="off" placeholder="Last name"></label></div>
         <div class="opt"><span class="opt-label">Quantity</span><div class="qty"><button id="qMinus" aria-label="Less">−</button><span id="pmQty">1</span><button id="qPlus" aria-label="More">+</button></div></div>
         <p class="error" id="pmErr"></p>
         <button class="btn btn-primary btn-big" id="pmAdd" style="width:100%">Add to cart</button>
@@ -149,8 +150,6 @@
 </form>
 
 <script src="/js/config.js"></script>
-<script src="/js/art.js"></script>
-<script src="/js/collection.js"></script>
 <script src="/js/store.js"></script>
 </body>
 </html>

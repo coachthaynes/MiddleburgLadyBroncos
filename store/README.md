@@ -7,6 +7,7 @@ A made to order store for Lady Bronco Basketball gear. Coaches print each piece,
 | Path | What it is |
 | --- | --- |
 | `public/` | The store website (deploy this folder) |
+| `public/img/products/` | Product photos cropped from the coach's concept board (the Nike swoosh on the warmup jacket is removed) |
 | `public/js/config.js` | Product list, prices, sizes, shipping cost, give back percent and the payment link |
 | `public/js/collection.js` | The Bronco Built 26/27 artwork, garments (front and back) and where each print goes |
 | `public/js/art.js` | The horseshoe traced from the official logo, plus the earlier classic designs |

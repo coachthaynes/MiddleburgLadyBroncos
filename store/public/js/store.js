@@ -6,25 +6,19 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const C = window.BroncoCollection;
+  const IMG = "/img/products/";
+  const photo = (file, alt = "") => `<img src="${IMG}${file}" alt="${esc(alt)}" loading="lazy" draggable="false">`;
   const CATEGORIES = { All: null, Tees: "tees", Hoodies: "hoodies", Warmups: "warmups", Bottoms: "bottoms", Hats: "hats" };
   const sizesFor = (p) => p.sizes || [...S.youth, ...S.adult];
-  const art = (key, view, extra = {}) => C.productSvg(key, view, extra);
-  const printsLabel = (key) => {
-    const P = C.PRODUCTS[key];
-    const spots = new Set((P.front || []).map(([, slot]) => slot).concat((P.back || []).map(() => "back")));
-    const words = { chest: "front", leftChest: "left chest", leftSleeve: "sleeve", back: "back", leftLeg: "leg", rightLeg: "leg", front: "front", side: "side" };
-    const list = [...new Set([...spots].map((x) => words[x] || x))];
-    return list.length > 1 ? `${list.slice(0, -1).join(", ")} and ${list[list.length - 1]} prints` : `${list[0]} print`;
-  };
+  const byKey = (k) => S.products.find((p) => p.key === k);
 
   $$(".pct").forEach((el) => { el.textContent = S.giveBackPercent; });
   ["#fundLink", "#fundLink2", "#fundLink3"].forEach((id) => { $(id).href = S.fundraiserUrl; });
   $("#shipCost").textContent = money(S.shipping);
 
   // ---------- hero turntable ----------
-  $("#ttFront").innerHTML = art("fearherd", "front");
-  $("#ttBack").innerHTML = art("fearherd", "back");
+  $("#ttFront").innerHTML = photo("fearherd.jpg", "Fear the Herd hoodie front");
+  $("#ttBack").innerHTML = photo("fearherd_back.jpg", "Fear the Herd hoodie back");
   let tilt = { x: 0, y: 0 };
   const tt = $("#turntable");
   function spinHero() {
@@ -40,7 +34,7 @@
   // ---------- scroll ring ----------
   const ring = $("#ring");
   const step = 360 / S.products.length;
-  ring.innerHTML = S.products.map((p, i) => `<div class="ring-item" data-i="${i}"><div class="glass">${art(p.key, "front")}</div></div>`).join("");
+  ring.innerHTML = S.products.map((p, i) => `<div class="ring-item" data-i="${i}"><div class="glass">${photo(p.img, p.name)}</div></div>`).join("");
   function layoutRing() {
     const w = ring.offsetWidth;
     const radius = Math.round(w / (2 * Math.tan(Math.PI / S.products.length)) + w * 0.18);
@@ -81,14 +75,14 @@
     const list = S.products.filter((p) => !CATEGORIES[filter] || CATEGORIES[filter] === p.cat);
     $("#products").innerHTML = list.map((p) => `
       <button class="glass product" data-key="${p.key}">
-        <div class="pv">${art(p.key, "front")}</div>
+        <div class="pv">${photo(p.img, p.name)}</div>
         <h3>${esc(p.name)}</h3>
-        <div class="row"><span class="price">${money(p.price)}</span><span class="tag">${esc(printsLabel(p.key))}</span></div>
+        <div class="row"><span class="price">${money(p.price)}</span><span class="tag">${esc(p.prints)}</span></div>
       </button>`).join("");
   }
   $("#products").addEventListener("click", (e) => {
     const b = e.target.closest("[data-key]");
-    if (b) openProduct(S.products.find((p) => p.key === b.dataset.key));
+    if (b) openProduct(byKey(b.dataset.key));
   });
   $("#products").addEventListener("pointermove", (e) => {
     const card = e.target.closest(".product");
@@ -107,23 +101,25 @@
   const pm = { p: null, size: "", qty: 1, flipped: false, spin: 0 };
   const cleanName = (v) => String(v || "").replace(/[^A-Za-z .\'-]/g, "").slice(0, 14).trim();
   function drawSheet() {
-    const key = pm.p.key;
-    const player = C.takesName(key) ? cleanName($("#pmPlayer").value) : "";
-    $("#pmFront").innerHTML = art(key, "front", { name: player });
-    $("#pmBack").innerHTML = art(key, "back");
-    $("#pmNameWrap").classList.toggle("hidden", !C.takesName(key));
-    $("#pmSizes").innerHTML = sizesFor(pm.p).map((s) => `<button data-s="${s}" class="${s === pm.size ? "on" : ""}">${s}</button>`).join("");
+    const p = pm.p;
+    $("#pmFront").innerHTML = photo(pm.view || p.img, p.name);
+    $("#pmBack").innerHTML = p.back ? photo(p.back, `${p.name} back`) : "";
+    const shots = [p.img, p.back, ...(p.extra || [])].filter(Boolean);
+    $("#pmThumbs").innerHTML = shots.length > 1 ? shots.map((f) => `<button data-v="${f}" class="${(pm.flipped ? f === p.back : f === (pm.view || p.img)) ? "on" : ""}">${photo(f)}</button>`).join("") : "";
+    $("#pmFlip").classList.toggle("hidden", !p.back);
+    $("#pmNameWrap").classList.toggle("hidden", !p.sleeveName);
+    $("#pmSizes").innerHTML = sizesFor(p).map((s) => `<button data-s="${s}" class="${s === pm.size ? "on" : ""}">${s}</button>`).join("");
     $("#pmQty").textContent = pm.qty;
-    $("#pmPrice").textContent = money(pm.p.price);
+    $("#pmPrice").textContent = money(p.price);
     $("#pmCard").style.transform = `rotateY(${pm.spin + (pm.flipped ? 180 : 0)}deg)`;
   }
   function openProduct(p) {
-    Object.assign(pm, { p, size: p.sizes ? p.sizes[0] : "", qty: 1, flipped: false, spin: 0 });
+    Object.assign(pm, { p, size: p.sizes ? p.sizes[0] : "", qty: 1, flipped: false, spin: 0, view: "" });
     $("#pmPlayer").value = "";
     $("#pmName").textContent = p.name;
     $("#pmBlurb").textContent = p.blurb;
-    $("#pmPrints").textContent = printsLabel(p.key);
-    $("#pmFlip").textContent = C.hasBack(p.key) ? "See the back" : "Turn around";
+    $("#pmPrints").textContent = p.prints;
+    $("#pmFlip").textContent = "See the back";
     $("#pmErr").textContent = "";
     drawSheet();
     $("#productModal").classList.add("open");
@@ -135,17 +131,21 @@
   }
   $("#productModal").addEventListener("click", (e) => {
     if (e.target.id === "productModal" || e.target.closest("[data-close]")) return closeProduct();
-    const s = e.target.closest("[data-s]");
+    const s = e.target.closest("[data-s]"), v = e.target.closest("[data-v]");
     if (s) { pm.size = s.dataset.s; $("#pmErr").textContent = ""; drawSheet(); }
+    if (v) {
+      if (v.dataset.v === pm.p.back) { pm.flipped = true; pm.view = ""; }
+      else { pm.flipped = false; pm.view = v.dataset.v; }
+      drawSheet();
+    }
   });
-  $("#pmPlayer").addEventListener("input", drawSheet);
-  $("#pmFlip").addEventListener("click", () => { pm.flipped = !pm.flipped; drawSheet(); });
+    $("#pmFlip").addEventListener("click", () => { pm.flipped = !pm.flipped; pm.view = ""; drawSheet(); });
   $("#qMinus").addEventListener("click", () => { pm.qty = Math.max(1, pm.qty - 1); drawSheet(); });
   $("#qPlus").addEventListener("click", () => { pm.qty = Math.min(20, pm.qty + 1); drawSheet(); });
 
   // Drag the garment to spin it.
   let drag = null;
-  $("#pmStage").addEventListener("pointerdown", (e) => { drag = { x: e.clientX, start: pm.spin }; $("#pmCard").style.transition = "none"; });
+  $("#pmStage").addEventListener("pointerdown", (e) => { if (!pm.p.back) return; drag = { x: e.clientX, start: pm.spin }; $("#pmCard").style.transition = "none"; });
   window.addEventListener("pointermove", (e) => {
     if (!drag) return;
     pm.spin = drag.start + (e.clientX - drag.x) * 0.8;
@@ -163,7 +163,7 @@
     if (!pm.size) { $("#pmErr").textContent = "Please pick a size."; return; }
     const item = {
       key: pm.p.key, title: pm.p.name, price: pm.p.price, size: pm.size, qty: pm.qty,
-      player: C.takesName(pm.p.key) ? cleanName($("#pmPlayer").value) : "",
+      player: pm.p.sleeveName ? cleanName($("#pmPlayer").value) : "",
     };
     const same = cart.find((i) => i.key === item.key && i.size === item.size && i.player === item.player);
     if (same) same.qty = Math.min(20, same.qty + item.qty); else cart.push(item);
@@ -176,7 +176,7 @@
   let cart = [];
   try { cart = JSON.parse(localStorage.getItem("lb_cart") || "[]"); } catch { cart = []; }
   // Drop items saved from older versions of the store.
-  cart = Array.isArray(cart) ? cart.filter((i) => i && C.PRODUCTS[i.key] && i.title && S.products.some((p) => p.key === i.key)) : [];
+  cart = Array.isArray(cart) ? cart.filter((i) => i && i.title && byKey(i.key)) : [];
   function saveCart() {
     try { localStorage.setItem("lb_cart", JSON.stringify(cart)); } catch { /* private mode */ }
     renderCart();
@@ -197,7 +197,7 @@
     }
     $("#cartItems").innerHTML = cart.map((i, n) => `
       <div class="line">
-        <div class="pv">${art(i.key, "front", { name: i.player })}</div>
+        <div class="pv">${photo(byKey(i.key).img)}</div>
         <div><b>${esc(i.title)}</b><small>${esc(describe(i))}</small><small>Qty ${i.qty} · ${money(i.price * i.qty)}</small></div>
         <button class="rm" data-rm="${n}">Remove</button>
       </div>`).join("");
