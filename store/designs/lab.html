@@ -8,8 +8,8 @@ const A = BroncoArt;
 document.fonts.ready.then(()=>{});
 const d = document.getElementById("designs");
 for (const k of Object.keys(A.DESIGNS)) for (const cw of ["white","red","black","gray"])
-  d.insertAdjacentHTML("beforeend", `<div class="cell" data-design="${k}-${cw}">${A.designSvg(k, cw, 400, A.COLORWAYS[cw].garment)}<div>${A.DESIGNS[k].name} · ${A.COLORWAYS[cw].name}</div></div>`);
+  d.insertAdjacentHTML("beforeend", `<div class="cell">${A.designSvg(k, cw, 400, A.COLORWAYS[cw].garment, { saying: A.SAYINGS[["white","red","black","gray"].indexOf(cw) % 3] })}<div>${A.DESIGNS[k].name} · ${A.COLORWAYS[cw].name}</div></div>`);
 const g = document.getElementById("garments");
-const plan = [["tee","varsity","white"],["longsleeve","horsepower","black"],["crewneck","badge","gray"],["hoodie","stacked","red"],["jacket","chest","black"],["hat","chest","white"],["warmupjacket","chest","black"],["warmuppants","chest","black"],["jersey","varsity","red"]];
-for (const [gk, dk, cw] of plan) g.insertAdjacentHTML("beforeend", `<div class="cell" data-garment="${gk}">${A.mockupSvg(gk, dk, cw)}<div>${A.GARMENTS[gk].name}</div></div>`);
+const plan = [["tee","varsity","white","BRONCO"],["longsleeve","horsepower","black","BRONCO"],["crewneck","badge","gray","BRONCO"],["hoodie","built","red","BRONCO"],["jacket","chest","black","BRONCO"],["hat","chest","white",""],["warmupjacket","chest","black","BRONCO"],["warmuppants","chest","black",""],["jersey","varsity","red","BRONCO"]];
+for (const [gk, dk, cw, nm] of plan) g.insertAdjacentHTML("beforeend", `<div class="cell">${A.mockupSvg(gk, dk, cw, { name: nm, saying: A.SAYINGS[2] })}<div>${A.GARMENTS[gk].name}</div></div>`);
 </script></body></html>

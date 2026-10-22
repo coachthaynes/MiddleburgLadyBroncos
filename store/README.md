@@ -14,9 +14,25 @@ A made to order store for Lady Bronco Basketball gear. Coaches print each piece,
 | `designs/mockup_board.png` | All nine garments |
 | `designs/lab.html` | Open in a browser to preview every design and garment |
 
-## Designs
+## Designs (26/27 season)
 
-Varsity Arch, Horsepower, Stacked, Hoops Badge, Lady Broncos Script and Left Chest Mark, each in White, Bronco Red, Black and Heather Gray.
+All designs use the horseshoe traced from the official Middleburg logo, each in White, Bronco Red, Black and Heather Gray.
+
+| Design | Style | Notes |
+| --- | --- | --- |
+| Bronco Built | Streetwear | BRONCO BUILT, team saying, #HORSEPOWER, 26/27 |
+| Horsepower Repeat | Streetwear | HORSEPOWER three times with the horseshoe, LADY BRONCOS BASKETBALL 26/27 strip |
+| Varsity Arch | Varsity | Arched LADY BRONCOS, 26 and 27 beside the horseshoe, BASKETBALL |
+| Bronco Badge | Varsity | MIDDLEBURG badge with BRONCO BUILT and the team saying |
+| Minimal Wordmark | Minimal | Horseshoe beside LADY BRONCOS, team saying, BASKETBALL 26/27 |
+| Left Chest Mark | Minimal | Horseshoe with LB 26/27, used on jackets, hats and pants |
+
+Team sayings (buyers pick one on designs that show it): No Mercy. All Heart. / United as One. / Battle Tested.
+Change them or the season in `public/js/config.js` (`sayings` and `season`).
+
+Buyers can add an optional player name, printed down the left sleeve (on the front hem for practice jerseys).
+
+Print files are named `design_saying_on_color.png`, for example `built_battletested_on_black.png`.
 
 ## Orders
 
