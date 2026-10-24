@@ -41,7 +41,18 @@ const SPONSOR_LEVELS = [
   });
 
   // Sponsor wall and payment link
+  let homeGames = [];
+  const renderGames = () => {
+    const keep = $("#spGame").value;
+    const title = $("#spLevel").value === "title" && !$("#spLevel").selectedOptions[0]?.dataset.unsure;
+    const list = homeGames.filter((g) => !g.taken && (!g.senior || title));
+    $("#spGame").innerHTML = '<option value="">No preference yet</option>'
+      + list.map((g) => `<option value="${esc(g.id)}">${esc(g.label)}${g.senior ? " (Title sponsors)" : ""}</option>`).join("");
+    if (list.some((g) => g.id === keep)) $("#spGame").value = keep;
+  };
   api("/api/sponsors").then((data) => {
+    homeGames = data.homeGames || [];
+    renderGames();
     if (data.payUrl) $("#payOnline").href = data.payUrl; else $("#payOnline").classList.add("hidden");
     $("#wall").innerHTML = data.sponsors.length
       ? data.sponsors.map((s) => {
@@ -64,6 +75,7 @@ const SPONSOR_LEVELS = [
     const unsure = $("#spLevel").selectedOptions[0]?.dataset.unsure;
     $("#spGameWrap").classList.toggle("hidden", unsure || !(v === "herd" || v === "title"));
     $("#spBizWrap").classList.toggle("hidden", unsure || v !== "title");
+    renderGames();
   };
   $("#spLevel").addEventListener("change", levelExtras);
   $("#levelCards").addEventListener("click", () => setTimeout(levelExtras, 0));

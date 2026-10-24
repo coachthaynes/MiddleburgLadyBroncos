@@ -301,6 +301,7 @@
   // ---------- sponsors ----------
   let sponsors = [];
   let levels = {};
+  let homeGames = [];
   let spTab = "interested";
   const openSp = new Set();
   const STATUS = { interested: ["New", "warn"], committed: ["Committed", ""], paid: ["Paid", "good"], declined: ["Declined", "red"] };
@@ -309,6 +310,7 @@
       const d = await api("/api/coach/sponsors");
       sponsors = d.sponsors;
       levels = d.levels;
+      homeGames = d.homeGames || [];
       $("#saLevel").innerHTML = Object.entries(levels).map(([k, l]) => `<option value="${k}">${esc(l.name)} (${fmtMoney(l.price)})</option>`).join("");
       renderSponsors();
       renderTodo();
@@ -336,7 +338,7 @@
     const html = [
       row("Name on banners and shirts", d.displayName), row("Motto", d.motto), row("PA announcer", d.paScript),
       row("Social", social), row("Brand colors", d.colors), row("Address", d.address),
-      row("Plans to pay", PAY[d.payMethod] || ""), row("Preferred game night", d.preferredGame), row("Business Day ideas", d.bizDayNotes),
+      row("Plans to pay", PAY[d.payMethod] || ""), row("Preferred game night", (homeGames.find((g) => g.id === d.preferredGame) || {}).label || d.preferredGame), row("Business Day ideas", d.bizDayNotes),
     ].join("");
     return html ? `<div class="sp-details">${html}</div>` : "";
   }
@@ -358,6 +360,10 @@
           <div class="sp-controls">
             <label class="field">Level<select class="gselect" data-splevel="${s.id}">${Object.entries(levels).map(([k, l]) => `<option value="${k}" ${k === s.level ? "selected" : ""}>${esc(l.name)}</option>`).join("")}</select></label>
             <label class="field">Amount<input type="number" min="0" step="1" value="${s.amount}" data-spamt="${s.id}"></label>
+            ${s.level === "herd" || s.level === "title" ? `<label class="field">Game night<select class="gselect" data-spgame="${s.id}"><option value="">Not picked yet</option>${homeGames.map((g) => {
+              const other = g.takenBy && g.takenBy.id !== s.id ? ` (taken by ${g.takenBy.business})` : "";
+              return `<option value="${esc(g.id)}" ${s.details?.preferredGame === g.id ? "selected" : ""} ${other ? "disabled" : ""}>${esc(g.label)}${esc(other)}</option>`;
+            }).join("")}</select></label>` : ""}
             <div class="field"><span>Status</span><div class="chips">${Object.entries(STATUS).map(([k, [l]]) => `<button data-spstatus="${s.id}|${k}" class="${k === s.status ? "on" : ""}">${l}</button>`).join("")}</div></div>
           </div>
           <div class="btn-row" style="margin:12px 0">
@@ -474,6 +480,7 @@
     if (t.dataset.tlink) return taskUpdate(t.dataset.tlink, { link: t.value });
     if (t.dataset.splevel) return spUpdate(t.dataset.splevel, { level: t.value, amount: levels[t.value]?.price }, "Level saved");
     if (t.dataset.spamt) return spUpdate(t.dataset.spamt, { amount: t.value }, "Amount saved");
+    if (t.dataset.spgame) return spUpdate(t.dataset.spgame, { details: { preferredGame: t.value } }, "Game night saved");
     if (t.dataset.spwall) return spUpdate(t.dataset.spwall, { showOnWall: t.checked }, t.checked ? "Now on the sponsor wall" : "Removed from the wall");
   });
   document.addEventListener("submit", async (e) => {
@@ -497,7 +504,7 @@
     for (const s of sponsors) {
       const d = s.details || {};
       rows.push([s.business, s.contact, s.email, s.phone, s.website, levels[s.level]?.name || s.level, s.amount, STATUS[s.status][0], `${s.tasks.filter((t) => t.done).length} of ${s.tasks.length}`, s.reportUrl, new Date(s.createdAt).toLocaleDateString(),
-        d.displayName, d.motto, d.paScript, d.instagram, d.facebook, d.tiktok, d.colors, d.address, PAY[d.payMethod] || "", d.preferredGame, d.bizDayNotes, s.logo ? location.origin + s.logo : ""]);
+        d.displayName, d.motto, d.paScript, d.instagram, d.facebook, d.tiktok, d.colors, d.address, PAY[d.payMethod] || "", (homeGames.find((g) => g.id === d.preferredGame) || {}).label || d.preferredGame, d.bizDayNotes, s.logo ? location.origin + s.logo : ""]);
     }
     const csv = rows.map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
     const a = document.createElement("a");

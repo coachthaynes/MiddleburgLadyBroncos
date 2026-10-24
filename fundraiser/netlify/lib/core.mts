@@ -400,6 +400,27 @@ export interface SponsorDetails {
   bizDayNotes: string;
 }
 
+// Home games a Herd Champion or Title sponsor can pick for their game night (2026/27 schedule).
+export const HOME_GAMES: { id: string; label: string; senior?: boolean }[] = [
+  { id: "2026-11-17-tocoi", label: "Nov 17 vs Tocoi Creek, varsity 7:30 PM" },
+  { id: "2026-11-20-sprucecreek", label: "Nov 20 vs Spruce Creek, varsity 7:30 PM" },
+  { id: "2026-12-01-duvalcharter", label: "Dec 1 vs Duval Charter, varsity 6:00 PM" },
+  { id: "2026-12-14-clay", label: "Dec 14 vs Clay, varsity 7:30 PM" },
+  { id: "2027-01-14-nease", label: "Jan 14 vs Nease, varsity 7:30 PM" },
+  { id: "2027-01-20-fsdb", label: "Jan 20 vs FSDB, Senior Night, varsity 6:00 PM", senior: true },
+  { id: "2027-01-25-orangepark", label: "Jan 25 vs Orange Park, varsity 5:30 PM" },
+];
+
+// Which games already belong to a committed or paid sponsor.
+export function takenGames(sponsors: { id: string; business: string; status: string; details?: { preferredGame?: string } }[]) {
+  const taken: Record<string, { id: string; business: string }> = {};
+  for (const s of sponsors) {
+    const g = s.details?.preferredGame;
+    if (g && (s.status === "committed" || s.status === "paid") && HOME_GAMES.some((h) => h.id === g)) taken[g] = { id: s.id, business: s.business };
+  }
+  return taken;
+}
+
 export function cleanSponsorDetails(b: any, clean: (v: unknown, max?: number) => string): SponsorDetails {
   const handle = (v: unknown) => clean(v, 120).replace(/\s+/g, "");
   return {

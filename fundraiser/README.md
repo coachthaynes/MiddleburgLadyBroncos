@@ -51,3 +51,4 @@ npx netlify dev
 * On the coach dashboard, interest forms land under **Sponsors**. Marking a sponsor Committed or Paid creates that level's to do list (including ordering the plain jersey for Title sponsors and sending the proof report). Each item can hold a date, a proof link and a proof photo.
 * Each sponsor has a private report link (`/sponsor-report/...`) that shows what was delivered, for sending to the business.
 * `sponsor-packet/email-drip.md` holds the seven sponsor emails, which are also saved as Gmail drafts.
+* Game nights: Herd Champion and Title sponsors pick from the 2026/27 home games listed in `HOME_GAMES` in `netlify/lib/core.mts` (Senior Night only for Title). Once a sponsor is Committed or Paid, their game is no longer offered to others. Update that list if the schedule changes.

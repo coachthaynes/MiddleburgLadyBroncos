@@ -6,7 +6,7 @@ import {
   makeSessionCookie, money, newCode, noteFailedAttempt, photoUrl, Player, publicPlayer,
   recordEvent, safeEqual, saveImage, savePlayer, Session, Settings, slugify, sumStats,
   tooManyAttempts, listGifts, saveGift, confirmedTotals, recentSupporters, Gift,
-  listSponsors, getSponsor, saveSponsor, syncSponsorTasks, isSponsorLevel, cleanUrl, cleanSponsorDetails, Sponsor, SponsorLevel, SPONSOR_LEVELS, REPORT_LABELS, INTERNAL_TASKS,
+  listSponsors, getSponsor, saveSponsor, syncSponsorTasks, isSponsorLevel, cleanUrl, cleanSponsorDetails, HOME_GAMES, takenGames, Sponsor, SponsorLevel, SPONSOR_LEVELS, REPORT_LABELS, INTERNAL_TASKS,
 } from "../lib/core.mts";
 
 export default async (req: Request, context: Context) => {
@@ -156,7 +156,9 @@ async function sponsorWall() {
     .filter((s) => s.showOnWall && (s.status === "committed" || s.status === "paid"))
     .sort((a, b) => SPONSOR_LEVELS[b.level].rank - SPONSOR_LEVELS[a.level].rank || a.business.localeCompare(b.business))
     .map((s) => ({ business: s.business, website: s.website, level: s.level, levelName: SPONSOR_LEVELS[s.level].name, logo: photoUrl(s.logoKey) }));
-  return json({ sponsors: wall, payUrl: settings.donateUrl }, 200, { "cache-control": "public, max-age=60" });
+  const taken = takenGames(sponsors);
+  const homeGames = HOME_GAMES.map((g) => ({ ...g, taken: !!taken[g.id] }));
+  return json({ sponsors: wall, payUrl: settings.donateUrl, homeGames }, 200, { "cache-control": "public, max-age=60" });
 }
 
 async function sponsorReport(token: string) {
@@ -550,8 +552,10 @@ async function coachSponsors(req: Request, parts: string[]) {
 
   if (parts.length === 0 && method === "GET") {
     const list = await listSponsors();
+    const taken = takenGames(list);
     return json({
       levels: SPONSOR_LEVELS,
+      homeGames: HOME_GAMES.map((g) => ({ ...g, takenBy: taken[g.id] || null })),
       sponsors: list.map(({ uploadToken, uploadUntil, ...s }) => ({
         ...s,
         logo: photoUrl(s.logoKey),

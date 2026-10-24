@@ -333,7 +333,7 @@ details.sp > summary::-webkit-details-marker { display: none; }
 .sp-title { flex: 1; min-width: 160px; }
 .sp-title small { display: block; color: var(--muted); }
 .sp-body { padding: 4px 16px 16px; }
-.sp-controls { display: grid; grid-template-columns: 1fr 140px 2fr; gap: 12px; align-items: end; }
+.sp-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; align-items: end; }
 .sp-controls .field > span { font-weight: 700; font-size: .9rem; }
 @media (max-width: 760px) { .sp-controls { grid-template-columns: 1fr; } }
 .tasks { display: grid; gap: 8px; }
