@@ -24,7 +24,15 @@
   $("#pct").textContent = `${pct}% there`;
   $("#ends").textContent = daysLeft(settings.endDate) > 0 ? `Ends ${endLabel(settings.endDate)}` : "Fundraiser has ended";
   startCountdown($("#countdown"), settings.endDate);
-  $("#sDonate").textContent = fmtNum(totals.donate);
+  $("#sDonate").textContent = fmtNum(totals.gifts || 0);
+  $("#supportList").innerHTML = supportersHtml(data.supporters || []);
+  setupDonate({ options: data.options || [], slug: "team", settings });
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("#donateBtn, [data-donate]");
+    if (!b) return;
+    e.preventDefault();
+    openDonate(b.dataset.donate || "team");
+  });
   $("#sShare").textContent = fmtNum(totals.share);
   $("#sPlayers").textContent = fmtNum(players.length);
 

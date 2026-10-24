@@ -26,9 +26,14 @@
     const { settings: s, players, totals } = data;
     applyBrand(s);
 
-    $("#oRaised").textContent = fmtMoney(s.raised);
+    const gt = data.giftTotals || { confirmed: 0, pledged: 0, pledgedCount: 0 };
+    const raisedAll = (s.raised || 0) + gt.confirmed;
+    $("#oRaised").textContent = fmtMoney(raisedAll);
     $("#oGoal").textContent = fmtMoney(s.goal);
-    setBar($("#bar"), s.raised, s.goal);
+    setBar($("#bar"), raisedAll, s.goal);
+    $("#oPledged").textContent = `${fmtMoney(gt.pledged)}`;
+    $("#gaFor").innerHTML = `<option value="team">Whole team</option>` + players.map((p) => `<option value="${esc(p.slug)}">${esc(p.name)}</option>`).join("");
+    loadGifts();
     $("#oDonate").textContent = fmtNum(totals.donate);
     $("#oViews").textContent = fmtNum(totals.view);
     $("#oShares").textContent = fmtNum(totals.share);
@@ -71,7 +76,8 @@
           <td>${fmtNum(p.stats.view)}</td>
           <td>${fmtNum(p.stats.share)}</td>
           <td><b>${fmtNum(p.stats.donate)}</b></td>
-          <td><input type="number" min="0" step="0.01" value="${p.raised || ""}" placeholder="0" data-raised="${p.id}" aria-label="Dollars raised by ${esc(p.name)}"></td>
+          <td><b>${fmtMoney(p.confirmed || 0)}</b></td>
+          <td><input type="number" min="0" step="0.01" value="${p.raised || ""}" placeholder="0" data-raised="${p.id}" aria-label="Other money raised by ${esc(p.name)}"></td>
           <td><div class="actions">
             <a class="btn btn-glass btn-small" href="/p/${esc(p.slug)}" target="_blank" rel="noopener">View</a>
             <button class="btn btn-glass btn-small" data-act="code" data-id="${p.id}">New code</button>
@@ -214,6 +220,77 @@
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     a.download = "LadyBroncosStats.csv";
+    a.click();
+  });
+
+  // ---------- gifts ----------
+  let gifts = [];
+  let giftTab = "pledged";
+  async function loadGifts() {
+    try {
+      gifts = (await api("/api/coach/gifts")).gifts;
+      renderGifts();
+    } catch (err) { toast(err.message); }
+  }
+  function renderGifts() {
+    const list = gifts.filter((g) => giftTab === "all" || g.status === giftTab);
+    const forOptions = (sel) => `<option value="team"${sel === "team" ? " selected" : ""}>Whole team</option>` + (data?.players || []).map((p) => `<option value="${esc(p.slug)}"${sel === p.slug ? " selected" : ""}>${esc(p.name)}</option>`).join("");
+    $("#giftRows").innerHTML = list.length ? list.map((g) => `
+      <tr>
+        <td>${new Date(g.createdAt).toLocaleDateString()}<div class="muted" style="font-size:.75rem">${new Date(g.createdAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div></td>
+        <td><b>${esc(g.name)}</b>${g.anonymous ? ' <span class="pill">Anonymous</span>' : ""}${g.email ? `<div class="muted" style="font-size:.8rem">${esc(g.email)}</div>` : ""}${g.source === "coach" ? '<div class="muted" style="font-size:.75rem">Added by coach</div>' : ""}</td>
+        <td><select class="gselect" data-gfor="${g.id}">${forOptions(g.slug)}</select></td>
+        <td><input type="number" min="1" step="0.01" value="${g.amount}" data-gamt="${g.id}" aria-label="Amount"></td>
+        <td>${g.status === "confirmed" ? '<span class="pill good">Confirmed</span>' : g.status === "removed" ? '<span class="pill red">Removed</span>' : '<span class="pill warn">Waiting</span>'}</td>
+        <td><div class="actions">
+          ${g.status !== "confirmed" ? `<button class="btn btn-primary btn-small" data-gact="confirm" data-id="${g.id}">Confirm</button>` : `<button class="btn btn-glass btn-small" data-gact="unconfirm" data-id="${g.id}">Undo</button>`}
+          ${g.status !== "removed" ? `<button class="btn btn-danger btn-small" data-gact="remove" data-id="${g.id}">Remove</button>` : `<button class="btn btn-glass btn-small" data-gact="restore" data-id="${g.id}">Restore</button>`}
+        </div></td>
+      </tr>`).join("") : `<tr><td colspan="6" class="muted">${giftTab === "pledged" ? "Nothing waiting. New donation forms show up here." : "No gifts here yet."}</td></tr>`;
+  }
+  $("#giftTabs").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-gt]");
+    if (!b) return;
+    giftTab = b.dataset.gt;
+    $$("#giftTabs button").forEach((x) => x.classList.toggle("on", x === b));
+    renderGifts();
+  });
+  $("#giftRows").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-gact]");
+    if (!b) return;
+    const id = b.dataset.id;
+    if (b.dataset.gact === "remove" && !confirm("Remove this gift? Use this when a payment never came through.")) return;
+    try {
+      await api(`/api/coach/gifts/${id}`, { method: "POST", body: { action: b.dataset.gact, amount: $(`[data-gamt="${id}"]`).value, slug: $(`[data-gfor="${id}"]`).value } });
+      toast(b.dataset.gact === "confirm" ? "Gift confirmed" : "Updated");
+      await load();
+    } catch (err) { toast(err.message); }
+  });
+  $("#giftRows").addEventListener("change", async (e) => {
+    const id = e.target.dataset.gamt || e.target.dataset.gfor;
+    if (!id) return;
+    try {
+      await api(`/api/coach/gifts/${id}`, { method: "POST", body: e.target.dataset.gamt ? { amount: e.target.value } : { slug: e.target.value } });
+      toast("Saved");
+      await load();
+    } catch (err) { toast(err.message); }
+  });
+  $("#giftAdd").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try {
+      await api("/api/coach/gifts", { method: "POST", body: { name: $("#gaName").value, slug: $("#gaFor").value, amount: $("#gaAmt").value, anonymous: $("#gaAnon").checked } });
+      e.target.reset();
+      toast("Gift added");
+      await load();
+    } catch (err) { toast(err.message); }
+  });
+  $("#giftCsv").addEventListener("click", () => {
+    const rows = [["Date", "Donor", "Email", "Anonymous", "For", "Amount", "Status", "Confirmed on", "Source"]];
+    for (const g of gifts) rows.push([new Date(g.createdAt).toLocaleString(), g.name, g.email, g.anonymous ? "Yes" : "No", g.forName, g.amount, g.status, g.confirmedAt ? new Date(g.confirmedAt).toLocaleDateString() : "", g.source === "coach" ? "Added by coach" : "Donation form"]);
+    const csv = rows.map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = "LadyBroncosGifts.csv";
     a.click();
   });
 

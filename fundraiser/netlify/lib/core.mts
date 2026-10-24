@@ -94,7 +94,61 @@ export function photoUrl(key: string) {
   return key ? `/img/${encodeURIComponent(key)}` : "";
 }
 
-export function publicPlayer(p: Player, stats?: Stats) {
+// ---------- gifts (donation form entries) ----------
+
+export interface Gift {
+  id: string;
+  slug: string; // "team" or a player slug
+  amount: number;
+  name: string;
+  anonymous: boolean;
+  email: string;
+  status: "pledged" | "confirmed" | "removed";
+  source: "form" | "coach";
+  createdAt: string;
+  confirmedAt: string;
+}
+
+// Each gift is its own blob so two donors at once never overwrite each other.
+export async function listGifts(): Promise<Gift[]> {
+  const store = db();
+  const { blobs } = await store.list({ prefix: "gifts/" });
+  const all = await Promise.all(blobs.map((b) => store.get(b.key, { type: "json" })));
+  return (all.filter(Boolean) as Gift[]).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function saveGift(g: Gift) {
+  await db().setJSON(`gifts/${g.id}`, g);
+}
+
+export function confirmedTotals(gifts: Gift[]) {
+  const bySlug: Record<string, number> = {};
+  let all = 0;
+  for (const g of gifts) {
+    if (g.status !== "confirmed") continue;
+    all += g.amount;
+    bySlug[g.slug] = (bySlug[g.slug] || 0) + g.amount;
+  }
+  return { all, bySlug };
+}
+
+// "Sarah Johnson" becomes "Sarah J." on public pages.
+export function publicDonorName(g: Gift) {
+  if (g.anonymous) return "Anonymous";
+  const parts = g.name.trim().split(/\s+/);
+  return parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1].charAt(0).toUpperCase()}.` : parts[0];
+}
+
+export function recentSupporters(gifts: Gift[], players: Player[], slug?: string, limit = 12) {
+  const names = new Map(players.map((p) => [p.slug, displayName(p)]));
+  return gifts
+    .filter((g) => g.status === "confirmed" && (!slug || g.slug === slug))
+    .sort((a, b) => (b.confirmedAt || b.createdAt).localeCompare(a.confirmedAt || a.createdAt))
+    .slice(0, limit)
+    .map((g) => ({ name: publicDonorName(g), amount: g.amount, for: g.slug === "team" ? "the team" : names.get(g.slug) || "the team", at: g.confirmedAt || g.createdAt }));
+}
+
+export function publicPlayer(p: Player, stats?: Stats, giftTotal = 0) {
   return {
     slug: p.slug,
     name: displayName(p),
@@ -103,7 +157,7 @@ export function publicPlayer(p: Player, stats?: Stats) {
     position: p.position,
     message: p.message,
     personalGoal: p.personalGoal,
-    raised: p.raised || 0,
+    raised: (p.raised || 0) + giftTotal,
     photo: photoUrl(p.photoKey),
     stats: stats || emptyStats(),
   };
@@ -146,7 +200,7 @@ export function sumStats(all: Record<string, Stats>): Stats {
 
 async function meta(key: string) {
   const store = db();
-  let v = await store.get(`meta/${key}`);
+  let v = await store.get(`meta/${key}`, { type: "text" });
   if (!v) {
     v = randomBytes(32).toString("hex");
     await store.set(`meta/${key}`, v);

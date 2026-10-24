@@ -46,11 +46,32 @@
         </div>
         <div class="bar"><i id="bar"></i></div>
         <div class="stat-row" style="margin-top:16px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr))">
+          <div class="stat"><b id="oPledged">$0</b><span>Waiting to confirm</span></div>
           <div class="stat"><b id="oDonate">0</b><span>Donation clicks</span></div>
           <div class="stat"><b id="oViews">0</b><span>Page visits</span></div>
           <div class="stat"><b id="oShares">0</b><span>Shares</span></div>
           <div class="stat"><b id="oLive">0</b><span>Live players</span></div>
         </div>
+      </div>
+
+      <div class="glass card span" id="giftsCard">
+        <div class="section-head" style="margin-bottom:10px">
+          <div><h3 style="margin:0">Gifts</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Every donation form lands here as Pledged. Check your MySchoolBucks report, fix the amount if needed, then tap Confirm. Only confirmed gifts count toward totals and show publicly.</p></div>
+          <div class="btn-row"><button class="btn btn-glass btn-small" id="giftCsv">Download gifts</button></div>
+        </div>
+        <div class="chips" id="giftTabs" style="margin-bottom:12px">
+          <button data-gt="pledged" class="on">Waiting to confirm</button><button data-gt="confirmed">Confirmed</button><button data-gt="removed">Removed</button><button data-gt="all">All</button>
+        </div>
+        <div class="table-wrap"><table class="players"><thead><tr><th>Date</th><th>Donor</th><th>For</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="giftRows"></tbody></table></div>
+        <details style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">Add a gift by hand (cash or check)</summary>
+          <form class="form" id="giftAdd" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));align-items:end;margin-top:10px">
+            <label class="field">Donor name<input type="text" id="gaName" maxlength="60" required></label>
+            <label class="field">For<select id="gaFor" class="gselect"></select></label>
+            <label class="field">Amount<input type="number" id="gaAmt" min="1" step="0.01" required></label>
+            <label class="switch"><input type="checkbox" id="gaAnon"> Anonymous</label>
+            <button class="btn btn-primary" type="submit">Add confirmed gift</button>
+          </form>
+        </details>
       </div>
 
       <div class="glass card span hidden" id="approvalsCard">
@@ -72,7 +93,7 @@
         </form>
         <div class="table-wrap" style="margin-top:16px">
           <table class="players">
-            <thead><tr><th>Player</th><th>Status</th><th>Visits</th><th>Shares</th><th>Donation clicks</th><th>Raised</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Player</th><th>Status</th><th>Visits</th><th>Shares</th><th>Donation clicks</th><th>Confirmed</th><th>Other $</th><th>Actions</th></tr></thead>
             <tbody id="rows"></tbody>
           </table>
         </div>
@@ -84,7 +105,7 @@
           <label class="field">MySchoolBucks donation link <small>Paste the link to the team's MySchoolBucks item. Every Donate button goes here.</small>
             <input type="url" id="donateUrl" placeholder="https://www.myschoolbucks.com/...">
           </label>
-          <label class="field">Team total raised <small>Update this from your MySchoolBucks report.</small><input type="number" id="raised" min="0" step="0.01"></label>
+          <label class="field">Other money raised <small>Cash, checks or anything not entered as a gift. Confirmed gifts are added automatically.</small><input type="number" id="raised" min="0" step="0.01"></label>
           <div class="two">
             <label class="field">Goal<input type="number" id="goal" min="1" step="1"></label>
             <label class="field">End date<input type="date" id="endDate"></label>

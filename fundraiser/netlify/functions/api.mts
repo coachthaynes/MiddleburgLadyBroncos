@@ -5,7 +5,7 @@ import {
   displayName, emptyStats, getPlayer, getSession, getSettings, isLive, json, listPlayers,
   makeSessionCookie, money, newCode, noteFailedAttempt, photoUrl, Player, publicPlayer,
   recordEvent, safeEqual, saveImage, savePlayer, Session, Settings, slugify, sumStats,
-  tooManyAttempts,
+  tooManyAttempts, listGifts, saveGift, confirmedTotals, recentSupporters, Gift,
 } from "../lib/core.mts";
 
 export default async (req: Request, context: Context) => {
@@ -18,6 +18,7 @@ export default async (req: Request, context: Context) => {
     if (parts[0] === "public" && method === "GET") return publicData();
     if (parts[0] === "player" && parts[1] && method === "GET") return publicPlayerData(parts[1]);
     if (parts[0] === "track" && method === "POST") return track(req);
+    if (parts[0] === "gift" && method === "POST") return createGift(req, context);
 
     // ----- sessions -----
     if (parts[0] === "login" && method === "POST") return playerLogin(req, context);
@@ -51,14 +52,14 @@ export const config: Config = { path: "/api/*" };
 
 // ================= public =================
 
-function publicSettings(s: Settings) {
+function publicSettings(s: Settings, confirmed = 0) {
   return {
     teamName: s.teamName,
     schoolName: s.schoolName,
     tagline: s.tagline,
     story: s.story,
     goal: s.goal,
-    raised: s.raised,
+    raised: (s.raised || 0) + confirmed,
     endDate: s.endDate,
     donateReady: !!s.donateUrl,
     logo: photoUrl(s.logoKey),
@@ -66,12 +67,15 @@ function publicSettings(s: Settings) {
 }
 
 async function publicData() {
-  const [settings, players, stats] = await Promise.all([getSettings(), listPlayers(), allStats()]);
-  const live = players.filter(isLive).map((p) => publicPlayer(p, stats[p.slug]));
+  const [settings, players, stats, gifts] = await Promise.all([getSettings(), listPlayers(), allStats(), listGifts()]);
+  const t = confirmedTotals(gifts);
+  const live = players.filter(isLive).map((p) => publicPlayer(p, stats[p.slug], t.bySlug[p.slug] || 0));
   return json({
-    settings: publicSettings(settings),
+    settings: publicSettings(settings, t.all),
     players: live,
-    totals: sumStats(stats),
+    totals: { ...sumStats(stats), gifts: gifts.filter((g) => g.status === "confirmed").length },
+    supporters: recentSupporters(gifts, players, undefined, 15),
+    options: live.map((p) => ({ slug: p.slug, name: p.name })),
   });
 }
 
@@ -79,7 +83,43 @@ async function publicPlayerData(slug: string) {
   const [settings, players, stats] = await Promise.all([getSettings(), listPlayers(), allStats()]);
   const p = players.find((x) => x.slug === slug.toLowerCase());
   if (!p || !isLive(p)) return json({ error: "We could not find that player page." }, 404);
-  return json({ settings: publicSettings(settings), player: publicPlayer(p, stats[p.slug]) });
+  const gifts = await listGifts();
+  const t = confirmedTotals(gifts);
+  return json({
+    settings: publicSettings(settings, t.all),
+    player: publicPlayer(p, stats[p.slug], t.bySlug[p.slug] || 0),
+    supporters: recentSupporters(gifts, players, p.slug, 15),
+    options: players.filter(isLive).map((x) => ({ slug: x.slug, name: displayName(x) })),
+  });
+}
+
+// The donation form. Records who the gift is for and how much, then hands back the payment link.
+async function createGift(req: Request, context: Context) {
+  const body = await req.json().catch(() => ({}));
+  if (clean(body.company, 50)) return json({ ok: true }); // spam trap
+  const settings = await getSettings();
+  if (!settings.donateUrl) return json({ error: "Online donations open soon. Please check back shortly." }, 503);
+  const amount = Math.round(money(body.amount) * 100) / 100;
+  if (amount < 1 || amount > 10000) return json({ error: "Please enter an amount between $1 and $10,000." }, 400);
+  const name = clean(body.name, 60);
+  if (name.length < 2) return json({ error: "Please enter your name." }, 400);
+  const email = clean(body.email, 120).toLowerCase();
+  if (email && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)) return json({ error: "That email does not look right." }, 400);
+  let slug = clean(body.slug, 40).toLowerCase().replace(/[^a-z0-9]/g, "") || "team";
+  if (slug !== "team") {
+    const p = (await listPlayers()).find((x) => x.slug === slug && isLive(x));
+    if (!p) slug = "team";
+  }
+  const gift: Gift = {
+    id: `${Date.now()}${randomBytes(4).toString("hex")}`,
+    slug, amount, name, email,
+    anonymous: !!body.anonymous,
+    status: "pledged", source: "form",
+    createdAt: new Date().toISOString(), confirmedAt: "",
+  };
+  await saveGift(gift);
+  await recordEvent("donate", slug);
+  return json({ ok: true, id: gift.id, url: settings.donateUrl });
 }
 
 async function track(req: Request) {
@@ -99,7 +139,7 @@ async function playerLogin(req: Request, context: Context) {
   }
   const body = await req.json().catch(() => ({}));
   const hash = await codeHash(body.code);
-  const id = hash ? await db().get(`codes/${hash}`) : null;
+  const id = hash ? await db().get(`codes/${hash}`, { type: "text" }) : null;
   const player = id ? await getPlayer(id) : null;
   if (!player || !player.active) {
     await noteFailedAttempt(req, context);
@@ -134,9 +174,10 @@ async function playerRoutes(req: Request, parts: string[], player: Player) {
 
   if (parts.length === 0 && method === "GET") {
     const stats = (await allStats())[player.slug] || emptyStats();
+    const t = confirmedTotals(await listGifts());
     return json({
       player: {
-        ...publicPlayer(player, stats),
+        ...publicPlayer(player, stats, t.bySlug[player.slug] || 0),
         last: player.last,
         live: isLive(player),
         consent: player.consent,
@@ -202,7 +243,8 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
   const method = req.method;
 
   if (parts[0] === "overview" && method === "GET") {
-    const [settings, players, stats] = await Promise.all([getSettings(), listPlayers(), allStats()]);
+    const [settings, players, stats, gifts] = await Promise.all([getSettings(), listPlayers(), allStats(), listGifts()]);
+    const t = confirmedTotals(gifts);
     return json({
       settings: { ...settings, logo: photoUrl(settings.logoKey) },
       players: players.map((p) => ({
@@ -216,6 +258,7 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
         active: p.active,
         live: isLive(p),
         raised: p.raised || 0,
+        confirmed: t.bySlug[p.slug] || 0,
         consent: p.consent,
         photo: photoUrl(p.photoKey),
         pendingPhoto: photoUrl(p.pendingPhotoKey),
@@ -223,7 +266,49 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       })),
       teamStats: stats.team || emptyStats(),
       totals: sumStats(stats),
+      giftTotals: {
+        confirmed: t.all,
+        teamOnly: t.bySlug.team || 0,
+        pledged: gifts.filter((g) => g.status === "pledged").reduce((n, g) => n + g.amount, 0),
+        pledgedCount: gifts.filter((g) => g.status === "pledged").length,
+      },
     });
+  }
+
+  if (parts[0] === "gifts" && parts.length === 1 && method === "GET") {
+    const [gifts, players] = await Promise.all([listGifts(), listPlayers()]);
+    const names = new Map(players.map((p) => [p.slug, displayName(p)]));
+    return json({ gifts: gifts.map((g) => ({ ...g, forName: g.slug === "team" ? "Whole team" : names.get(g.slug) || g.slug })) });
+  }
+
+  // Coach adds a gift by hand, like cash or a check.
+  if (parts[0] === "gifts" && parts.length === 1 && method === "POST") {
+    const body = await req.json().catch(() => ({}));
+    const amount = money(body.amount);
+    const name = clean(body.name, 60);
+    if (amount <= 0) return json({ error: "Please enter an amount." }, 400);
+    if (!name) return json({ error: "Please enter the donor's name." }, 400);
+    const slug = clean(body.slug, 40).toLowerCase().replace(/[^a-z0-9]/g, "") || "team";
+    const now = new Date().toISOString();
+    await saveGift({ id: `${Date.now()}${randomBytes(4).toString("hex")}`, slug, amount, name, email: "", anonymous: !!body.anonymous, status: "confirmed", source: "coach", createdAt: now, confirmedAt: now });
+    return json({ ok: true });
+  }
+
+  if (parts[0] === "gifts" && parts[1] && method === "POST") {
+    const gift = (await db().get(`gifts/${parts[1].replace(/[^a-z0-9]/gi, "")}`, { type: "json" })) as Gift | null;
+    if (!gift) return json({ error: "Gift not found." }, 404);
+    const body = await req.json().catch(() => ({}));
+    if (body.amount !== undefined) {
+      const a = money(body.amount);
+      if (a <= 0) return json({ error: "Please enter an amount." }, 400);
+      gift.amount = a;
+    }
+    if (body.slug !== undefined) gift.slug = clean(body.slug, 40).toLowerCase().replace(/[^a-z0-9]/g, "") || "team";
+    if (body.action === "confirm") { gift.status = "confirmed"; gift.confirmedAt = new Date().toISOString(); }
+    if (body.action === "unconfirm" || body.action === "restore") { gift.status = "pledged"; gift.confirmedAt = ""; }
+    if (body.action === "remove") gift.status = "removed";
+    await saveGift(gift);
+    return json({ ok: true });
   }
 
   if (parts[0] === "settings" && method === "PUT") {
@@ -340,7 +425,7 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       await deleteImage(player.pendingPhotoKey);
       const store = db();
       const { blobs } = await store.list({ prefix: "codes/" });
-      for (const b of blobs) if ((await store.get(b.key)) === player.id) await store.delete(b.key);
+      for (const b of blobs) if ((await store.get(b.key, { type: "text" })) === player.id) await store.delete(b.key);
       await store.delete(`players/${player.id}`);
       return json({ ok: true });
     }
@@ -353,9 +438,9 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
 async function assignCode(player: Player) {
   const store = db();
   const { blobs } = await store.list({ prefix: "codes/" });
-  for (const b of blobs) if ((await store.get(b.key)) === player.id) await store.delete(b.key);
+  for (const b of blobs) if ((await store.get(b.key, { type: "text" })) === player.id) await store.delete(b.key);
   let code = newCode();
-  while (await store.get(`codes/${await codeHash(code)}`)) code = newCode();
+  while (await store.get(`codes/${await codeHash(code)}`, { type: "text" })) code = newCode();
   await store.set(`codes/${await codeHash(code)}`, player.id);
   return code;
 }

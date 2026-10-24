@@ -262,3 +262,26 @@ footer.site a { font-weight: 700; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.4), rgba(255,255,255,0.8), rgba(255,255,255,0.4)); background-size: 200% 100%; animation: sk 1.4s infinite; border-radius: 12px; }
 @keyframes sk { to { background-position: -200% 0; } }
+
+/* Donation form */
+.donate-sheet { position: relative; max-width: 520px !important; text-align: left !important; max-height: calc(100vh - 32px); overflow: auto; }
+.donate-sheet .close-x { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.9); font-size: 1.5rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+.donate-sheet select { width: 100%; font: 600 1rem var(--body); color: var(--ink); padding: 13px 16px; border-radius: 14px; border: 1px solid rgba(200, 16, 46, 0.18); background: rgba(255, 255, 255, 0.85); }
+.donate-sheet input[type=email] { width: 100%; font: 500 1rem var(--body); color: var(--ink); padding: 13px 16px; border-radius: 14px; border: 1px solid rgba(200, 16, 46, 0.18); background: rgba(255, 255, 255, 0.78); }
+.donate-sheet .field > span { font-weight: 700; font-size: 0.9rem; }
+.amounts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+.amounts button { padding: 12px 0; border-radius: 14px; border: 1px solid var(--glass-line); background: rgba(255,255,255,.8); font: 800 1.05rem var(--display); color: var(--ink); cursor: pointer; }
+.amounts button.on { background: var(--red); color: #fff; border-color: var(--red); box-shadow: 0 8px 18px rgba(200,16,46,.3); }
+
+/* Recent supporters */
+.supporters { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.supporters li { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 16px; background: rgba(255,255,255,.55); }
+.sup-av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font: 800 0.95rem var(--display); color: #fff; background: linear-gradient(135deg, #ff6f86, var(--red)); }
+.sup-name small { display: block; color: var(--muted); font-size: 0.8rem; }
+.sup-amt { font-family: var(--display); font-weight: 800; color: var(--red); font-size: 1.1rem; }
+
+.gselect { width: 100%; min-width: 130px; font: 600 0.9rem var(--body); padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(200,16,46,.18); background: rgba(255,255,255,.85); color: var(--ink); }
+#giftAdd select.gselect { padding: 13px 12px; border-radius: 14px; font-size: 1rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button { border: 1px solid var(--glass-line); background: rgba(255,255,255,0.75); padding: 8px 14px; border-radius: 999px; font: 700 0.85rem var(--body); cursor: pointer; color: var(--ink); }
+.chips button.on { background: var(--red); color: #fff; border-color: var(--red); }

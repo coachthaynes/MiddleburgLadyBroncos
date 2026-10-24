@@ -215,3 +215,112 @@ function applyBrand(settings) {
 function playerMessage(name, settings) {
   return `Hi! It's ${name} from the ${settings.schoolName} ${settings.teamName}. We are raising ${fmtMoney(settings.goal)} for our season and I would love your support. Every gift goes straight to our school:`;
 }
+
+// ---------- donation form ----------
+// Opens before MySchoolBucks so we know who the gift is for and how much.
+function setupDonate({ options = [], slug = "team", settings }) {
+  if (!$("#donateModal")) {
+    document.body.insertAdjacentHTML("beforeend", `
+      <div class="modal" id="donateModal" role="dialog" aria-modal="true" aria-labelledby="dnTitle">
+        <div class="glass donate-sheet">
+          <button class="close-x" data-dn-close aria-label="Close">×</button>
+          <form class="form" id="dnForm" novalidate>
+            <span class="eyebrow">Make a gift</span>
+            <h2 id="dnTitle" style="margin:6px 0 0">Support the Lady Broncos</h2>
+            <label class="field">Who are you supporting?<select id="dnFor"></select></label>
+            <div class="field"><span>Amount</span>
+              <div class="amounts" id="dnAmounts">
+                ${[25, 50, 100, 250].map((a) => `<button type="button" data-amt="${a}">$${a}</button>`).join("")}
+              </div>
+              <input type="number" id="dnOther" min="1" max="10000" step="1" inputmode="decimal" placeholder="Other amount">
+            </div>
+            <label class="field">Your name<input type="text" id="dnName" maxlength="60" autocomplete="name" required></label>
+            <label class="field">Email <small>Optional, for a thank you</small><input type="email" id="dnEmail" maxlength="120" autocomplete="email"></label>
+            <label class="switch"><input type="checkbox" id="dnAnon"> Show my gift as Anonymous on the site</label>
+            <input type="text" id="dnCompany" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
+            <p class="error" id="dnErr"></p>
+            <button class="btn btn-primary btn-big" type="submit" id="dnGo">Continue to MySchoolBucks</button>
+            <p class="muted" style="margin:0;font-size:.85rem;text-align:center">Payment is made securely on the official school portal. Your name and amount appear in Recent supporters once the coach confirms your gift.</p>
+          </form>
+          <div id="dnNext" class="hidden" style="text-align:center">
+            <span class="eyebrow">Almost done</span>
+            <h2 style="margin:8px 0">Thank you, <span id="dnThanksName"></span>!</h2>
+            <p>On the next page, enter <b id="dnAmt"></b>. If there is a note or comment box, type <b id="dnNote"></b> so we know who you are supporting.</p>
+            <a class="btn btn-primary btn-big" id="dnPay" href="#" style="width:100%">Go to MySchoolBucks to pay</a>
+          </div>
+        </div>
+      </div>`);
+    $("#donateModal").addEventListener("click", (e) => {
+      if (e.target.id === "donateModal" || e.target.closest("[data-dn-close]")) closeDonate();
+      const b = e.target.closest("[data-amt]");
+      if (b) {
+        $$("#dnAmounts button").forEach((x) => x.classList.toggle("on", x === b));
+        $("#dnOther").value = "";
+      }
+    });
+    $("#dnOther").addEventListener("input", () => $$("#dnAmounts button").forEach((x) => x.classList.remove("on")));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDonate(); });
+    $("#dnForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const picked = $("#dnAmounts button.on");
+      const amount = picked ? Number(picked.dataset.amt) : Number($("#dnOther").value);
+      $("#dnErr").textContent = "";
+      if (!amount || amount < 1) { $("#dnErr").textContent = "Please choose or type an amount."; return; }
+      if ($("#dnName").value.trim().length < 2) { $("#dnErr").textContent = "Please enter your name."; return; }
+      const btn = $("#dnGo");
+      btn.disabled = true;
+      try {
+        const forSlug = $("#dnFor").value;
+        const res = await api("/api/gift", { method: "POST", body: {
+          slug: forSlug, amount, name: $("#dnName").value, email: $("#dnEmail").value,
+          anonymous: $("#dnAnon").checked, company: $("#dnCompany").value,
+        } });
+        const forName = $("#dnFor").selectedOptions[0].dataset.label;
+        $("#dnThanksName").textContent = $("#dnName").value.trim().split(/\s+/)[0];
+        $("#dnAmt").textContent = fmtMoney(amount, true);
+        $("#dnNote").textContent = forSlug === "team" ? "Lady Broncos team" : `Lady Broncos, ${forName}`;
+        $("#dnPay").href = res.url;
+        $("#dnForm").classList.add("hidden");
+        $("#dnNext").classList.remove("hidden");
+      } catch (err) {
+        $("#dnErr").textContent = err.message;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+  const opts = [`<option value="team" data-label="the whole team">The whole team</option>`]
+    .concat(options.map((o) => `<option value="${esc(o.slug)}" data-label="${esc(o.name)}">${esc(o.name)}</option>`));
+  $("#dnFor").innerHTML = opts.join("");
+  window.__donateDefault = slug;
+  window.__donateReady = !!settings.donateReady;
+}
+
+function openDonate(slug) {
+  if (!window.__donateReady) { toast("Online donations open very soon. Please check back shortly!"); return; }
+  $("#dnForm").reset();
+  $("#dnForm").classList.remove("hidden");
+  $("#dnNext").classList.add("hidden");
+  $$("#dnAmounts button").forEach((x) => x.classList.toggle("on", x.dataset.amt === "50"));
+  $("#dnErr").textContent = "";
+  const want = slug || window.__donateDefault || "team";
+  $("#dnFor").value = Array.from($("#dnFor").options).some((o) => o.value === want) ? want : "team";
+  $("#donateModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+  setTimeout(() => $("#dnName").focus(), 50);
+}
+
+function closeDonate() {
+  const m = $("#donateModal");
+  if (!m) return;
+  m.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function supportersHtml(list, { showFor = true } = {}) {
+  if (!list.length) return '<p class="muted" style="margin:0">Be the first to give! Gifts appear here once the coach confirms them.</p>';
+  return `<ul class="supporters">${list.map((s) => `
+    <li><span class="sup-av">${esc(s.name === "Anonymous" ? "♥" : initials(s.name))}</span>
+      <span class="sup-name"><b>${esc(s.name)}</b>${showFor ? `<small>for ${esc(s.for)}</small>` : ""}</span>
+      <span class="sup-amt">${fmtMoney(s.amount)}</span></li>`).join("")}</ul>`;
+}

@@ -16,6 +16,10 @@
 
   $("#profile").classList.remove("hidden");
   $("#shareSection").classList.remove("hidden");
+  $("#supSection").classList.remove("hidden");
+  $("#supportList").innerHTML = supportersHtml(data.supporters || [], { showFor: false });
+  setupDonate({ options: data.options || [], slug: p.slug, settings });
+  $("#donateBtn").addEventListener("click", (e) => { e.preventDefault(); openDonate(p.slug); });
   $("#photo").innerHTML = photoHtml(p.photo, p.name, p.number);
   $("#name").textContent = p.name;
   $("#meta").textContent = [p.number ? `#${p.number}` : "", p.position, `${settings.schoolName} ${settings.teamName}`].filter(Boolean).join(" · ");
@@ -27,7 +31,7 @@
 
   const pct = setBar($("#bar"), settings.raised, settings.goal);
   $("#barWrap").setAttribute("aria-valuenow", pct);
-  $("#teamLine").textContent = `Team: ${fmtMoney(settings.raised)} of ${fmtMoney(settings.goal)}`;
+  $("#teamLine").textContent = `Team: ${fmtMoney(settings.raised)} of ${fmtMoney(settings.goal)}${p.raised ? ` · ${p.first}: ${fmtMoney(p.raised)}` : ""}`;
   $("#ends").textContent = daysLeft(settings.endDate) > 0 ? `Ends ${endLabel(settings.endDate)}` : "Fundraiser has ended";
 
   const url = `${location.origin}/p/${p.slug}`;
