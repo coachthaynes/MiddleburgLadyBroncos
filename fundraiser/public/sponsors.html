@@ -100,6 +100,7 @@
       <h2 style="margin-top:10px">Tell us about your business</h2>
       <p class="muted">A coach will reach out within a few days to answer questions and get you set up.</p>
       <form class="form" id="sponsorForm" novalidate>
+        <h3 class="form-sec">About you</h3>
         <div class="two">
           <label class="field">Business name<input type="text" id="spBusiness" maxlength="80" autocomplete="organization" required></label>
           <label class="field">Your name<input type="text" id="spContact" maxlength="60" autocomplete="name" required></label>
@@ -109,10 +110,46 @@
           <label class="field">Phone<input type="tel" id="spPhone" maxlength="30" autocomplete="tel"></label>
         </div>
         <div class="two">
-          <label class="field">Website or social page <small>Optional</small><input type="text" id="spWebsite" maxlength="300" autocomplete="url"></label>
           <label class="field">Level you are interested in<select id="spLevel" class="gselect big"></select></label>
+          <label class="field">How do you plan to pay?<select id="spPay" class="gselect big"><option value="unsure">Not sure yet</option><option value="online">Online with MySchoolBucks</option><option value="check">Check to Middleburg High School</option></select></label>
         </div>
-        <label class="field">Anything else? <small>Optional</small><textarea id="spMessage" maxlength="800"></textarea></label>
+
+        <h3 class="form-sec">How we should show your business</h3>
+        <div class="two">
+          <label class="field">Name as it should appear <small>On banners, shirts and our website</small><input type="text" id="spDisplay" maxlength="80"></label>
+          <label class="field">Motto or tagline <small>Optional, for PA reads and posts</small><input type="text" id="spMotto" maxlength="160"></label>
+        </div>
+        <label class="field">What should our PA announcer say? <small>Optional. How to pronounce your name, your location, a special offer</small><textarea id="spPa" maxlength="500" rows="3"></textarea></label>
+        <div class="logo-pick">
+          <div class="logo-prev" id="spLogoPrev"><span>Your logo</span></div>
+          <div>
+            <b>Upload your logo</b>
+            <p class="muted" style="margin:2px 0 8px;font-size:.88rem">A PNG with a see through background works best. You can also email it to a coach later.</p>
+            <input type="file" id="spLogo" accept="image/png,image/jpeg,image/webp" class="hidden">
+            <div class="btn-row"><button type="button" class="btn btn-glass btn-small" id="spLogoBtn">Choose logo file</button><button type="button" class="btn btn-danger btn-small hidden" id="spLogoClear">Remove</button></div>
+          </div>
+        </div>
+        <div class="two">
+          <label class="field">Brand colors <small>Optional, for banners and shirts</small><input type="text" id="spColors" maxlength="120" placeholder="Navy and gold"></label>
+          <label class="field">Website <small>Optional</small><input type="text" id="spWebsite" maxlength="300" autocomplete="url"></label>
+        </div>
+        <div class="three">
+          <label class="field">Instagram<input type="text" id="spIg" maxlength="120" placeholder="@yourbusiness"></label>
+          <label class="field">Facebook<input type="text" id="spFb" maxlength="120" placeholder="Page name or link"></label>
+          <label class="field">TikTok<input type="text" id="spTt" maxlength="120" placeholder="@yourbusiness"></label>
+        </div>
+        <label class="field">Business address <small>For delivering your certificate and keepsakes</small><input type="text" id="spAddress" maxlength="200" autocomplete="street-address"></label>
+
+        <div id="spGameWrap" class="hidden">
+          <h3 class="form-sec">Your game night</h3>
+          <label class="field">Preferred home game or date <small>We will confirm the schedule with you</small><input type="text" id="spGame" maxlength="160"></label>
+        </div>
+        <div id="spBizWrap" class="hidden">
+          <h3 class="form-sec">Business Day</h3>
+          <label class="field">What would you like our players to see or try at your business? <small>Plus any days or times that work best</small><textarea id="spBiz" maxlength="600" rows="3"></textarea></label>
+        </div>
+
+        <label class="field">Anything else? <small>Optional</small><textarea id="spMessage" maxlength="800" rows="3"></textarea></label>
         <input type="text" id="spHp" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
         <p class="error" id="spErr"></p>
         <div><button class="btn btn-primary btn-big" type="submit" id="spGo">Send to the coaches</button></div>

@@ -362,3 +362,17 @@ section[id] { scroll-margin-top: 96px; }
 .level-more { display: block; font-weight: 700; font-size: .85rem; margin: -6px 0 14px; }
 .prep { margin-bottom: 14px; padding: 12px 14px; border-radius: 16px; background: var(--warn-soft); }
 .prep summary { cursor: pointer; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+/* Sponsor form sections */
+.form-sec { font-size: 1.05rem; margin: 10px 0 0; padding-top: 12px; border-top: 1px solid rgba(200,16,46,.15); }
+.form-sec:first-child { border-top: 0; padding-top: 0; margin-top: 4px; }
+.form .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 640px) { .form .three { grid-template-columns: 1fr; } }
+.logo-pick { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: center; padding: 14px; border-radius: 16px; background: rgba(255,255,255,.55); }
+.logo-prev { width: 120px; height: 120px; border-radius: 16px; border: 2px dashed rgba(200,16,46,.3); display: grid; place-items: center; background: #fff; overflow: hidden; color: var(--muted); font-size: .8rem; font-weight: 700; }
+.logo-prev img { max-width: 92%; max-height: 92%; object-fit: contain; }
+@media (max-width: 480px) { .logo-pick { grid-template-columns: 1fr; } }
+.sp-details { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 16px; margin: 0 0 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.7); font-size: .9rem; }
+.sp-details div b { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+input[type=email] { width: 100%; font: 500 1rem var(--body); color: var(--ink); padding: 13px 16px; border-radius: 14px; border: 1px solid rgba(200, 16, 46, 0.18); background: rgba(255, 255, 255, 0.78); outline: none; }
+#spGameWrap .form-sec, #spBizWrap .form-sec { border-top: 1px solid rgba(200,16,46,.15); padding-top: 12px; margin: 10px 0 10px; }

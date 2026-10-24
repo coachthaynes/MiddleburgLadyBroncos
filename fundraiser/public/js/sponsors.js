@@ -41,8 +41,7 @@ const SPONSOR_LEVELS = [
   });
 
   // Sponsor wall and payment link
-  try {
-    const data = await api("/api/sponsors");
+  api("/api/sponsors").then((data) => {
     if (data.payUrl) $("#payOnline").href = data.payUrl; else $("#payOnline").classList.add("hidden");
     $("#wall").innerHTML = data.sponsors.length
       ? data.sponsors.map((s) => {
@@ -53,31 +52,75 @@ const SPONSOR_LEVELS = [
           : `<div class="wall-item lvl-${s.level}">${body}</div>`;
       }).join("")
       : '<p class="muted" style="margin:0">Be the first business to join our sponsor wall this season!</p>';
-  } catch {
+  }).catch(() => {
     $("#wall").innerHTML = '<p class="muted" style="margin:0">Our sponsor wall is loading slowly. Please refresh.</p>';
     $("#payOnline").classList.add("hidden");
-  }
+  });
 
   // Interest form
+  let logoBlob = null;
+  const levelExtras = () => {
+    const v = $("#spLevel").value;
+    const unsure = $("#spLevel").selectedOptions[0]?.dataset.unsure;
+    $("#spGameWrap").classList.toggle("hidden", unsure || !(v === "herd" || v === "title"));
+    $("#spBizWrap").classList.toggle("hidden", unsure || v !== "title");
+  };
+  $("#spLevel").addEventListener("change", levelExtras);
+  $("#levelCards").addEventListener("click", () => setTimeout(levelExtras, 0));
+  levelExtras();
+
+  $("#spLogoBtn").addEventListener("click", () => $("#spLogo").click());
+  $("#spLogo").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      logoBlob = await resizeImage(file, 1200, "image/png");
+      $("#spLogoPrev").innerHTML = `<img src="${URL.createObjectURL(logoBlob)}" alt="Your logo">`;
+      $("#spLogoClear").classList.remove("hidden");
+      $("#spLogoBtn").textContent = "Choose a different file";
+    } catch (err) { $("#spErr").textContent = err.message; }
+  });
+  $("#spLogoClear").addEventListener("click", () => {
+    logoBlob = null;
+    $("#spLogoPrev").innerHTML = "<span>Your logo</span>";
+    $("#spLogoClear").classList.add("hidden");
+    $("#spLogoBtn").textContent = "Choose logo file";
+  });
+
   $("#sponsorForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     $("#spErr").textContent = "";
     const btn = $("#spGo");
     btn.disabled = true;
+    btn.textContent = "Sending...";
     try {
       const unsure = $("#spLevel").selectedOptions[0]?.dataset.unsure;
-      await api("/api/sponsor", { method: "POST", body: {
+      const lvl = $("#spLevel").value;
+      const res = await api("/api/sponsor", { method: "POST", body: {
         business: $("#spBusiness").value, contact: $("#spContact").value, email: $("#spEmail").value, phone: $("#spPhone").value,
-        website: $("#spWebsite").value, level: $("#spLevel").value,
+        website: $("#spWebsite").value, level: lvl,
         message: (unsure ? "Not sure which level yet. " : "") + $("#spMessage").value,
+        displayName: $("#spDisplay").value || $("#spBusiness").value, motto: $("#spMotto").value, paScript: $("#spPa").value,
+        instagram: $("#spIg").value, facebook: $("#spFb").value, tiktok: $("#spTt").value,
+        address: $("#spAddress").value, colors: $("#spColors").value, payMethod: $("#spPay").value,
+        preferredGame: !unsure && (lvl === "herd" || lvl === "title") ? $("#spGame").value : "",
+        bizDayNotes: !unsure && lvl === "title" ? $("#spBiz").value : "",
         company_hp: $("#spHp").value,
       } });
+      let logoNote = "";
+      if (logoBlob && res.id) {
+        const up = await fetch(`/api/sponsor/${res.id}/logo`, { method: "POST", headers: { "content-type": logoBlob.type, "x-upload-token": res.uploadToken }, body: logoBlob });
+        if (!up.ok) logoNote = " We could not save your logo, so please email it to a coach.";
+      }
       $("#sponsorForm").classList.add("hidden");
+      $("#spDone").textContent = `Thank you! A coach will reach out soon. Go Broncos!${logoNote}`;
       $("#spDone").classList.remove("hidden");
     } catch (err) {
       $("#spErr").textContent = err.message;
     } finally {
       btn.disabled = false;
+      btn.textContent = "Send to the coaches";
     }
   });
 })();

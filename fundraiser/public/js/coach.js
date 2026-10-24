@@ -327,6 +327,19 @@
       </div>
     </div>`;
   }
+  const PAY = { online: "Online with MySchoolBucks", check: "Check", unsure: "Not sure yet" };
+  function detailsHtml(s) {
+    const d = s.details;
+    if (!d) return "";
+    const row = (label, v) => (v ? `<div><b>${label}</b>${esc(v)}</div>` : "");
+    const social = [d.instagram && `Instagram ${d.instagram}`, d.facebook && `Facebook ${d.facebook}`, d.tiktok && `TikTok ${d.tiktok}`].filter(Boolean).join(" · ");
+    const html = [
+      row("Name on banners and shirts", d.displayName), row("Motto", d.motto), row("PA announcer", d.paScript),
+      row("Social", social), row("Brand colors", d.colors), row("Address", d.address),
+      row("Plans to pay", PAY[d.payMethod] || ""), row("Preferred game night", d.preferredGame), row("Business Day ideas", d.bizDayNotes),
+    ].join("");
+    return html ? `<div class="sp-details">${html}</div>` : "";
+  }
   function renderSponsors() {
     const list = sponsors.filter((s) => spTab === "all" || s.status === spTab);
     $("#spList").innerHTML = list.length ? list.map((s) => {
@@ -341,6 +354,7 @@
         </summary>
         <div class="sp-body">
           <p class="muted" style="margin:0 0 10px">${[esc(s.contact), s.email ? `<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>` : "", esc(s.phone), s.website ? `<a href="${esc(s.website)}" target="_blank" rel="noopener">Website</a>` : ""].filter(Boolean).join(" · ")}${s.message ? `<br>“${esc(s.message)}”` : ""}</p>
+          ${detailsHtml(s)}
           <div class="sp-controls">
             <label class="field">Level<select class="gselect" data-splevel="${s.id}">${Object.entries(levels).map(([k, l]) => `<option value="${k}" ${k === s.level ? "selected" : ""}>${esc(l.name)}</option>`).join("")}</select></label>
             <label class="field">Amount<input type="number" min="0" step="1" value="${s.amount}" data-spamt="${s.id}"></label>
@@ -349,6 +363,7 @@
           <div class="btn-row" style="margin:12px 0">
             <label class="switch"><input type="checkbox" data-spwall="${s.id}" ${s.showOnWall ? "checked" : ""}> Show on sponsor wall</label>
             <button class="btn btn-glass btn-small" data-splogo="${s.id}">${s.logo ? "Replace logo" : "Upload logo"}</button>
+            ${s.logo ? `<a class="btn btn-glass btn-small" href="${esc(s.logo)}" download="${esc(s.business.replace(/[^A-Za-z0-9 ]/g, ""))} logo.png">Download logo</a>` : ""}
             <button class="btn btn-glass btn-small" data-spcopy="${s.id}">Copy report link</button>
             <a class="btn btn-glass btn-small" href="${esc(s.reportUrl)}" target="_blank" rel="noopener">Open report</a>
             <button class="btn btn-danger btn-small" data-spdel="${s.id}">Delete</button>
@@ -478,8 +493,12 @@
     } catch (err) { toast(err.message); }
   });
   $("#spCsv").addEventListener("click", () => {
-    const rows = [["Business", "Contact", "Email", "Phone", "Website", "Level", "Amount", "Status", "To dos done", "Report link", "Added"]];
-    for (const s of sponsors) rows.push([s.business, s.contact, s.email, s.phone, s.website, levels[s.level]?.name || s.level, s.amount, STATUS[s.status][0], `${s.tasks.filter((t) => t.done).length} of ${s.tasks.length}`, s.reportUrl, new Date(s.createdAt).toLocaleDateString()]);
+    const rows = [["Business", "Contact", "Email", "Phone", "Website", "Level", "Amount", "Status", "To dos done", "Report link", "Added", "Name on banners", "Motto", "PA announcer", "Instagram", "Facebook", "TikTok", "Brand colors", "Address", "Plans to pay", "Preferred game night", "Business Day ideas", "Logo"]];
+    for (const s of sponsors) {
+      const d = s.details || {};
+      rows.push([s.business, s.contact, s.email, s.phone, s.website, levels[s.level]?.name || s.level, s.amount, STATUS[s.status][0], `${s.tasks.filter((t) => t.done).length} of ${s.tasks.length}`, s.reportUrl, new Date(s.createdAt).toLocaleDateString(),
+        d.displayName, d.motto, d.paScript, d.instagram, d.facebook, d.tiktok, d.colors, d.address, PAY[d.payMethod] || "", d.preferredGame, d.bizDayNotes, s.logo ? location.origin + s.logo : ""]);
+    }
     const csv = rows.map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));

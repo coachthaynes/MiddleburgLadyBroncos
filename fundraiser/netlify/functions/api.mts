@@ -6,7 +6,7 @@ import {
   makeSessionCookie, money, newCode, noteFailedAttempt, photoUrl, Player, publicPlayer,
   recordEvent, safeEqual, saveImage, savePlayer, Session, Settings, slugify, sumStats,
   tooManyAttempts, listGifts, saveGift, confirmedTotals, recentSupporters, Gift,
-  listSponsors, getSponsor, saveSponsor, syncSponsorTasks, isSponsorLevel, cleanUrl, Sponsor, SponsorLevel, SPONSOR_LEVELS, REPORT_LABELS, INTERNAL_TASKS,
+  listSponsors, getSponsor, saveSponsor, syncSponsorTasks, isSponsorLevel, cleanUrl, cleanSponsorDetails, Sponsor, SponsorLevel, SPONSOR_LEVELS, REPORT_LABELS, INTERNAL_TASKS,
 } from "../lib/core.mts";
 
 export default async (req: Request, context: Context) => {
@@ -20,7 +20,8 @@ export default async (req: Request, context: Context) => {
     if (parts[0] === "player" && parts[1] && method === "GET") return publicPlayerData(parts[1]);
     if (parts[0] === "track" && method === "POST") return track(req);
     if (parts[0] === "gift" && method === "POST") return createGift(req, context);
-    if (parts[0] === "sponsor" && method === "POST") return createSponsor(req);
+    if (parts[0] === "sponsor" && parts.length === 1 && method === "POST") return createSponsor(req);
+    if (parts[0] === "sponsor" && parts[1] && parts[2] === "logo" && method === "POST") return sponsorLogoUpload(req, parts[1]);
     if (parts[0] === "sponsors" && method === "GET") return sponsorWall();
     if (parts[0] === "sponsor-report" && parts[1] && method === "GET") return sponsorReport(parts[1]);
 
@@ -124,8 +125,28 @@ async function createSponsor(req: Request) {
     logoKey: "", showOnWall: false,
     createdAt: new Date().toISOString(),
     tasks: [],
+    details: cleanSponsorDetails(body, clean),
+    uploadToken: randomBytes(16).toString("hex"),
+    uploadUntil: Date.now() + 60 * 60 * 1000,
   };
   await saveSponsor(sponsor);
+  return json({ ok: true, id: sponsor.id, uploadToken: sponsor.uploadToken });
+}
+
+// The business can attach its logo once, right after sending the form.
+async function sponsorLogoUpload(req: Request, id: string) {
+  const s = await getSponsor(id);
+  const key = req.headers.get("x-upload-token") || "";
+  if (!s || !s.uploadToken || !safeEqual(key, s.uploadToken) || Date.now() > (s.uploadUntil || 0)) {
+    return json({ error: "That upload link has expired. Please email your logo to the coach." }, 403);
+  }
+  const saved = await saveImage(req, `sl${s.id}_`);
+  if ("error" in saved) return json({ error: saved.error }, 400);
+  await deleteImage(s.logoKey);
+  s.logoKey = saved.key;
+  delete s.uploadToken;
+  delete s.uploadUntil;
+  await saveSponsor(s);
   return json({ ok: true });
 }
 
@@ -531,7 +552,7 @@ async function coachSponsors(req: Request, parts: string[]) {
     const list = await listSponsors();
     return json({
       levels: SPONSOR_LEVELS,
-      sponsors: list.map((s) => ({
+      sponsors: list.map(({ uploadToken, uploadUntil, ...s }) => ({
         ...s,
         logo: photoUrl(s.logoKey),
         reportUrl: `${origin}/sponsor-report/${s.token}`,
@@ -571,6 +592,7 @@ async function coachSponsors(req: Request, parts: string[]) {
     if (body.amount !== undefined) s.amount = money(body.amount);
     if (body.showOnWall !== undefined) s.showOnWall = !!body.showOnWall;
     if (body.status !== undefined && ["interested", "committed", "paid", "declined"].includes(body.status)) s.status = body.status;
+    if (body.details && typeof body.details === "object") s.details = cleanSponsorDetails({ ...(s.details || {}), ...body.details }, clean);
     if (s.status === "committed" || s.status === "paid") syncSponsorTasks(s);
     await saveSponsor(s);
     return json({ ok: true });

@@ -380,6 +380,41 @@ export interface Sponsor {
   showOnWall: boolean;
   createdAt: string;
   tasks: SponsorTask[];
+  // Details the business gives us so we can deliver their benefits.
+  details?: SponsorDetails;
+  uploadToken?: string; // one time key so the business can attach a logo right after the form
+  uploadUntil?: number;
+}
+
+export interface SponsorDetails {
+  displayName: string; // exactly as it should appear on banners, shirts and the website
+  motto: string;
+  paScript: string;
+  instagram: string;
+  facebook: string;
+  tiktok: string;
+  address: string;
+  colors: string;
+  payMethod: string;
+  preferredGame: string;
+  bizDayNotes: string;
+}
+
+export function cleanSponsorDetails(b: any, clean: (v: unknown, max?: number) => string): SponsorDetails {
+  const handle = (v: unknown) => clean(v, 120).replace(/\s+/g, "");
+  return {
+    displayName: clean(b?.displayName, 80),
+    motto: clean(b?.motto, 160),
+    paScript: clean(b?.paScript, 500),
+    instagram: handle(b?.instagram),
+    facebook: handle(b?.facebook),
+    tiktok: handle(b?.tiktok),
+    address: clean(b?.address, 200),
+    colors: clean(b?.colors, 120),
+    payMethod: ["online", "check", "unsure"].includes(b?.payMethod) ? b.payMethod : "unsure",
+    preferredGame: clean(b?.preferredGame, 160),
+    bizDayNotes: clean(b?.bizDayNotes, 600),
+  };
 }
 
 // What has to be delivered at each level. Higher levels include everything below them.
@@ -421,6 +456,8 @@ export function syncSponsorTasks(s: Sponsor) {
   for (const t of TASKS) {
     if (t.min <= rank && !have.has(t.id)) s.tasks.push({ id: t.id, text: t.text, done: false, date: "", link: "", photoKey: "", note: "" });
   }
+  // A logo sent with the sign up form counts as received.
+  if (s.logoKey) for (const t of s.tasks) if (t.id === "logo" && !t.done) { t.done = true; t.date = new Date().toISOString().slice(0, 10); }
   // Keep the proof report as the last step.
   s.tasks.sort((a, b) => (a.id === "proof" ? 1 : 0) - (b.id === "proof" ? 1 : 0));
 }
