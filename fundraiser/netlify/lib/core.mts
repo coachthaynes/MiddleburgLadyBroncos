@@ -407,7 +407,7 @@ export const HOME_GAMES: { id: string; label: string; senior?: boolean }[] = [
   { id: "2026-12-01-duvalcharter", label: "Dec 1 vs Duval Charter, varsity 6:00 PM" },
   { id: "2026-12-14-clay", label: "Dec 14 vs Clay, varsity 7:30 PM" },
   { id: "2027-01-14-nease", label: "Jan 14 vs Nease, varsity 7:30 PM" },
-  { id: "2027-01-20-fsdb", label: "Jan 20 vs FSDB, Senior Night, varsity 6:00 PM", senior: true },
+  { id: "2027-01-20-fsdb", label: "Senior Night, Jan 20 vs FSDB or Jan 26 (date to be confirmed)", senior: true },
   { id: "2027-01-25-orangepark", label: "Jan 25 vs Orange Park, varsity 5:30 PM" },
 ];
 
