@@ -36,6 +36,7 @@ export function cleanHome(body: unknown) {
         location: str(x.location, 80),
         note: str(x.note, 40),
         result: str(x.result, 20),
+        neutral: !!x.neutral,
         featured: !!x.featured,
       };
     }).filter((g) => g.date && g.opponent),
@@ -90,4 +91,44 @@ export async function saveLinks(body: unknown) {
   const links = cleanLinks(body);
   await db().setJSON(LINKS_KEY, { links });
   return links;
+}
+
+// ---------- YouTube highlights ----------
+// Latest uploads from the team channel through YouTube's public feed (no API key). Cached for an hour.
+const clip = (s: string) => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+  // House style: no hyphens or dashes in page text.
+  .replace(/\s*[-‐-―|]+\s*/g, " · ").replace(/^ · | · $/g, "").replace(/\s+/g, " ").trim();
+
+async function channelId(handle: string) {
+  const r = await fetch(`https://www.youtube.com/@${encodeURIComponent(handle)}`, { headers: { "accept-language": "en-US,en;q=0.9", "user-agent": "Mozilla/5.0 (compatible; mhsladybroncos.com)" } });
+  const html = await r.text();
+  const m = /"(?:externalId|channelId)":"(UC[\w-]{22})"/.exec(html) || /youtube\.com\/channel\/(UC[\w-]{22})/.exec(html);
+  if (!m) throw new Error(`No channel id for @${handle} (${r.status})`);
+  return m[1];
+}
+
+export async function youtubeFeed(ref: string) {
+  const handle = /^@?([\w.-]{3,40})$/.exec(ref)?.[1] || "";
+  const direct = /^UC[\w-]{22}$/.test(ref) ? ref : "";
+  if (!handle && !direct) return { videos: [] };
+  const key = `cache/youtube/${(direct || handle).toLowerCase()}`;
+  const store = db();
+  const cached = (await store.get(key, { type: "json" }).catch(() => null)) as { at: number; id: string; videos: unknown[] } | null;
+  if (cached && Date.now() - cached.at < 60 * 60 * 1000) return { videos: cached.videos };
+  try {
+    const id = direct || cached?.id || (await channelId(handle));
+    const r = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${id}`);
+    if (!r.ok) throw new Error(`YouTube feed ${r.status}`);
+    const xml = await r.text();
+    const videos = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)].map(([, e]) => ({
+      id: /<yt:videoId>([\w-]{11})<\/yt:videoId>/.exec(e)?.[1] || "",
+      title: clip(/<title>([\s\S]*?)<\/title>/.exec(e)?.[1] || ""),
+      at: /<published>([^<]+)<\/published>/.exec(e)?.[1] || "",
+    })).filter((v) => v.id);
+    await store.setJSON(key, { at: Date.now(), id, videos });
+    return { videos };
+  } catch (err) {
+    console.error("youtube", err);
+    return { videos: cached?.videos || [] };
+  }
 }

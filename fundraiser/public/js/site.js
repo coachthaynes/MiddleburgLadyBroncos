@@ -29,13 +29,15 @@
     if (m) { h = (+m[1] % 12) + (m[3].toUpperCase() === "PM" ? 12 : 0); min = +m[2]; }
     return new Date(`${g.date}T${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}:00-05:00`);
   }
+  // Neutral site games (like preseason at Ribault) read "vs", the same as home games.
+  const vsAt = (g) => (g.home || g.neutral ? "vs" : "at");
   const dayFmt = (d, o) => d.toLocaleDateString("en-US", { timeZone: "America/New_York", ...o });
   const now = new Date();
   const upcoming = schedule.filter((g) => !g.result && g.at.getTime() + 2 * 3600000 > now.getTime());
   const next = upcoming[0];
 
   const notePills = (g) => (g.note || "").split("·").map((n) => n.trim()).filter(Boolean).map((n) => `<span class="pill red">${esc(n)}</span>`).join("");
-  const tagFor = (g) => (g.home ? '<span class="tag">Home</span>' : /tbd/i.test(g.location || "") ? '<span class="tag grey">TBD</span>' : '<span class="tag grey">Away</span>');
+  const tagFor = (g) => (g.home ? '<span class="tag">Home</span>' : g.neutral ? '<span class="tag grey">Neutral</span>' : /tbd/i.test(g.location || "") ? '<span class="tag grey">TBD</span>' : '<span class="tag grey">Away</span>');
   function renderSchedule(filter) {
     const list = schedule.filter((g) => filter === "all" || (filter === "home" ? g.home : !g.home));
     const label = { home: "home", away: "away", all: "" }[filter];
@@ -44,7 +46,7 @@
       const res = g.result ? `<span class="result ${/^w/i.test(g.result) ? "w" : "l"}">${esc(g.result)}</span>` : "";
       return `<li class="game${g === next ? " next" : ""}${past ? " past" : ""}${g.featured ? " featured" : ""}">
         <div class="date"><small>${esc(dayFmt(g.at, { month: "short" }))}</small><b>${esc(dayFmt(g.at, { day: "numeric" }))}</b></div>
-        <div><div class="opp"><em>${g.home ? "vs" : "at"}</em>${esc(g.opponent)}${g.featured ? '<span class="star" aria-label="Featured game">★</span>' : ""}</div>
+        <div><div class="opp"><em>${vsAt(g)}</em>${esc(g.opponent)}${g.featured ? '<span class="star" aria-label="Featured game">★</span>' : ""}</div>
           <div class="meta">${esc(dayFmt(g.at, { weekday: "long" }))} · ${esc(g.time || "Time to be announced")}${g.location ? " · " + esc(g.location) : ""}</div></div>
         <div class="right">${res || tagFor(g)}${notePills(g)}</div>
       </li>`;
@@ -64,7 +66,7 @@
       <div class="fg-date"><small>${esc(dayFmt(g.at, { weekday: "short" }))}</small><b>${esc(dayFmt(g.at, { month: "short", day: "numeric" }))}</b></div>
       <div class="fg-body">
         <span class="tag">Circle the date</span>
-        <div class="fg-opp"><em>${g.home ? "vs" : "at"}</em> ${esc(g.opponent)}</div>
+        <div class="fg-opp"><em>${vsAt(g)}</em> ${esc(g.opponent)}</div>
         <div class="fg-meta">${esc(g.time || "Time to be announced")}${g.location ? " · " + esc(g.location) : ""}${g.home ? " · Middleburg" : ""}</div>
         ${g.note ? `<div class="fg-notes">${notePills(g)}</div>` : ""}
       </div>
@@ -78,7 +80,7 @@
   // Next game card with a live countdown
   const ng = $("#nextGame .ng-body");
   if (next) {
-    ng.innerHTML = `<div class="ng-vs">${next.home ? "Home game vs" : "Road game at"}</div>
+    ng.innerHTML = `<div class="ng-vs">${next.home ? "Home game vs" : next.neutral ? "Neutral site vs" : "Road game at"}</div>
       <div class="ng-opp">${esc(next.opponent)}</div>
       <div class="ng-when">${esc(dayFmt(next.at, { weekday: "long", month: "long", day: "numeric" }))} · ${esc(next.time || "")}</div>
       ${next.note ? `<div class="ng-note"><span class="pill red">${esc(next.note)}</span></div>` : ""}
@@ -110,7 +112,7 @@
     upcoming.forEach((g) => {
       lines.push("BEGIN:VEVENT", `UID:${g.date}${g.opponent.replace(/\W/g, "")}@mhsladybroncos.com`, `DTSTAMP:${stamp(new Date())}`,
         `DTSTART:${stamp(g.at)}`, `DTEND:${stamp(new Date(g.at.getTime() + 2 * 3600000))}`,
-        `SUMMARY:Lady Broncos ${g.home ? "vs" : "at"} ${g.opponent}${g.note ? " (" + g.note + ")" : ""}`,
+        `SUMMARY:Lady Broncos ${vsAt(g)} ${g.opponent}${g.note ? " (" + g.note + ")" : ""}`,
         `LOCATION:${g.home ? venue.name + ", " + (venue.city || "") : g.location || g.opponent}`, "END:VEVENT");
     });
     lines.push("END:VCALENDAR");
@@ -124,9 +126,9 @@
 
   // Ticker
   const tickerItems = ["Go Broncos"];
-  if (next) tickerItems.push(`Next up: ${next.home ? "vs" : "at"} ${next.opponent} ${dayFmt(next.at, { month: "short", day: "numeric" })} ${next.time || ""}`);
+  if (next) tickerItems.push(`Next up: ${vsAt(next)} ${next.opponent} ${dayFmt(next.at, { month: "short", day: "numeric" })} ${next.time || ""}`);
   schedule.filter((g) => (g.note || g.featured) && upcoming.includes(g) && !/^(JV 6:00|Varsity only|Tournament|Preseason)$/.test(g.note || ""))
-    .forEach((g) => tickerItems.push(`${(g.note || "Big game").split("·").map((n) => n.trim()).filter((n) => !/^JV /.test(n)).join(" and ")} ${dayFmt(g.at, { month: "short", day: "numeric" })} ${g.home ? "vs" : "at"} ${g.opponent}`));
+    .forEach((g) => tickerItems.push(`${(g.note || "Big game").split("·").map((n) => n.trim()).filter((n) => !/^JV /.test(n)).join(" and ")} ${dayFmt(g.at, { month: "short", day: "numeric" })} ${vsAt(g)} ${g.opponent}`));
   tickerItems.push(...(H.ticker || []));
   const tickerHtml = tickerItems.map((t) => `<span>${esc(t)}</span>`).join("");
   $("#ticker").innerHTML = tickerHtml + tickerHtml;
@@ -140,15 +142,47 @@
     const m = /(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/.exec(s);
     return m ? m[1] : "";
   };
-  const slots = (H.highlights || []).slice(0, 6);
-  while (slots.length < 6) slots.push({ title: "Highlight", tag: "Coming soon" });
-  $("#highlightGrid").innerHTML = slots.map((h, i) => {
-    const id = ytId(h.url);
-    const frame = id
-      ? `<button class="frame" data-yt="${esc(id)}" style="background-image:url(https://i.ytimg.com/vi/${esc(id)}/hqdefault.jpg)" aria-label="Play ${esc(h.title)}"><span class="num">${i + 1}</span><span class="play"></span></button>`
-      : `<a class="frame empty" href="${esc(yt)}" target="_blank" rel="noopener"><span class="num">${i + 1}</span><span>Coming soon</span></a>`;
-    return `<article class="glass hl">${frame}${h.tag ? `<span class="tag grey">${esc(h.tag)}</span>` : ""}<h3>${esc(h.title || "Highlight")}</h3></article>`;
-  }).join("");
+  function renderHighlights(slots) {
+    $("#highlightGrid").innerHTML = slots.map((h, i) => {
+      const id = ytId(h.url);
+      const frame = id
+        ? `<button class="frame" data-yt="${esc(id)}" style="background-image:url(https://i.ytimg.com/vi/${esc(id)}/hqdefault.jpg)" aria-label="Play ${esc(h.title)}"><span class="num">${i + 1}</span><span class="play"></span></button>`
+        : `<a class="frame empty" href="${esc(yt)}" target="_blank" rel="noopener"><span class="num">${i + 1}</span><span>Coming soon</span></a>`;
+      return `<article class="glass hl">${frame}${h.tag ? `<span class="tag grey">${esc(h.tag)}</span>` : ""}<h3>${esc(h.title || "Highlight")}</h3></article>`;
+    }).join("");
+  }
+  // Slots with a link pasted on the dashboard stay put. Empty slots fill from the team channel,
+  // newest first, with one video per player so nobody shows up twice.
+  const picked = (H.highlights || []).filter((h) => ytId(h.url)).slice(0, 6);
+  const fillSlots = (videos) => {
+    const slots = [...picked];
+    const used = new Set(slots.map((h) => ytId(h.url)));
+    const names = [...new Set([...Object.keys(H.rosterExtras || {}), ...(H.spotlights || []).map((p) => p.name)])];
+    const who = (title) => names.find((n) => {
+      const [first, ...rest] = n.split(/\s+/);
+      const last = rest[rest.length - 1] || "";
+      return [n, last, first].some((w) => w.length > 2 && new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(title));
+    });
+    const seen = new Set(slots.map((h) => who(h.title || "")).filter(Boolean));
+    const ranked = [...videos].sort((a, b) => (who(b.title) || /highlight/i.test(b.title) ? 1 : 0) - (who(a.title) || /highlight/i.test(a.title) ? 1 : 0));
+    for (const v of ranked) {
+      if (slots.length >= 6) break;
+      if (used.has(v.id)) continue;
+      const p = who(v.title);
+      if (p && seen.has(p)) continue;
+      if (p) seen.add(p);
+      used.add(v.id);
+      slots.push({ url: v.id, title: v.title, tag: p || "Team highlights" });
+    }
+    const placeholders = (H.highlights || []).filter((h) => !ytId(h.url));
+    while (slots.length < 6) slots.push(placeholders[slots.length - picked.length] || { title: "Highlight", tag: "Coming soon" });
+    renderHighlights(slots);
+  };
+  fillSlots([]);
+  const channelRef = (/youtube\.com\/(?:@([\w.-]+)|channel\/(UC[\w-]{22}))/.exec(yt) || []).slice(1).find(Boolean) || "mhsbroncogbb";
+  if (channelRef && picked.length < 6) {
+    api(`/api/youtube?channel=${encodeURIComponent(channelRef)}`).then((d) => { if ((d.videos || []).length) fillSlots(d.videos); }).catch(() => {});
+  }
   $("#highlightGrid").addEventListener("click", (e) => {
     const b = e.target.closest("[data-yt]");
     if (!b) return;

@@ -13,11 +13,11 @@ window.HOME = {
 
   // YouTube channel for the highlight section and the Watch button.
   youtube: {
-    channel: "https://www.youtube.com/results?search_query=Middleburg+High+School+girls+basketball",
+    channel: "https://www.youtube.com/@mhsbroncogbb",
   },
 
-  // Six highlight slots. Paste a YouTube link (watch, youtu.be or shorts) into url.
-  // Empty slots show a Coming soon card that links to the channel.
+  // Six highlight slots. Empty slots fill on their own with the newest videos from the channel above,
+  // one per player. Paste a YouTube link (watch, youtu.be or shorts) into url to pin a video to a slot.
   highlights: [
     { url: "", title: "Season opener highlights", tag: "Game recap" },
     { url: "", title: "Top plays of the week", tag: "Top plays" },
@@ -39,8 +39,8 @@ window.HOME = {
   // Add result once a game is played, for example "W 54 41" or "L 38 45".
   schedule: [
     // Preseason
-    { date: "2026-11-09", opponent: "Mandarin", home: false, time: "5:00 PM", location: "at Ribault HS", note: "Preseason" },
-    { date: "2026-11-11", opponent: "NEFI", home: false, time: "3:30 PM", location: "at Ribault HS", note: "Preseason" },
+    { date: "2026-11-09", opponent: "Mandarin", home: false, neutral: true, time: "5:00 PM", location: "at Ribault HS", note: "Preseason" },
+    { date: "2026-11-11", opponent: "NEFI", home: false, neutral: true, time: "3:30 PM", location: "at Ribault HS", note: "Preseason" },
     // November
     { date: "2026-11-16", opponent: "Temple Christian", home: false, time: "6:00 PM" },
     { date: "2026-11-17", opponent: "Tocoi Creek", home: true, time: "7:30 PM", note: "JV 6:00" },

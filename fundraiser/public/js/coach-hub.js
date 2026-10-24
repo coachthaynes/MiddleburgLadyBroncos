@@ -111,10 +111,10 @@
   const F = (k, label, o = {}) => ({ k, label, ...o });
   const LISTS = {
     schedule: { title: "Game schedule", help: "Games sort by date and split into Home and Away tabs on the home page. Add the result after the game, for example W 54 41. Feature a game to spotlight it above the schedule.", add: "Add a game", max: 60,
-      blank: { date: "", opponent: "", home: true, time: "7:30 PM", location: "", note: "", result: "", featured: false },
+      blank: { date: "", opponent: "", home: true, time: "7:30 PM", location: "", note: "", result: "", neutral: false, featured: false },
       fields: [F("date", "Date", { type: "date" }), F("opponent", "Opponent", { max: 60 }), F("home", "Home game", { type: "check" }), F("time", "Varsity time", { ph: "7:30 PM", max: 12 }),
         F("location", "Away gym", { ph: "Only for away games", max: 80 }), F("note", "Note", { ph: "Senior Night", max: 40 }), F("result", "Result", { ph: "W 54 41", max: 20 }),
-        F("featured", "Feature this game", { type: "check" })] },
+        F("neutral", "Neutral site", { type: "check" }), F("featured", "Feature this game", { type: "check" })] },
     highlights: { title: "Highlights", help: "Six slots. Paste a YouTube link to fill a slot. Leave the link empty to show Coming soon.", max: 6, fixed: true,
       blank: { url: "", title: "", tag: "" },
       fields: [F("url", "YouTube link", { type: "url", ph: "https://youtu.be/...", wide: true }), F("title", "Title", { max: 80 }), F("tag", "Label", { ph: "Game recap", max: 30 })] },
@@ -314,7 +314,7 @@
     const games = (st?.schedule || []).filter((g) => g.date && !g.result && new Date(g.date + "T23:59:59") >= new Date())
       .sort((a, b) => a.date.localeCompare(b.date));
     const g = games[0];
-    $("#hubNext").textContent = g ? `${g.home ? "vs" : "at"} ${g.opponent}` : "None scheduled";
+    $("#hubNext").textContent = g ? `${g.home || g.neutral ? "vs" : "at"} ${g.opponent}` : "None scheduled";
     $("#hubNextWhen").textContent = g ? `${new Date(g.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })} · ${g.time || ""}` : "Add games on the Home page tab";
     $("#hubSaved").textContent = savedAt ? "Published" : "Not edited yet";
     $("#hubSavedWhen").textContent = savedAt ? new Date(savedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "Showing the starting content";

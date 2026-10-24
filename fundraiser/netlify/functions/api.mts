@@ -13,7 +13,7 @@ import {
   normalizeEmail, providerStatus, renderEmail, renderSms, saveContacts, saveWaves,
   sendEmail, SendLog, siteOrigin, unsubUrl, Wave,
 } from "../lib/messaging.mts";
-import { getHome, getLinks, saveHome, saveLinks } from "../lib/home.mts";
+import { getHome, getLinks, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
 
 export default async (req: Request, context: Context) => {
   const url = new URL(req.url);
@@ -30,6 +30,7 @@ export default async (req: Request, context: Context) => {
     if (parts[0] === "sponsor" && parts[1] && parts[2] === "logo" && method === "POST") return sponsorLogoUpload(req, parts[1]);
     if (parts[0] === "sponsors" && method === "GET") return sponsorWall();
     if (parts[0] === "instagram" && method === "GET") return instagramFeed();
+    if (parts[0] === "youtube" && method === "GET") return json(await youtubeFeed(url.searchParams.get("channel") || ""), 200, { "cache-control": "public, max-age=600" });
     if (parts[0] === "home" && method === "GET") return json({ content: (await getHome())?.content || null }, 200, { "cache-control": "public, max-age=60" });
     if (parts[0] === "sponsor-report" && parts[1] && method === "GET") return sponsorReport(parts[1]);
 
