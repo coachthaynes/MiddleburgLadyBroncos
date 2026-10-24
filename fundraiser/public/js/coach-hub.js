@@ -110,10 +110,11 @@
   // ----- home page editor -----
   const F = (k, label, o = {}) => ({ k, label, ...o });
   const LISTS = {
-    schedule: { title: "Game schedule", help: "Games sort by date on the home page. Add the result after the game, for example W 54 41.", add: "Add a game", max: 60,
-      blank: { date: "", opponent: "", home: true, time: "7:30 PM", location: "", note: "", result: "" },
+    schedule: { title: "Game schedule", help: "Games sort by date and split into Home and Away tabs on the home page. Add the result after the game, for example W 54 41. Feature a game to spotlight it above the schedule.", add: "Add a game", max: 60,
+      blank: { date: "", opponent: "", home: true, time: "7:30 PM", location: "", note: "", result: "", featured: false },
       fields: [F("date", "Date", { type: "date" }), F("opponent", "Opponent", { max: 60 }), F("home", "Home game", { type: "check" }), F("time", "Varsity time", { ph: "7:30 PM", max: 12 }),
-        F("location", "Away gym", { ph: "Only for away games", max: 80 }), F("note", "Note", { ph: "Senior Night", max: 40 }), F("result", "Result", { ph: "W 54 41", max: 20 })] },
+        F("location", "Away gym", { ph: "Only for away games", max: 80 }), F("note", "Note", { ph: "Senior Night", max: 40 }), F("result", "Result", { ph: "W 54 41", max: 20 }),
+        F("featured", "Feature this game", { type: "check" })] },
     highlights: { title: "Highlights", help: "Six slots. Paste a YouTube link to fill a slot. Leave the link empty to show Coming soon.", max: 6, fixed: true,
       blank: { url: "", title: "", tag: "" },
       fields: [F("url", "YouTube link", { type: "url", ph: "https://youtu.be/...", wide: true }), F("title", "Title", { max: 80 }), F("tag", "Label", { ph: "Game recap", max: 30 })] },

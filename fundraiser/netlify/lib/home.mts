@@ -36,6 +36,7 @@ export function cleanHome(body: unknown) {
         location: str(x.location, 80),
         note: str(x.note, 40),
         result: str(x.result, 20),
+        featured: !!x.featured,
       };
     }).filter((g) => g.date && g.opponent),
     venue: { name: str(venue.name, 80), city: str(venue.city, 60), map: url(venue.map) },

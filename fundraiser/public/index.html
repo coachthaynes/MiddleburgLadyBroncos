@@ -92,14 +92,15 @@
   <section class="wrap block" id="schedule">
     <div class="print-head">
       <div><span class="kicker">Come watch</span><h2><span data-season></span> Game Schedule</h2></div>
-      <div class="seg" role="group" aria-label="Filter games">
-        <button aria-pressed="true" data-filter="all">All</button>
-        <button aria-pressed="false" data-filter="home">Home</button>
-        <button aria-pressed="false" data-filter="away">Away</button>
+      <div class="seg" role="tablist" aria-label="Schedule">
+        <button role="tab" id="st-home" aria-controls="scheduleList" aria-selected="true" data-filter="home">Home games</button>
+        <button role="tab" id="st-away" aria-controls="scheduleList" aria-selected="false" data-filter="away">Away games</button>
+        <button role="tab" id="st-all" aria-controls="scheduleList" aria-selected="false" data-filter="all">Full season</button>
       </div>
     </div>
+    <div id="featuredGame"></div>
     <div class="glass sched-card">
-      <ol class="schedule" id="scheduleList"></ol>
+      <ol class="schedule" id="scheduleList" role="tabpanel" aria-labelledby="st-home"></ol>
       <div class="sched-foot">
         <span class="muted"><b class="dot-home"></b> Home games at <a id="venueLink" href="#" target="_blank" rel="noopener"></a>. Varsity times shown.</span>
         <button class="btn btn-glass btn-small" id="icsBtn">Add games to my calendar</button>

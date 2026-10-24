@@ -118,7 +118,7 @@ a.sp-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
 /* Schedule */
 .seg { display: inline-flex; padding: 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--glass-line); }
 .seg button { appearance: none; border: 0; background: transparent; color: var(--muted); font: 700 0.88rem var(--body); padding: 8px 16px; border-radius: 999px; cursor: pointer; }
-.seg button[aria-pressed="true"] { background: var(--red); color: #fff; }
+.seg button[aria-selected="true"] { background: var(--red); color: #fff; }
 .sched-card { padding: 8px; }
 .schedule { list-style: none; margin: 0; padding: 0; }
 .game { display: grid; grid-template-columns: 76px 1fr auto; align-items: center; gap: 16px; padding: 14px 16px; border-radius: 18px; }
@@ -260,3 +260,22 @@ body.dark .ph .jersey { background: var(--red); color: #fff; font-family: var(--
 .slogan-band span { font: 700 clamp(2.6rem, 9vw, 6rem) var(--print); text-transform: uppercase; line-height: 1; letter-spacing: -0.01em; color: #fff; }
 .slogan-band span:nth-child(even) { color: transparent; -webkit-text-stroke: 2px #ff2e4d; }
 .foot-slogans { display: inline-flex; gap: 18px; }
+
+/* Featured game */
+.game.featured { background: linear-gradient(90deg, rgba(200, 16, 46, 0.22), rgba(200, 16, 46, 0.04)); box-shadow: inset 4px 0 0 #ff2e4d; }
+.game .star { color: #ff2e4d; margin-left: 8px; font-size: 1rem; }
+.feature-game { display: grid; grid-template-columns: auto 1fr auto; gap: 22px; align-items: center; padding: 22px 26px; margin-bottom: 16px; border: 1px solid rgba(200, 16, 46, 0.6); background: linear-gradient(120deg, rgba(200, 16, 46, 0.35), rgba(20, 20, 20, 0.6) 60%); position: relative; overflow: hidden; }
+.feature-game::after { content: ""; position: absolute; right: -40px; top: -40px; width: 200px; height: 200px; background: url(/brand/logo.png) center / contain no-repeat; opacity: 0.08; pointer-events: none; }
+.fg-date { text-align: center; padding: 12px 16px; border-radius: 16px; background: var(--red); color: #fff; line-height: 1; }
+.fg-date small { display: block; font: 600 0.75rem var(--body); letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.85; }
+.fg-date b { display: block; font: 700 1.8rem var(--print); margin-top: 6px; text-transform: uppercase; white-space: nowrap; }
+.fg-body { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.fg-opp { font: 700 clamp(1.8rem, 4.5vw, 2.6rem) var(--print); text-transform: uppercase; line-height: 1; color: #fff; }
+.fg-opp em { font-style: normal; font-size: 0.5em; color: var(--muted); letter-spacing: 0.1em; vertical-align: middle; }
+.fg-meta { color: #e4e4e7; font-weight: 600; }
+.fg-notes { display: flex; flex-wrap: wrap; gap: 6px; }
+.fg-cta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.fg-shout { font: 700 1.1rem var(--print); text-transform: uppercase; letter-spacing: 0.14em; color: #fff; }
+@media (max-width: 640px) { .feature-game { grid-template-columns: auto 1fr; } .fg-cta { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; } }
+.game .right { flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 560px) { .game .right { justify-content: flex-start; } }

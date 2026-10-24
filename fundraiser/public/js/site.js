@@ -34,24 +34,42 @@
   const upcoming = schedule.filter((g) => !g.result && g.at.getTime() + 2 * 3600000 > now.getTime());
   const next = upcoming[0];
 
+  const notePills = (g) => (g.note || "").split("·").map((n) => n.trim()).filter(Boolean).map((n) => `<span class="pill red">${esc(n)}</span>`).join("");
+  const tagFor = (g) => (g.home ? '<span class="tag">Home</span>' : '<span class="tag grey">Away</span>');
   function renderSchedule(filter) {
     const list = schedule.filter((g) => filter === "all" || (filter === "home" ? g.home : !g.home));
+    const label = { home: "home", away: "away", all: "" }[filter];
     $("#scheduleList").innerHTML = list.length ? list.map((g) => {
       const past = !!g.result || g.at.getTime() + 2 * 3600000 < now.getTime();
       const res = g.result ? `<span class="result ${/^w/i.test(g.result) ? "w" : "l"}">${esc(g.result)}</span>` : "";
-      return `<li class="game${g === next ? " next" : ""}${past ? " past" : ""}">
+      return `<li class="game${g === next ? " next" : ""}${past ? " past" : ""}${g.featured ? " featured" : ""}">
         <div class="date"><small>${esc(dayFmt(g.at, { month: "short" }))}</small><b>${esc(dayFmt(g.at, { day: "numeric" }))}</b></div>
-        <div><div class="opp"><em>${g.home ? "vs" : "at"}</em>${esc(g.opponent)}</div>
+        <div><div class="opp"><em>${g.home ? "vs" : "at"}</em>${esc(g.opponent)}${g.featured ? '<span class="star" aria-label="Featured game">★</span>' : ""}</div>
           <div class="meta">${esc(dayFmt(g.at, { weekday: "long" }))} · ${esc(g.time || "Time to be announced")}${g.location ? " · " + esc(g.location) : ""}</div></div>
-        <div class="right">${res || (g.home ? '<span class="tag">Home</span>' : '<span class="tag grey">Away</span>')}${g.note ? `<span class="pill red">${esc(g.note)}</span>` : ""}</div>
+        <div class="right">${res || tagFor(g)}${notePills(g)}</div>
       </li>`;
-    }).join("") : `<li class="game"><div></div><div class="muted">No ${filter} games on the schedule yet.</div></li>`;
+    }).join("") : `<li class="game"><div></div><div class="muted">No ${label} games on the schedule yet.</div></li>`;
+    $("#scheduleList").setAttribute("aria-labelledby", "st-" + filter);
   }
-  renderSchedule("all");
+  renderSchedule("home");
   $$(".seg button").forEach((b) => b.addEventListener("click", () => {
-    $$(".seg button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    $$(".seg button").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
     renderSchedule(b.dataset.filter);
   }));
+
+  // Featured games (a big rivalry or a triple header) get their own card above the schedule.
+  const featured = upcoming.filter((g) => g.featured);
+  $("#featuredGame").innerHTML = featured.map((g) => `
+    <div class="glass feature-game">
+      <div class="fg-date"><small>${esc(dayFmt(g.at, { weekday: "short" }))}</small><b>${esc(dayFmt(g.at, { month: "short", day: "numeric" }))}</b></div>
+      <div class="fg-body">
+        <span class="tag">Circle the date</span>
+        <div class="fg-opp"><em>${g.home ? "vs" : "at"}</em> ${esc(g.opponent)}</div>
+        <div class="fg-meta">${esc(g.time || "Time to be announced")}${g.location ? " · " + esc(g.location) : ""}${g.home ? " · Middleburg" : ""}</div>
+        ${g.note ? `<div class="fg-notes">${notePills(g)}</div>` : ""}
+      </div>
+      <div class="fg-cta"><span class="fg-shout">Pack the stands</span>${tagFor(g)}</div>
+    </div>`).join("");
 
   const venue = H.venue || {};
   $("#venueLink").textContent = venue.name || "Middleburg High School";
@@ -107,7 +125,8 @@
   // Ticker
   const tickerItems = ["Go Broncos"];
   if (next) tickerItems.push(`Next up: ${next.home ? "vs" : "at"} ${next.opponent} ${dayFmt(next.at, { month: "short", day: "numeric" })} ${next.time || ""}`);
-  schedule.filter((g) => g.note && upcoming.includes(g)).forEach((g) => tickerItems.push(`${g.note} ${dayFmt(g.at, { month: "short", day: "numeric" })} vs ${g.opponent}`));
+  schedule.filter((g) => (g.note || g.featured) && upcoming.includes(g) && !/^(JV|Varsity only|Tournament)/.test(g.note || ""))
+    .forEach((g) => tickerItems.push(`${(g.note || "Big game").replace(/\s*·\s*/g, " and ")} ${dayFmt(g.at, { month: "short", day: "numeric" })} ${g.home ? "vs" : "at"} ${g.opponent}`));
   tickerItems.push(...(H.ticker || []));
   const tickerHtml = tickerItems.map((t) => `<span>${esc(t)}</span>`).join("");
   $("#ticker").innerHTML = tickerHtml + tickerHtml;

@@ -45,6 +45,25 @@ window.HOME = {
     { date: "2027-01-14", opponent: "Nease", home: true, time: "7:30 PM" },
     { date: "2027-01-20", opponent: "FSDB", home: true, time: "6:00 PM" },
     { date: "2027-01-25", opponent: "Orange Park", home: true, time: "5:30 PM", note: "Senior Night" },
+
+    // Away games and tournaments. featured puts a game in the spotlight card above the schedule.
+    { date: "2026-11-12", opponent: "Beachside Preseason", home: false, time: "" },
+    { date: "2026-11-13", opponent: "Beachside Preseason", home: false, time: "" },
+    { date: "2026-11-25", opponent: "IE Thanksgiving Tournament", home: false, time: "", note: "Tournament" },
+    { date: "2026-11-26", opponent: "IE Thanksgiving Tournament", home: false, time: "", note: "Tournament" },
+    { date: "2026-12-03", opponent: "Beachside", home: false, time: "7:30 PM", note: "JV 6:00" },
+    { date: "2026-12-04", opponent: "Ridgeview", home: false, time: "6:00 PM" },
+    { date: "2026-12-07", opponent: "Bolles", home: false, time: "6:00 PM", note: "Varsity only" },
+    { date: "2026-12-09", opponent: "Episcopal", home: false, time: "7:30 PM", note: "JV 6:00" },
+    { date: "2026-12-16", opponent: "Oakleaf", home: false, time: "6:00 PM" },
+    { date: "2027-01-05", opponent: "Creekside", home: false, time: "6:00 PM", note: "Varsity only" },
+    { date: "2027-01-07", opponent: "Fleming Island", home: false, time: "6:00 PM", note: "Triple header · County rivalry", featured: true },
+    { date: "2027-01-08", opponent: "Jackson", home: false, time: "6:00 PM", note: "Varsity only" },
+    { date: "2027-01-11", opponent: "St. Augustine", home: false, time: "7:30 PM", note: "JV 6:00" },
+    { date: "2027-01-12", opponent: "Bartram Trail", home: false, time: "7:30 PM", note: "JV 6:00" },
+    { date: "2027-01-22", opponent: "Pedro Menendez", home: false, time: "7:30 PM", note: "JV 6:00" },
+    { date: "2027-01-26", opponent: "Bradford", home: false, time: "6:00 PM", note: "Triple header" },
+    { date: "2027-01-28", opponent: "Ponte Vedra", home: false, time: "6:00 PM", note: "Varsity only" },
   ],
 
   venue: {
