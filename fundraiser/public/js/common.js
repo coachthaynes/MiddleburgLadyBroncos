@@ -216,6 +216,30 @@ function playerMessage(name, settings) {
   return `Hi! It's ${name} from the ${settings.schoolName} ${settings.teamName}. We are raising ${fmtMoney(settings.goal)} for our season and I would love your support. Every gift goes straight to our school:`;
 }
 
+// ---------- MySchoolBucks app help ----------
+// The MySchoolBucks app grabs our link and opens on the balances screen, so show how to find the item.
+// `linkSel` points at the pay link whose href the Copy link button copies.
+function appStepsHtml(linkSel) {
+  return `
+    <div class="app-steps">
+      <b>Did the MySchoolBucks app open instead?</b>
+      <ol>
+        <li>Tap <b>Store</b> at the bottom of the app.</li>
+        <li>Choose <b>Middleburg High School</b>.</li>
+        <li>Search <b>Girls Basketball</b> (or scroll down).</li>
+        <li>Tap <b>MHS Girls Basketball Donations</b> and enter your amount.</li>
+      </ol>
+      <p><b>Rather use the website?</b> Tap Copy link, open Safari or Chrome, paste it in the address bar and press Go.</p>
+      <button type="button" class="btn btn-glass btn-small" data-copy-pay="${esc(linkSel)}">Copy link</button>
+    </div>`;
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-copy-pay]");
+  if (!b) return;
+  const href = $(b.dataset.copyPay)?.href;
+  if (href && !href.endsWith("#")) copyText(href);
+});
+
 // ---------- donation form ----------
 // Opens before MySchoolBucks so we know who the gift is for and how much.
 function setupDonate({ options = [], slug = "team", settings }) {
@@ -246,7 +270,8 @@ function setupDonate({ options = [], slug = "team", settings }) {
             <span class="eyebrow">Almost done</span>
             <h2 style="margin:8px 0">Thank you, <span id="dnThanksName"></span>!</h2>
             <p>On the next page, enter <b id="dnAmt"></b>. If there is a note or comment box, type <b id="dnNote"></b> so we know who you are supporting.</p>
-            <a class="btn btn-primary btn-big" id="dnPay" href="#" style="width:100%">Go to MySchoolBucks to pay</a>
+            ${appStepsHtml("#dnPay")}
+            <a class="btn btn-primary btn-big" id="dnPay" href="#" target="_blank" rel="noopener" style="width:100%">Go to MySchoolBucks to pay</a>
           </div>
         </div>
       </div>`);

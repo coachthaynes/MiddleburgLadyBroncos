@@ -41,6 +41,7 @@ const SPONSOR_LEVELS = [
   });
 
   // Sponsor wall and payment link
+  $("#payOnline").insertAdjacentHTML("afterend", appStepsHtml("#payOnline"));
   let homeGames = [];
   const renderGames = () => {
     const keep = $("#spGame").value;

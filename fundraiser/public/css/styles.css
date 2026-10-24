@@ -269,6 +269,10 @@ footer.site a { font-weight: 700; }
 .donate-sheet select { width: 100%; font: 600 1rem var(--body); color: var(--ink); padding: 13px 16px; border-radius: 14px; border: 1px solid rgba(200, 16, 46, 0.18); background: rgba(255, 255, 255, 0.85); }
 .donate-sheet input[type=email] { width: 100%; font: 500 1rem var(--body); color: var(--ink); padding: 13px 16px; border-radius: 14px; border: 1px solid rgba(200, 16, 46, 0.18); background: rgba(255, 255, 255, 0.78); }
 .donate-sheet .field > span { font-weight: 700; font-size: 0.9rem; }
+.app-steps { text-align: left; margin: 14px 0; padding: 14px 16px; border-radius: 16px; background: rgba(255,255,255,.7); border: 1px solid rgba(200, 16, 46, 0.14); font-size: .92rem; line-height: 1.45; }
+.app-steps ol { margin: 8px 0; padding-left: 22px; }
+.app-steps li { margin: 3px 0; }
+.app-steps p { margin: 8px 0 10px; color: var(--muted, #6b5a5e); }
 .amounts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
 .amounts button { padding: 12px 0; border-radius: 14px; border: 1px solid var(--glass-line); background: rgba(255,255,255,.8); font: 800 1.05rem var(--display); color: var(--ink); cursor: pointer; }
 .amounts button.on { background: var(--red); color: #fff; border-color: var(--red); box-shadow: 0 8px 18px rgba(200,16,46,.3); }
