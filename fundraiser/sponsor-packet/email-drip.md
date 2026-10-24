@@ -66,7 +66,7 @@ Bronco Backer, $750: your name and link on our website sponsor wall, a PA thank 
 
 Stallion Partner, $1,500: your logo on our game day entry banner, a PA mention at every home game, two social posts including a player spotlight, and your logo in our Team Store.
 
-Herd Champion, $2,500: a large logo on the entry banner, your logo on our warmup shooting shirts, a home game presented by your business with halftime recognition, a player shout out reel on Instagram, and season passes if the school allows.
+Herd Champion, $2,500: a large logo on the entry banner, your logo on our warmup shooting shirts, a home game presented by your business with halftime recognition, a player shout out reel on Instagram, and four season passes.
 
 Horsepower Title, $5,000: a Business Day video ad made with our players, the top logo spot, a year round banner on the football field fence (seen at football, track and soccer games plus middle and elementary school events), Senior Night or a holiday tournament named for you, a homepage feature and a framed jersey signed by the team.
 

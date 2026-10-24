@@ -398,7 +398,7 @@ const TASKS: { id: string; text: string; min: number }[] = [
   { id: "halftime", text: "Halftime recognition at their game", min: 3 },
   { id: "featured", text: "Featured spot on the entry banner at their game", min: 3 },
   { id: "reel", text: "Player shout out reel on Instagram", min: 3 },
-  { id: "passes", text: "Season passes (if the school allows)", min: 3 },
+  { id: "passes", text: "Give them four season passes", min: 3 },
   { id: "approval", text: "Get school approval and parent permission forms for Business Day", min: 4 },
   { id: "bizday", text: "Schedule Business Day with the owner", min: 4 },
   { id: "film", text: "Film and edit the 60 second ad and three short clips", min: 4 },

@@ -10,7 +10,7 @@ const SPONSOR_LEVELS = [
   },
   {
     key: "herd", name: "Herd Champion", price: 2500, featured: true, page: 2,
-    perks: ["Large logo on the entry banner", "Your logo on the back of our warmup shooting shirts", "A home game presented by your business with halftime recognition", "Featured entry banner spot that night", "Player shout out reel on Instagram", "Four season passes (if the school allows)"],
+    perks: ["Large logo on the entry banner", "Your logo on the back of our warmup shooting shirts", "A home game presented by your business with halftime recognition", "Featured entry banner spot that night", "Player shout out reel on Instagram", "Four season passes"],
   },
   {
     key: "title", name: "Horsepower Title Sponsor", price: 5000, limit: "Only 2 available", page: 3,
