@@ -25,7 +25,7 @@ The main team home page lives in this folder, on the same Netlify site as the fu
 | `/api/*`, `/go/*`, `/img/*`, `/u/*` | Netlify Functions |
 | `/players` | `public/players.html` (Player Hub) |
 | `/athletemonitor/` | proxy to the `athletemonitor` Netlify site (source: `coachthaynes/social_scheduler`, `performance/`) |
-| `/secretbinder/` | proxy to the `mhssecretbinder` Netlify site |
+| `/secretbinder/` | `netlify/functions/binder.mts`: the MHS Secret Binder behind the team code (`BINDER_CODE` on Netlify, never in this repo). Signed in coaches go straight in. To update the binder, replace `netlify/binder/index.html`, run `node netlify/binder/build.mjs`, then deploy. |
 
 Athlete Monitor loads its files and calls its API with page relative paths (`api/...`, not `/api/...`), so it works both at athletemonitor.netlify.app and inside `/athletemonitor/` without touching this site's `/api`. Keep it that way when editing it.
 

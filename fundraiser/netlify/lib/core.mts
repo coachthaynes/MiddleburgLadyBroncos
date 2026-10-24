@@ -221,7 +221,7 @@ async function meta(key: string) {
   return v as string;
 }
 
-async function sessionSecret() {
+export async function sessionSecret() {
   return Netlify.env.get("SESSION_SECRET") || (await meta("session-secret"));
 }
 

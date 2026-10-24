@@ -52,19 +52,14 @@
   to = "/players.html"
   status = 200
 
-# Athlete Monitor and the MHS Secret Binder are their own Netlify sites, served here under one address.
+# Athlete Monitor is its own Netlify site, served here under one address.
+# The MHS Secret Binder is served by netlify/functions/binder.mts behind the team code (BINDER_CODE).
 # Athlete Monitor uses page relative paths, so its files and /api calls stay inside /athletemonitor/.
 # Netlify matches /athletemonitor and /athletemonitor/ with one rule, so the app adds the
 # trailing slash itself when it is opened without one.
 [[redirects]]
   from = "/athletemonitor/*"
   to = "https://athletemonitor.netlify.app/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/secretbinder/*"
-  to = "https://mhssecretbinder.netlify.app/:splat"
   status = 200
   force = true
 
