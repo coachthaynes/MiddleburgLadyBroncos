@@ -35,7 +35,8 @@ export const DEFAULT_SETTINGS: Settings = {
   goal: 10000,
   raised: 0,
   endDate: "2027-02-01",
-  donateUrl: "",
+  // Team donation item on MySchoolBucks. The coach dashboard can replace it.
+  donateUrl: "https://www.myschoolbucks.com/ver2/prdembd?ref=ZZH4WPLXJ8082OZ_ZZ68I7E4C5HH19W",
   logoKey: "",
   requirePhotoApproval: true,
   updatedAt: "",
@@ -43,7 +44,10 @@ export const DEFAULT_SETTINGS: Settings = {
 
 export async function getSettings(): Promise<Settings> {
   const s = await db().get("settings", { type: "json" });
-  return { ...DEFAULT_SETTINGS, ...(s || {}) };
+  const merged = { ...DEFAULT_SETTINGS, ...(s || {}) };
+  // A blank saved link falls back to the team's MySchoolBucks link.
+  if (!merged.donateUrl) merged.donateUrl = DEFAULT_SETTINGS.donateUrl;
+  return merged;
 }
 
 export interface Player {
