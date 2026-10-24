@@ -27,7 +27,7 @@ const SPONSOR_LEVELS = [
       <div class="level-price">${fmtMoney(l.price)}</div>
       ${i ? `<p class="muted level-inc">Everything in ${esc(SPONSOR_LEVELS[i - 1].name)}, plus:</p>` : ""}
       <ul>${l.perks.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>
-      ${l.page ? `<a class="level-more" href="/sponsor-packet.pdf#page=${l.page}" target="_blank" rel="noopener">Full details (PDF page ${l.page})</a>` : ""}
+      ${l.page ? `<a class="level-more" href="/sponsor-packet.pdf#page=${l.page}" target="_blank" rel="noopener">Click here for more info</a>` : ""}
       <button class="btn ${l.featured ? "btn-primary" : "btn-glass"}" data-pick="${l.key}">Choose ${esc(l.name)}</button>
     </div>`).join("");
   $("#spLevel").innerHTML = SPONSOR_LEVELS.map((l) => `<option value="${l.key}">${esc(l.name)} (${fmtMoney(l.price)})</option>`).join("")
