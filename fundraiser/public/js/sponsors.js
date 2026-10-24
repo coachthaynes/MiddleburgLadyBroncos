@@ -14,7 +14,7 @@ const SPONSOR_LEVELS = [
   },
   {
     key: "title", name: "Horsepower Title Sponsor", price: 5000, limit: "Only 2 available", page: 3,
-    perks: ["Business Day: our players visit and we make a 60 second ad plus three clips for you", "Top logo spot on the entry banner and shooting shirts", "Senior Night or a holiday tournament named for you", "Homepage feature on our fundraiser site", "Framed jersey signed by the team"],
+    perks: ["Business Day: our players visit and we make a 60 second ad plus three clips for you", "Top logo spot on the entry banner and shooting shirts", "Year round banner on the football field fence, seen at football, track and soccer games plus middle and elementary school events", "Senior Night or a holiday tournament named for you", "Homepage feature on our fundraiser site", "Framed jersey signed by the team"],
   },
 ];
 

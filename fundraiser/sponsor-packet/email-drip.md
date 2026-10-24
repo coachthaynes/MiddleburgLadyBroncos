@@ -68,7 +68,7 @@ Stallion Partner, $1,500: your logo on our game day entry banner, a PA mention a
 
 Herd Champion, $2,500: a large logo on the entry banner, your logo on our warmup shooting shirts, a home game presented by your business with halftime recognition, a player shout out reel on Instagram, and season passes if the school allows.
 
-Horsepower Title, $5,000: a Business Day video ad made with our players, the top logo spot, Senior Night or a holiday tournament named for you, a homepage feature and a framed jersey signed by the team.
+Horsepower Title, $5,000: a Business Day video ad made with our players, the top logo spot, a year round banner on the football field fence (seen at football, track and soccer games plus middle and elementary school events), Senior Night or a holiday tournament named for you, a homepage feature and a framed jersey signed by the team.
 
 You can pay online through our school's MySchoolBucks page or by check made out to Middleburg High School. Sign up or ask a question here: https://ladybroncosfundraiser.netlify.app/sponsors#join
 Pages 2 and 3 of our sponsor packet explain the Herd Champion and Horsepower Title levels in detail: https://ladybroncosfundraiser.netlify.app/sponsor-packet.pdf
