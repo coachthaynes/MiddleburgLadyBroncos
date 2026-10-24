@@ -43,3 +43,11 @@ npm install
 echo "ADMIN_PASSWORD=pickapassword" > .env
 npx netlify dev
 ```
+
+## Sponsors
+
+* `/sponsors` is the public sponsor page: four levels (Bronco Backer $750, Stallion Partner $1,500, Herd Champion $2,500, Horsepower Title $5,000), the Business Day video, how to pay (MySchoolBucks or check to Middleburg High School), the sponsor wall and an interest form. Edit levels and benefits in `public/js/sponsors.js`.
+* `/sponsor-packet.pdf` is the one page handout. Its source is `sponsor-packet/packet.html`; the QR code points to the sponsor page.
+* On the coach dashboard, interest forms land under **Sponsors**. Marking a sponsor Committed or Paid creates that level's to do list (including ordering the plain jersey for Title sponsors and sending the proof report). Each item can hold a date, a proof link and a proof photo.
+* Each sponsor has a private report link (`/sponsor-report/...`) that shows what was delivered, for sending to the business.
+* `sponsor-packet/email-drip.md` holds the seven sponsor emails, which are also saved as Gmail drafts.

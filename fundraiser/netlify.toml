@@ -17,6 +17,16 @@
   status = 200
 
 [[redirects]]
+  from = "/sponsors"
+  to = "/sponsors.html"
+  status = 200
+
+[[redirects]]
+  from = "/sponsor-report/*"
+  to = "/sponsor-report.html"
+  status = 200
+
+[[redirects]]
   from = "/coach"
   to = "/coach.html"
   status = 200

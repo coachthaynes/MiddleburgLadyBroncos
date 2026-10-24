@@ -26,6 +26,14 @@
   startCountdown($("#countdown"), settings.endDate);
   $("#sDonate").textContent = fmtNum(totals.gifts || 0);
   $("#supportList").innerHTML = supportersHtml(data.supporters || []);
+  api("/api/sponsors").then((w) => {
+    $("#homeWall").innerHTML = w.sponsors.length
+      ? w.sponsors.map((s) => {
+        const body = `<div class="wall-logo">${s.logo ? `<img src="${esc(s.logo)}" alt="${esc(s.business)}">` : `<span class="wall-name">${esc(s.business)}</span>`}</div><b>${esc(s.business)}</b><small>${s.level === "title" ? "Presenting sponsor" : esc(s.levelName)}</small>`;
+        return s.website ? `<a class="wall-item lvl-${s.level}" href="${esc(s.website)}" target="_blank" rel="noopener sponsored">${body}</a>` : `<div class="wall-item lvl-${s.level}">${body}</div>`;
+      }).join("")
+      : '<p class="muted" style="margin:0">Local businesses can partner with the Lady Broncos this season. <a href="/sponsors">See sponsor levels</a>.</p>';
+  }).catch(() => { $("#sponsorStrip").classList.add("hidden"); });
   setupDonate({ options: data.options || [], slug: "team", settings });
   document.addEventListener("click", (e) => {
     const b = e.target.closest("#donateBtn, [data-donate]");

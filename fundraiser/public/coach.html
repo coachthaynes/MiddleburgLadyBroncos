@@ -47,6 +47,8 @@
         <div class="bar"><i id="bar"></i></div>
         <div class="stat-row" style="margin-top:16px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr))">
           <div class="stat"><b id="oPledged">$0</b><span>Waiting to confirm</span></div>
+          <div class="stat"><b id="oSponsors">$0</b><span>Sponsorships paid</span></div>
+          <div class="stat"><b id="oTodo">0</b><span>Sponsor to dos</span></div>
           <div class="stat"><b id="oDonate">0</b><span>Donation clicks</span></div>
           <div class="stat"><b id="oViews">0</b><span>Page visits</span></div>
           <div class="stat"><b id="oShares">0</b><span>Shares</span></div>
@@ -72,6 +74,33 @@
             <button class="btn btn-primary" type="submit">Add confirmed gift</button>
           </form>
         </details>
+      </div>
+
+      <div class="glass card span" id="sponsorsCard">
+        <div class="section-head" style="margin-bottom:10px">
+          <div><h3 style="margin:0">Sponsors</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Interest forms from the <a href="/sponsors" target="_blank" rel="noopener">sponsor page</a> land under New. Mark a sponsor Committed or Paid and their level's to do list appears. Sponsorship money is tracked here, separate from the donation goal; add it under Other money raised if you want it to count toward the goal.</p></div>
+          <div class="btn-row"><button class="btn btn-glass btn-small" id="spCsv">Download sponsors</button></div>
+        </div>
+        <div class="chips" id="spTabs" style="margin-bottom:12px">
+          <button data-st="interested" class="on">New</button><button data-st="committed">Committed</button><button data-st="paid">Paid</button><button data-st="declined">Declined</button><button data-st="all">All</button>
+        </div>
+        <div id="spList"></div>
+        <details style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">Add a sponsor by hand</summary>
+          <form class="form" id="spAdd" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));align-items:end;margin-top:10px">
+            <label class="field">Business<input type="text" id="saBiz" maxlength="80" required></label>
+            <label class="field">Contact<input type="text" id="saContact" maxlength="60"></label>
+            <label class="field">Email<input type="email" id="saEmail" maxlength="120"></label>
+            <label class="field">Level<select id="saLevel" class="gselect big"></select></label>
+            <label class="field">Status<select id="saStatus" class="gselect big"><option value="committed">Committed</option><option value="paid">Paid</option><option value="interested">New</option></select></label>
+            <button class="btn btn-primary" type="submit">Add sponsor</button>
+          </form>
+        </details>
+      </div>
+
+      <div class="glass card span" id="todoCard">
+        <h3 style="margin:0">Sponsor to do list</h3>
+        <p class="muted" style="font-size:.9rem;margin:4px 0 12px">Everything still owed to committed and paid sponsors. Check items off here or inside each sponsor.</p>
+        <div id="todoList"></div>
       </div>
 
       <div class="glass card span hidden" id="approvalsCard">
@@ -152,6 +181,8 @@
     <div class="btn-row" style="justify-content:center"><button class="btn btn-glass" id="codeCopy">Copy</button><button class="btn btn-primary" id="codeClose">Done</button></div>
   </div>
 </div>
+
+<input type="file" id="spFile" accept="image/*" class="hidden">
 
 <footer class="site wrap"><div class="glass"><span>Lady Broncos Coach Dashboard</span><span><a href="/">Team page</a></span></div></footer>
 

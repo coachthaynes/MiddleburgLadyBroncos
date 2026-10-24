@@ -6,6 +6,7 @@ import {
   makeSessionCookie, money, newCode, noteFailedAttempt, photoUrl, Player, publicPlayer,
   recordEvent, safeEqual, saveImage, savePlayer, Session, Settings, slugify, sumStats,
   tooManyAttempts, listGifts, saveGift, confirmedTotals, recentSupporters, Gift,
+  listSponsors, getSponsor, saveSponsor, syncSponsorTasks, isSponsorLevel, cleanUrl, Sponsor, SponsorLevel, SPONSOR_LEVELS, REPORT_LABELS, INTERNAL_TASKS,
 } from "../lib/core.mts";
 
 export default async (req: Request, context: Context) => {
@@ -19,6 +20,9 @@ export default async (req: Request, context: Context) => {
     if (parts[0] === "player" && parts[1] && method === "GET") return publicPlayerData(parts[1]);
     if (parts[0] === "track" && method === "POST") return track(req);
     if (parts[0] === "gift" && method === "POST") return createGift(req, context);
+    if (parts[0] === "sponsor" && method === "POST") return createSponsor(req);
+    if (parts[0] === "sponsors" && method === "GET") return sponsorWall();
+    if (parts[0] === "sponsor-report" && parts[1] && method === "GET") return sponsorReport(parts[1]);
 
     // ----- sessions -----
     if (parts[0] === "login" && method === "POST") return playerLogin(req, context);
@@ -90,6 +94,64 @@ async function publicPlayerData(slug: string) {
     player: publicPlayer(p, stats[p.slug], t.bySlug[p.slug] || 0),
     supporters: recentSupporters(gifts, players, p.slug, 15),
     options: players.filter(isLive).map((x) => ({ slug: x.slug, name: displayName(x) })),
+  });
+}
+
+// ================= sponsors (public) =================
+
+async function createSponsor(req: Request) {
+  const body = await req.json().catch(() => ({}));
+  if (clean(body.company_hp, 50)) return json({ ok: true }); // spam trap
+  const business = clean(body.business, 80);
+  const contact = clean(body.contact, 60);
+  const email = clean(body.email, 120).toLowerCase();
+  const phone = clean(body.phone, 30);
+  if (business.length < 2) return json({ error: "Please enter your business name." }, 400);
+  if (contact.length < 2) return json({ error: "Please enter your name." }, 400);
+  if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email) && phone.replace(/\D/g, "").length < 10) {
+    return json({ error: "Please enter an email or a phone number so we can reach you." }, 400);
+  }
+  const level: SponsorLevel = isSponsorLevel(body.level) ? body.level : "backer";
+  const sponsor: Sponsor = {
+    id: `${Date.now()}${randomBytes(4).toString("hex")}`,
+    token: randomBytes(16).toString("hex"),
+    business, contact, email, phone,
+    website: cleanUrl(body.website),
+    level,
+    message: clean(body.message, 800),
+    status: "interested",
+    amount: SPONSOR_LEVELS[level].price,
+    logoKey: "", showOnWall: false,
+    createdAt: new Date().toISOString(),
+    tasks: [],
+  };
+  await saveSponsor(sponsor);
+  return json({ ok: true });
+}
+
+async function sponsorWall() {
+  const [sponsors, settings] = await Promise.all([listSponsors(), getSettings()]);
+  const wall = sponsors
+    .filter((s) => s.showOnWall && (s.status === "committed" || s.status === "paid"))
+    .sort((a, b) => SPONSOR_LEVELS[b.level].rank - SPONSOR_LEVELS[a.level].rank || a.business.localeCompare(b.business))
+    .map((s) => ({ business: s.business, website: s.website, level: s.level, levelName: SPONSOR_LEVELS[s.level].name, logo: photoUrl(s.logoKey) }));
+  return json({ sponsors: wall, payUrl: settings.donateUrl }, 200, { "cache-control": "public, max-age=60" });
+}
+
+async function sponsorReport(token: string) {
+  const t = token.replace(/[^a-f0-9]/gi, "");
+  if (t.length < 20) return json({ error: "Report not found." }, 404);
+  const s = (await listSponsors()).find((x) => x.token === t);
+  if (!s || s.status === "declined") return json({ error: "Report not found." }, 404);
+  return json({
+    business: s.business,
+    levelName: SPONSOR_LEVELS[s.level].name,
+    logo: photoUrl(s.logoKey),
+    delivered: s.tasks.filter((x) => x.done && !INTERNAL_TASKS.has(x.id)).map((x) => ({
+      text: REPORT_LABELS[x.id] || x.text,
+      date: x.date, link: x.link, photo: photoUrl(x.photoKey), note: x.note,
+    })),
+    upcoming: s.tasks.filter((x) => !x.done && !INTERNAL_TASKS.has(x.id)).length,
   });
 }
 
@@ -266,6 +328,15 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       })),
       teamStats: stats.team || emptyStats(),
       totals: sumStats(stats),
+      sponsorTotals: await (async () => {
+        const sp = await listSponsors();
+        return {
+          paid: sp.filter((x) => x.status === "paid").reduce((n, x) => n + x.amount, 0),
+          committed: sp.filter((x) => x.status === "committed").reduce((n, x) => n + x.amount, 0),
+          openTasks: sp.filter((x) => x.status === "committed" || x.status === "paid").reduce((n, x) => n + x.tasks.filter((t) => !t.done).length, 0),
+          newCount: sp.filter((x) => x.status === "interested").length,
+        };
+      })(),
       giftTotals: {
         confirmed: t.all,
         teamOnly: t.bySlug.team || 0,
@@ -274,6 +345,8 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       },
     });
   }
+
+  if (parts[0] === "sponsors") return coachSponsors(req, parts.slice(1));
 
   if (parts[0] === "gifts" && parts.length === 1 && method === "GET") {
     const [gifts, players] = await Promise.all([listGifts(), listPlayers()]);
@@ -443,4 +516,124 @@ async function assignCode(player: Player) {
   while (await store.get(`codes/${await codeHash(code)}`, { type: "text" })) code = newCode();
   await store.set(`codes/${await codeHash(code)}`, player.id);
   return code;
+}
+
+// ================= sponsors (coach) =================
+
+async function coachSponsors(req: Request, parts: string[]) {
+  const method = req.method;
+  const origin = new URL(req.url).origin;
+
+  if (parts.length === 0 && method === "GET") {
+    const list = await listSponsors();
+    return json({
+      levels: SPONSOR_LEVELS,
+      sponsors: list.map((s) => ({
+        ...s,
+        logo: photoUrl(s.logoKey),
+        reportUrl: `${origin}/sponsor-report/${s.token}`,
+        tasks: s.tasks.map((t) => ({ ...t, photo: photoUrl(t.photoKey) })),
+      })),
+    });
+  }
+
+  // Add a sponsor by hand.
+  if (parts.length === 0 && method === "POST") {
+    const body = await req.json().catch(() => ({}));
+    const business = clean(body.business, 80);
+    if (business.length < 2) return json({ error: "Please enter the business name." }, 400);
+    const level: SponsorLevel = isSponsorLevel(body.level) ? body.level : "backer";
+    const status = ["interested", "committed", "paid"].includes(body.status) ? body.status : "committed";
+    const s: Sponsor = {
+      id: `${Date.now()}${randomBytes(4).toString("hex")}`, token: randomBytes(16).toString("hex"),
+      business, contact: clean(body.contact, 60), email: clean(body.email, 120).toLowerCase(), phone: clean(body.phone, 30),
+      website: cleanUrl(body.website), level, message: "", status,
+      amount: money(body.amount) || SPONSOR_LEVELS[level].price,
+      logoKey: "", showOnWall: false, createdAt: new Date().toISOString(), tasks: [],
+    };
+    if (status !== "interested") syncSponsorTasks(s);
+    await saveSponsor(s);
+    return json({ ok: true, id: s.id });
+  }
+
+  const s = parts[0] ? await getSponsor(parts[0]) : null;
+  if (!s) return json({ error: "Sponsor not found." }, 404);
+
+  if (parts.length === 1 && method === "PUT") {
+    const body = await req.json().catch(() => ({}));
+    for (const k of ["business", "contact", "phone"] as const) if (body[k] !== undefined) s[k] = clean(body[k], k === "business" ? 80 : 60) || s[k];
+    if (body.email !== undefined) s.email = clean(body.email, 120).toLowerCase();
+    if (body.website !== undefined) s.website = cleanUrl(body.website);
+    if (body.level !== undefined && isSponsorLevel(body.level)) s.level = body.level;
+    if (body.amount !== undefined) s.amount = money(body.amount);
+    if (body.showOnWall !== undefined) s.showOnWall = !!body.showOnWall;
+    if (body.status !== undefined && ["interested", "committed", "paid", "declined"].includes(body.status)) s.status = body.status;
+    if (s.status === "committed" || s.status === "paid") syncSponsorTasks(s);
+    await saveSponsor(s);
+    return json({ ok: true });
+  }
+
+  if (parts.length === 1 && method === "DELETE") {
+    await deleteImage(s.logoKey);
+    for (const t of s.tasks) await deleteImage(t.photoKey);
+    await db().delete(`sponsors/${s.id}`);
+    return json({ ok: true });
+  }
+
+  if (parts[1] === "logo" && method === "POST") {
+    const saved = await saveImage(req, `sl${s.id}_`);
+    if ("error" in saved) return json({ error: saved.error }, 400);
+    await deleteImage(s.logoKey);
+    s.logoKey = saved.key;
+    const t = s.tasks.find((x) => x.id === "logo");
+    if (t && !t.done) { t.done = true; t.date = new Date().toISOString().slice(0, 10); }
+    await saveSponsor(s);
+    return json({ ok: true });
+  }
+
+  // Add your own to do item.
+  if (parts[1] === "tasks" && parts.length === 2 && method === "POST") {
+    const body = await req.json().catch(() => ({}));
+    const text = clean(body.text, 160);
+    if (!text) return json({ error: "Please type the to do item." }, 400);
+    const proofIdx = s.tasks.findIndex((x) => x.id === "proof");
+    const task = { id: `c${randomBytes(4).toString("hex")}`, text, done: false, date: "", link: "", photoKey: "", note: "" };
+    if (proofIdx >= 0) s.tasks.splice(proofIdx, 0, task); else s.tasks.push(task);
+    await saveSponsor(s);
+    return json({ ok: true });
+  }
+
+  if (parts[1] === "tasks" && parts[2]) {
+    const t = s.tasks.find((x) => x.id === parts[2]);
+    if (!t) return json({ error: "To do item not found." }, 404);
+    if (parts[3] === "photo" && method === "POST") {
+      const saved = await saveImage(req, `sp${s.id}_`);
+      if ("error" in saved) return json({ error: saved.error }, 400);
+      await deleteImage(t.photoKey);
+      t.photoKey = saved.key;
+      await saveSponsor(s);
+      return json({ ok: true });
+    }
+    if (parts.length === 3 && method === "PUT") {
+      const body = await req.json().catch(() => ({}));
+      if (body.done !== undefined) {
+        t.done = !!body.done;
+        if (t.done && !t.date) t.date = new Date().toISOString().slice(0, 10);
+      }
+      if (body.date !== undefined) t.date = /^\d{4}-\d{2}-\d{2}$/.test(body.date) ? body.date : "";
+      if (body.link !== undefined) t.link = cleanUrl(body.link);
+      if (body.note !== undefined) t.note = clean(body.note, 300);
+      if (body.removePhoto) { await deleteImage(t.photoKey); t.photoKey = ""; }
+      await saveSponsor(s);
+      return json({ ok: true });
+    }
+    if (parts.length === 3 && method === "DELETE") {
+      await deleteImage(t.photoKey);
+      s.tasks = s.tasks.filter((x) => x !== t);
+      await saveSponsor(s);
+      return json({ ok: true });
+    }
+  }
+
+  return json({ error: "Not found" }, 404);
 }

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sponsor the Lady Broncos</title>
+<meta name="description" content="Partner with Middleburg High School Lady Bronco Basketball. Sponsorships from $750 to $5,000 with game day recognition, social media features and a Business Day video for your business.">
+<meta name="theme-color" content="#c8102e">
+<link rel="icon" href="/brand/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="/brand/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="nav wrap">
+  <div class="glass">
+    <a class="brand" href="/"><img src="/brand/logo.png" alt=""><span>Lady Broncos<span class="hide-sm"> Sponsors</span></span></a>
+    <nav class="nav-links">
+      <a class="hide-sm" href="#levels">Levels</a>
+      <a class="hide-sm" href="/">Fundraiser</a>
+      <a href="#join">Become a sponsor</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="glass hero-main fade-in">
+      <img class="hero-logo" src="/brand/logo.png" alt="Middleburg High School horseshoe logo">
+      <span class="eyebrow">Middleburg High School · Lady Bronco Basketball</span>
+      <h1>Partner with the <span class="red">Lady Broncos</span></h1>
+      <p class="lead">Put your business in front of every home crowd, our families and our community, while helping our girls compete this season.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-big" href="#levels">See sponsor levels</a>
+        <a class="btn btn-glass btn-big" href="/sponsor-packet.pdf" target="_blank" rel="noopener">Download the packet</a>
+      </div>
+    </div>
+    <aside class="glass hero-side fade-in" style="animation-delay:.1s">
+      <span class="eyebrow">Why sponsor</span>
+      <ul class="why">
+        <li><b>Game day exposure.</b> Your name over the PA and your logo on our entry banner at home games.</li>
+        <li><b>Social media reach.</b> Posts and player shout outs shared with our families and fans.</li>
+        <li><b>A real ad for you.</b> Title sponsors get a Business Day video made with our players.</li>
+        <li><b>Community pride.</b> Your support covers tournaments, travel, uniforms and gear.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <section class="block" id="levels">
+    <div class="section-head"><div><span class="eyebrow">Sponsor levels</span><h2 style="margin-top:10px">Pick the level that fits your business</h2></div><p class="muted">Each level includes everything in the levels before it.</p></div>
+    <div class="levels" id="levelCards"></div>
+  </section>
+
+  <section class="block" id="businessday">
+    <div class="glass card bday">
+      <div>
+        <span class="eyebrow">Horsepower Title exclusive</span>
+        <h2 style="margin-top:10px">Business Day</h2>
+        <p>Our players visit your business and you show them how it works: the work, the people, the craft. We film the day and edit it into a <b>60 second ad</b> plus <b>three short clips</b> you can post anywhere. Your customers see a local business investing in local kids, and our players learn about careers in their own hometown.</p>
+        <div class="steps mini">
+          <div><b>1</b><span>Pick a date with us</span></div>
+          <div><b>2</b><span>Host the team for an hour</span></div>
+          <div><b>3</b><span>Get your finished video files</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="wallSection">
+    <div class="section-head"><div><span class="eyebrow">Thank you</span><h2 style="margin-top:10px">Our sponsors</h2></div></div>
+    <div class="glass card"><div class="wall" id="wall"></div></div>
+  </section>
+
+  <section class="block" id="pay">
+    <div class="glass card">
+      <span class="eyebrow">How to pay</span>
+      <h2 style="margin-top:10px">Two easy ways</h2>
+      <div class="payways">
+        <div class="payway">
+          <h3>Pay online</h3>
+          <p class="muted">Use the official Middleburg High School MySchoolBucks page. In the note, type <b>Lady Broncos sponsorship</b> and your business name.</p>
+          <a class="btn btn-primary" id="payOnline" href="#" target="_blank" rel="noopener">Pay on MySchoolBucks</a>
+        </div>
+        <div class="payway">
+          <h3>Pay by check</h3>
+          <p class="muted">Make checks payable to <b>Middleburg High School</b> with <b>Lady Broncos Basketball sponsorship</b> in the memo. Hand it to a coach or mail it to the school.</p>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.85rem;margin:14px 0 0">Benefits that involve school facilities, games or player appearances are subject to Middleburg High School and Clay County approval. Player filming requires parent permission.</p>
+    </div>
+  </section>
+
+  <section class="block" id="join">
+    <div class="glass card">
+      <span class="eyebrow">Become a sponsor</span>
+      <h2 style="margin-top:10px">Tell us about your business</h2>
+      <p class="muted">A coach will reach out within a few days to answer questions and get you set up.</p>
+      <form class="form" id="sponsorForm" novalidate>
+        <div class="two">
+          <label class="field">Business name<input type="text" id="spBusiness" maxlength="80" autocomplete="organization" required></label>
+          <label class="field">Your name<input type="text" id="spContact" maxlength="60" autocomplete="name" required></label>
+        </div>
+        <div class="two">
+          <label class="field">Email<input type="email" id="spEmail" maxlength="120" autocomplete="email"></label>
+          <label class="field">Phone<input type="tel" id="spPhone" maxlength="30" autocomplete="tel"></label>
+        </div>
+        <div class="two">
+          <label class="field">Website or social page <small>Optional</small><input type="text" id="spWebsite" maxlength="300" autocomplete="url"></label>
+          <label class="field">Level you are interested in<select id="spLevel" class="gselect big"></select></label>
+        </div>
+        <label class="field">Anything else? <small>Optional</small><textarea id="spMessage" maxlength="800"></textarea></label>
+        <input type="text" id="spHp" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
+        <p class="error" id="spErr"></p>
+        <div><button class="btn btn-primary btn-big" type="submit" id="spGo">Send to the coaches</button></div>
+      </form>
+      <div id="spDone" class="notice good hidden">Thank you! A coach will reach out soon. Go Broncos!</div>
+    </div>
+  </section>
+</main>
+
+<footer class="site wrap">
+  <div class="glass">
+    <span>Lady Bronco Basketball · Middleburg High School</span>
+    <span><a href="/">Fundraiser</a> · <a href="/sponsor-packet.pdf" target="_blank" rel="noopener">Sponsor packet</a></span>
+  </div>
+</footer>
+
+<script src="/js/common.js"></script>
+<script src="/js/sponsors.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sponsorship Report</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#c8102e">
+<link rel="icon" href="/brand/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+  .report-head { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+  .report-head .biz-logo { width: 110px; height: 110px; border-radius: 22px; background: #fff; display: grid; place-items: center; overflow: hidden; box-shadow: var(--shadow); }
+  .report-head .biz-logo img { max-width: 92%; max-height: 92%; object-fit: contain; }
+  .delivered { display: grid; gap: 12px; margin-top: 16px; }
+  .deliv { display: grid; grid-template-columns: 36px 1fr; gap: 12px; padding: 14px; border-radius: 18px; background: rgba(255,255,255,.6); }
+  .deliv .ck { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--good-soft); color: var(--good); font-weight: 800; }
+  .deliv img { display: block; max-width: 100%; max-height: 320px; border-radius: 14px; margin-top: 10px; }
+  .deliv small { color: var(--muted); font-weight: 600; }
+  @media (max-width: 520px) { .report-head { grid-template-columns: 1fr; } }
+  @media print { .backdrop, .nav, footer { display: none; } .glass { box-shadow: none; backdrop-filter: none; background: #fff; } }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+<header class="nav wrap"><div class="glass"><a class="brand" href="/"><img src="/brand/logo.png" alt=""><span>Lady Broncos</span></a><nav class="nav-links"><a href="#" onclick="print();return false">Print</a></nav></div></header>
+
+<main class="wrap">
+  <div id="missing" class="glass center-card hidden"><h2>Report not found</h2><p class="muted">Please check the link your coach sent you.</p></div>
+  <section id="report" class="hidden" style="margin-top:28px">
+    <div class="glass card">
+      <div class="report-head">
+        <div class="biz-logo" id="bizLogo"></div>
+        <div>
+          <span class="eyebrow">Sponsorship report</span>
+          <h1 style="margin:8px 0 4px;font-size:clamp(1.9rem,5vw,2.8rem)" id="bizName"></h1>
+          <p class="muted" style="margin:0;font-weight:600" id="bizLevel"></p>
+        </div>
+      </div>
+      <p style="margin:18px 0 0">Thank you for supporting Middleburg High School Lady Bronco Basketball. Here is everything we have delivered for your business so far.</p>
+    </div>
+    <div class="glass card" style="margin-top:18px">
+      <h2 style="margin:0">What we delivered</h2>
+      <div class="delivered" id="delivered"></div>
+      <p class="muted" id="upcoming" style="margin:14px 0 0"></p>
+    </div>
+  </section>
+</main>
+
+<footer class="site wrap"><div class="glass"><span>Lady Bronco Basketball · Middleburg High School</span><span><a href="/sponsors">Sponsor levels</a></span></div></footer>
+
+<script src="/js/common.js"></script>
+<script>
+(async function () {
+  const token = location.pathname.split("/")[2] || "";
+  let r;
+  try { r = await api(`/api/sponsor-report/${encodeURIComponent(token)}`); }
+  catch { $("#missing").classList.remove("hidden"); return; }
+  $("#report").classList.remove("hidden");
+  document.title = `${r.business} | Lady Broncos Sponsorship`;
+  $("#bizName").textContent = r.business;
+  $("#bizLevel").textContent = r.levelName;
+  $("#bizLogo").innerHTML = r.logo ? `<img src="${esc(r.logo)}" alt="">` : '<img src="/brand/logo.png" alt="">';
+  const fmtDate = (d) => d ? new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "";
+  $("#delivered").innerHTML = r.delivered.length ? r.delivered.map((d) => `
+    <div class="deliv"><span class="ck">✓</span><div>
+      <b>${esc(d.text)}</b>${d.date ? `<br><small>${esc(fmtDate(d.date))}</small>` : ""}
+      ${d.note ? `<p style="margin:6px 0 0">${esc(d.note)}</p>` : ""}
+      ${d.link ? `<p style="margin:6px 0 0"><a href="${esc(d.link)}" target="_blank" rel="noopener">See it here</a></p>` : ""}
+      ${d.photo ? `<img src="${esc(d.photo)}" alt="Photo of ${esc(d.text)}" loading="lazy">` : ""}
+    </div></div>`).join("") : '<p class="muted">Your benefits are being scheduled now. Check back soon!</p>';
+  $("#upcoming").textContent = r.upcoming ? `${r.upcoming} more ${r.upcoming === 1 ? "benefit is" : "benefits are"} on the way this season.` : "";
+})();
+</script>
+</body>
+</html>

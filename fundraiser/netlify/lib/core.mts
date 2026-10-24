@@ -341,3 +341,139 @@ export async function saveImage(req: Request, prefix: string) {
 export async function deleteImage(key: string) {
   if (key) await db().delete(`images/${key}`);
 }
+
+// ---------- sponsors ----------
+
+export type SponsorLevel = "backer" | "stallion" | "herd" | "title";
+export const SPONSOR_LEVELS: Record<SponsorLevel, { name: string; price: number; rank: number }> = {
+  backer: { name: "Bronco Backer", price: 750, rank: 1 },
+  stallion: { name: "Stallion Partner", price: 1500, rank: 2 },
+  herd: { name: "Herd Champion", price: 2500, rank: 3 },
+  title: { name: "Horsepower Title Sponsor", price: 5000, rank: 4 },
+};
+
+export interface SponsorTask {
+  id: string;
+  text: string;
+  done: boolean;
+  date: string; // when it happened, YYYY-MM-DD
+  link: string; // proof link (post, video, photo album)
+  photoKey: string; // proof photo
+  note: string;
+}
+
+export interface Sponsor {
+  id: string;
+  token: string; // private link for the proof of benefits report
+  business: string;
+  contact: string;
+  email: string;
+  phone: string;
+  website: string;
+  level: SponsorLevel;
+  message: string;
+  status: "interested" | "committed" | "paid" | "declined";
+  amount: number;
+  logoKey: string;
+  showOnWall: boolean;
+  createdAt: string;
+  tasks: SponsorTask[];
+}
+
+// What has to be delivered at each level. Higher levels include everything below them.
+const TASKS: { id: string; text: string; min: number }[] = [
+  { id: "thankyou", text: "Send the thank you email and ask for their logo", min: 1 },
+  { id: "wall", text: "Add them to the website sponsor wall (turn on Show on wall)", min: 1 },
+  { id: "pa1", text: "PA thank you at a home game (enter the date)", min: 1 },
+  { id: "social1", text: "Thank you post on team social media (add the post link)", min: 1 },
+  { id: "certificate", text: "Print and frame the team photo certificate, then deliver it", min: 1 },
+  { id: "logo", text: "Get their logo file (upload it here)", min: 2 },
+  { id: "banner", text: "Add their logo to the game day entry banner", min: 2 },
+  { id: "paall", text: "Give the announcer their PA mention for every home game", min: 2 },
+  { id: "social2", text: "Two social posts, including a player spotlight presented by them", min: 2 },
+  { id: "store", text: "Add their logo to the Team Store sponsor strip", min: 2 },
+  { id: "bannerlarge", text: "Make their logo large on the entry banner", min: 3 },
+  { id: "shirts", text: "Add their logo to the warmup shooting shirts (order before the season)", min: 3 },
+  { id: "presented", text: "Pick the home game presented by them", min: 3 },
+  { id: "halftime", text: "Halftime recognition at their game", min: 3 },
+  { id: "featured", text: "Featured spot on the entry banner at their game", min: 3 },
+  { id: "reel", text: "Player shout out reel on Instagram", min: 3 },
+  { id: "passes", text: "Season passes (if the school allows)", min: 3 },
+  { id: "approval", text: "Get school approval and parent permission forms for Business Day", min: 4 },
+  { id: "bizday", text: "Schedule Business Day with the owner", min: 4 },
+  { id: "film", text: "Film and edit the 60 second ad and three short clips", min: 4 },
+  { id: "deliver", text: "Deliver the video files to the business", min: 4 },
+  { id: "toplogo", text: "Top logo spot on the entry banner and shooting shirts", min: 4 },
+  { id: "naming", text: "Senior Night or tournament naming", min: 4 },
+  { id: "homepage", text: "Homepage feature on the fundraiser site (turn on Show on wall)", min: 4 },
+  { id: "jersey", text: "Order a plain jersey in Middleburg colors with the logo for players to sign", min: 4 },
+  { id: "jerseyframe", text: "Have players sign the jersey, frame it and deliver it", min: 4 },
+  { id: "proof", text: "Send the proof of benefits report (copy the report link)", min: 1 },
+];
+
+// Adds any tasks the sponsor's level needs that are not on their list yet. Keeps finished work.
+export function syncSponsorTasks(s: Sponsor) {
+  const rank = SPONSOR_LEVELS[s.level]?.rank || 1;
+  const have = new Set(s.tasks.map((t) => t.id));
+  for (const t of TASKS) {
+    if (t.min <= rank && !have.has(t.id)) s.tasks.push({ id: t.id, text: t.text, done: false, date: "", link: "", photoKey: "", note: "" });
+  }
+  // Keep the proof report as the last step.
+  s.tasks.sort((a, b) => (a.id === "proof" ? 1 : 0) - (b.id === "proof" ? 1 : 0));
+}
+
+export async function listSponsors(): Promise<Sponsor[]> {
+  const store = db();
+  const { blobs } = await store.list({ prefix: "sponsors/" });
+  const all = await Promise.all(blobs.map((b) => store.get(b.key, { type: "json" })));
+  return (all.filter(Boolean) as Sponsor[]).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function getSponsor(id: string): Promise<Sponsor | null> {
+  return (await db().get(`sponsors/${id.replace(/[^a-z0-9]/gi, "")}`, { type: "json" })) as Sponsor | null;
+}
+
+export async function saveSponsor(s: Sponsor) {
+  await db().setJSON(`sponsors/${s.id}`, s);
+}
+
+export function isSponsorLevel(v: unknown): v is SponsorLevel {
+  return typeof v === "string" && v in SPONSOR_LEVELS;
+}
+
+export function cleanUrl(v: unknown) {
+  let u = String(v ?? "").trim().slice(0, 300);
+  if (!u) return "";
+  if (!/^https?:\/\//i.test(u)) u = "https://" + u;
+  try {
+    const x = new URL(u);
+    return x.protocol === "https:" || x.protocol === "http:" ? x.toString() : "";
+  } catch {
+    return "";
+  }
+}
+
+// How each benefit reads on the sponsor's report. Internal steps (logo request, approvals, filming) are left off.
+export const REPORT_LABELS: Record<string, string> = {
+  wall: "Featured on the website sponsor wall",
+  pa1: "PA thank you at a home game",
+  social1: "Thank you post on team social media",
+  certificate: "Framed team photo certificate delivered",
+  banner: "Logo on the game day entry banner",
+  paall: "PA mention at every home game",
+  social2: "Two social posts, including a player spotlight",
+  store: "Logo on the Team Store sponsor strip",
+  bannerlarge: "Large logo on the entry banner",
+  shirts: "Logo on the warmup shooting shirts",
+  presented: "Home game presented by your business",
+  halftime: "Halftime recognition",
+  featured: "Featured entry banner spot",
+  reel: "Player shout out reel on Instagram",
+  passes: "Season passes",
+  deliver: "Business Day video and clips delivered",
+  toplogo: "Top logo spot on the entry banner and shooting shirts",
+  naming: "Senior Night or tournament named for your business",
+  homepage: "Homepage feature on the fundraiser site",
+  jerseyframe: "Framed jersey signed by the team",
+};
+export const INTERNAL_TASKS = new Set(["thankyou", "logo", "approval", "bizday", "film", "jersey", "proof"]);

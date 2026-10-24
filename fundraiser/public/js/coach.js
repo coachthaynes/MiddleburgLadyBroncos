@@ -32,6 +32,10 @@
     $("#oGoal").textContent = fmtMoney(s.goal);
     setBar($("#bar"), raisedAll, s.goal);
     $("#oPledged").textContent = `${fmtMoney(gt.pledged)}`;
+    const st = data.sponsorTotals || { paid: 0, openTasks: 0 };
+    $("#oSponsors").textContent = fmtMoney(st.paid);
+    $("#oTodo").textContent = fmtNum(st.openTasks);
+    loadSponsors();
     $("#gaFor").innerHTML = `<option value="team">Whole team</option>` + players.map((p) => `<option value="${esc(p.slug)}">${esc(p.name)}</option>`).join("");
     loadGifts();
     $("#oDonate").textContent = fmtNum(totals.donate);
@@ -291,6 +295,169 @@
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     a.download = "LadyBroncosGifts.csv";
+    a.click();
+  });
+
+  // ---------- sponsors ----------
+  let sponsors = [];
+  let levels = {};
+  let spTab = "interested";
+  const openSp = new Set();
+  const STATUS = { interested: ["New", "warn"], committed: ["Committed", ""], paid: ["Paid", "good"], declined: ["Declined", "red"] };
+  async function loadSponsors() {
+    try {
+      const d = await api("/api/coach/sponsors");
+      sponsors = d.sponsors;
+      levels = d.levels;
+      $("#saLevel").innerHTML = Object.entries(levels).map(([k, l]) => `<option value="${k}">${esc(l.name)} (${fmtMoney(l.price)})</option>`).join("");
+      renderSponsors();
+      renderTodo();
+    } catch (err) { toast(err.message); }
+  }
+  function taskRow(s, t) {
+    return `<div class="task ${t.done ? "done" : ""}">
+      <label class="task-main"><input type="checkbox" data-tdone="${s.id}|${t.id}" ${t.done ? "checked" : ""}><span>${esc(t.text)}</span></label>
+      <div class="task-proof">
+        <input type="date" value="${esc(t.date)}" data-tdate="${s.id}|${t.id}" aria-label="Date">
+        <input type="url" value="${esc(t.link)}" placeholder="Proof link (post, video)" data-tlink="${s.id}|${t.id}">
+        ${t.photo ? `<a href="${esc(t.photo)}" target="_blank" rel="noopener"><img class="task-thumb" src="${esc(t.photo)}" alt="Proof photo"></a>` : ""}
+        <button class="btn btn-glass btn-small" data-tphoto="${s.id}|${t.id}">${t.photo ? "Replace photo" : "Add photo"}</button>
+        ${t.id.startsWith("c") ? `<button class="btn btn-danger btn-small" data-tdel="${s.id}|${t.id}">Delete</button>` : ""}
+      </div>
+    </div>`;
+  }
+  function renderSponsors() {
+    const list = sponsors.filter((s) => spTab === "all" || s.status === spTab);
+    $("#spList").innerHTML = list.length ? list.map((s) => {
+      const done = s.tasks.filter((t) => t.done).length;
+      const [label, tone] = STATUS[s.status];
+      return `<details class="sp" data-sp="${s.id}" ${openSp.has(s.id) ? "open" : ""}>
+        <summary>
+          <span class="sp-logo">${s.logo ? `<img src="${esc(s.logo)}" alt="">` : esc(initials(s.business))}</span>
+          <span class="sp-title"><b>${esc(s.business)}</b><small>${esc(levels[s.level]?.name || s.level)} · ${fmtMoney(s.amount)}</small></span>
+          <span class="pill ${tone}">${label}</span>
+          ${s.tasks.length ? `<span class="pill">${done} of ${s.tasks.length} done</span>` : ""}
+        </summary>
+        <div class="sp-body">
+          <p class="muted" style="margin:0 0 10px">${[esc(s.contact), s.email ? `<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>` : "", esc(s.phone), s.website ? `<a href="${esc(s.website)}" target="_blank" rel="noopener">Website</a>` : ""].filter(Boolean).join(" · ")}${s.message ? `<br>“${esc(s.message)}”` : ""}</p>
+          <div class="sp-controls">
+            <label class="field">Level<select class="gselect" data-splevel="${s.id}">${Object.entries(levels).map(([k, l]) => `<option value="${k}" ${k === s.level ? "selected" : ""}>${esc(l.name)}</option>`).join("")}</select></label>
+            <label class="field">Amount<input type="number" min="0" step="1" value="${s.amount}" data-spamt="${s.id}"></label>
+            <div class="field"><span>Status</span><div class="chips">${Object.entries(STATUS).map(([k, [l]]) => `<button data-spstatus="${s.id}|${k}" class="${k === s.status ? "on" : ""}">${l}</button>`).join("")}</div></div>
+          </div>
+          <div class="btn-row" style="margin:12px 0">
+            <label class="switch"><input type="checkbox" data-spwall="${s.id}" ${s.showOnWall ? "checked" : ""}> Show on sponsor wall</label>
+            <button class="btn btn-glass btn-small" data-splogo="${s.id}">${s.logo ? "Replace logo" : "Upload logo"}</button>
+            <button class="btn btn-glass btn-small" data-spcopy="${s.id}">Copy report link</button>
+            <a class="btn btn-glass btn-small" href="${esc(s.reportUrl)}" target="_blank" rel="noopener">Open report</a>
+            <button class="btn btn-danger btn-small" data-spdel="${s.id}">Delete</button>
+          </div>
+          ${s.tasks.length ? `<h4 style="margin:6px 0 8px">To do for ${esc(levels[s.level]?.name || "")}</h4><div class="tasks">${s.tasks.map((t) => taskRow(s, t)).join("")}</div>
+            <form class="task-add" data-tadd="${s.id}"><input type="text" maxlength="160" placeholder="Add your own to do item"><button class="btn btn-glass btn-small">Add</button></form>`
+            : '<p class="muted" style="margin:0">Mark this sponsor Committed or Paid to create their to do list.</p>'}
+        </div>
+      </details>`;
+    }).join("") : `<p class="muted">${spTab === "interested" ? "No new sponsor forms yet. Share the sponsor page with local businesses!" : "No sponsors here yet."}</p>`;
+  }
+  function renderTodo() {
+    const active = sponsors.filter((s) => (s.status === "committed" || s.status === "paid") && s.tasks.some((t) => !t.done));
+    $("#todoList").innerHTML = active.length ? active.map((s) => `
+      <div class="todo-group"><b>${esc(s.business)}</b> <span class="muted" style="font-size:.85rem">${esc(levels[s.level]?.name || "")}</span>
+        ${s.tasks.filter((t) => !t.done).map((t) => `<label class="todo-item"><input type="checkbox" data-tdone="${s.id}|${t.id}"><span>${esc(t.text)}</span></label>`).join("")}
+      </div>`).join("") : '<p class="muted" style="margin:0">All caught up. Nothing owed to sponsors right now.</p>';
+  }
+  async function spUpdate(id, body, msg) {
+    try {
+      await api(`/api/coach/sponsors/${id}`, { method: "PUT", body });
+      if (msg) toast(msg);
+      await load();
+    } catch (err) { toast(err.message); }
+  }
+  async function taskUpdate(key, body) {
+    const [sid, tid] = key.split("|");
+    try {
+      await api(`/api/coach/sponsors/${sid}/tasks/${tid}`, { method: "PUT", body });
+      await load();
+    } catch (err) { toast(err.message); }
+  }
+  let uploadTarget = null;
+  $("#spFile").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (!file || !uploadTarget) return;
+    try {
+      const blob = await resizeImage(file, uploadTarget.logo ? 800 : 1400, uploadTarget.logo ? "image/png" : "image/jpeg");
+      await api(uploadTarget.url, { method: "POST", body: blob });
+      toast(uploadTarget.logo ? "Logo saved" : "Proof photo saved");
+      await load();
+    } catch (err) { toast(err.message); }
+  });
+  $("#spTabs").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-st]");
+    if (!b) return;
+    spTab = b.dataset.st;
+    $$("#spTabs button").forEach((x) => x.classList.toggle("on", x === b));
+    renderSponsors();
+  });
+  $("#spList").addEventListener("toggle", (e) => {
+    const d = e.target.closest("[data-sp]");
+    if (d) d.open ? openSp.add(d.dataset.sp) : openSp.delete(d.dataset.sp);
+  }, true);
+  document.addEventListener("click", async (e) => {
+    const t = e.target;
+    const status = t.closest("[data-spstatus]");
+    if (status) { const [id, st] = status.dataset.spstatus.split("|"); openSp.add(id); return spUpdate(id, { status: st }, "Status saved"); }
+    const logo = t.closest("[data-splogo]");
+    if (logo) { uploadTarget = { url: `/api/coach/sponsors/${logo.dataset.splogo}/logo`, logo: true }; return $("#spFile").click(); }
+    const photo = t.closest("[data-tphoto]");
+    if (photo) { const [sid, tid] = photo.dataset.tphoto.split("|"); uploadTarget = { url: `/api/coach/sponsors/${sid}/tasks/${tid}/photo` }; return $("#spFile").click(); }
+    const copy = t.closest("[data-spcopy]");
+    if (copy) { const s = sponsors.find((x) => x.id === copy.dataset.spcopy); return copyText(s.reportUrl); }
+    const del = t.closest("[data-spdel]");
+    if (del) {
+      const s = sponsors.find((x) => x.id === del.dataset.spdel);
+      if (!confirm(`Delete ${s.business}? Their to do list and proof photos will be removed.`)) return;
+      try { await api(`/api/coach/sponsors/${s.id}`, { method: "DELETE" }); await load(); } catch (err) { toast(err.message); }
+      return;
+    }
+    const tdel = t.closest("[data-tdel]");
+    if (tdel) {
+      const [sid, tid] = tdel.dataset.tdel.split("|");
+      try { await api(`/api/coach/sponsors/${sid}/tasks/${tid}`, { method: "DELETE" }); await load(); } catch (err) { toast(err.message); }
+    }
+  });
+  document.addEventListener("change", (e) => {
+    const t = e.target;
+    if (t.dataset.tdone) return taskUpdate(t.dataset.tdone, { done: t.checked });
+    if (t.dataset.tdate) return taskUpdate(t.dataset.tdate, { date: t.value });
+    if (t.dataset.tlink) return taskUpdate(t.dataset.tlink, { link: t.value });
+    if (t.dataset.splevel) return spUpdate(t.dataset.splevel, { level: t.value, amount: levels[t.value]?.price }, "Level saved");
+    if (t.dataset.spamt) return spUpdate(t.dataset.spamt, { amount: t.value }, "Amount saved");
+    if (t.dataset.spwall) return spUpdate(t.dataset.spwall, { showOnWall: t.checked }, t.checked ? "Now on the sponsor wall" : "Removed from the wall");
+  });
+  document.addEventListener("submit", async (e) => {
+    const f = e.target.closest("[data-tadd]");
+    if (!f) return;
+    e.preventDefault();
+    const input = f.querySelector("input");
+    try { await api(`/api/coach/sponsors/${f.dataset.tadd}/tasks`, { method: "POST", body: { text: input.value } }); await load(); } catch (err) { toast(err.message); }
+  });
+  $("#spAdd").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try {
+      await api("/api/coach/sponsors", { method: "POST", body: { business: $("#saBiz").value, contact: $("#saContact").value, email: $("#saEmail").value, level: $("#saLevel").value, status: $("#saStatus").value } });
+      e.target.reset();
+      toast("Sponsor added");
+      await load();
+    } catch (err) { toast(err.message); }
+  });
+  $("#spCsv").addEventListener("click", () => {
+    const rows = [["Business", "Contact", "Email", "Phone", "Website", "Level", "Amount", "Status", "To dos done", "Report link", "Added"]];
+    for (const s of sponsors) rows.push([s.business, s.contact, s.email, s.phone, s.website, levels[s.level]?.name || s.level, s.amount, STATUS[s.status][0], `${s.tasks.filter((t) => t.done).length} of ${s.tasks.length}`, s.reportUrl, new Date(s.createdAt).toLocaleDateString()]);
+    const csv = rows.map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = "LadyBroncosSponsors.csv";
     a.click();
   });
 
