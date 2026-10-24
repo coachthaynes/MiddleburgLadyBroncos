@@ -360,3 +360,5 @@ details.sp > summary::-webkit-details-marker { display: none; }
 .sp-controls > * { min-width: 0; }
 section[id] { scroll-margin-top: 96px; }
 .level-more { display: block; font-weight: 700; font-size: .85rem; margin: -6px 0 14px; }
+.prep { margin-bottom: 14px; padding: 12px 14px; border-radius: 16px; background: var(--warn-soft); }
+.prep summary { cursor: pointer; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }

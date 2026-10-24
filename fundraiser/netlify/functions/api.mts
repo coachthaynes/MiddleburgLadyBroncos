@@ -403,6 +403,9 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       endDate: /^\d{4}-\d{2}-\d{2}$/.test(endDate) ? endDate : cur.endDate,
       donateUrl,
       requirePhotoApproval: body.requirePhotoApproval === undefined ? cur.requirePhotoApproval : !!body.requirePhotoApproval,
+      sponsorPrep: body.sponsorPrep && typeof body.sponsorPrep === "object"
+        ? Object.fromEntries(Object.entries({ ...(cur.sponsorPrep || {}), ...body.sponsorPrep }).filter(([k]) => /^[a-z]{2,20}$/.test(k)).map(([k, v]) => [k, !!v]))
+        : cur.sponsorPrep || {},
       updatedAt: new Date().toISOString(),
     };
     await db().setJSON("settings", next);

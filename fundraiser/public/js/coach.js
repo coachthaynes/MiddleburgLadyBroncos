@@ -312,6 +312,7 @@
       $("#saLevel").innerHTML = Object.entries(levels).map(([k, l]) => `<option value="${k}">${esc(l.name)} (${fmtMoney(l.price)})</option>`).join("");
       renderSponsors();
       renderTodo();
+      renderPrep();
     } catch (err) { toast(err.message); }
   }
   function taskRow(s, t) {
@@ -359,6 +360,31 @@
       </details>`;
     }).join("") : `<p class="muted">${spTab === "interested" ? "No new sponsor forms yet. Share the sponsor page with local businesses!" : "No sponsors here yet."}</p>`;
   }
+  // Things to confirm with the school before selling sponsorships.
+  const PREP = [
+    { id: "passes", text: "Confirm with the athletic director that you can get four season passes for each Herd Champion and Title sponsor. If the answer is no at first, ask whether you can buy them, and plan to pay for them out of the sponsorship money." },
+    { id: "approvals", text: "Get athletic director approval for PA mentions, the game day entry banner and presented by game nights." },
+    { id: "field", text: "Get approval for the year round banner on the football field fence, including size and placement rules." },
+    { id: "senior", text: "Confirm Senior Night or a holiday tournament can be named for a Title sponsor." },
+    { id: "nike", text: "Ask your Nike rep whether other businesses' logos are allowed on the warmup shooting shirts." },
+    { id: "stand", text: "Order the game day entry banner and stand." },
+  ];
+  function renderPrep() {
+    const done = (data.settings.sponsorPrep || {});
+    const left = PREP.filter((p) => !done[p.id]).length;
+    $("#spPrep").innerHTML = `<details ${left ? "open" : ""}><summary><b>Before you sell sponsorships</b> <span class="pill ${left ? "warn" : "good"}">${left ? `${left} to confirm` : "All set"}</span></summary>
+      ${PREP.map((p) => `<label class="todo-item"><input type="checkbox" data-prep="${p.id}" ${done[p.id] ? "checked" : ""}><span>${esc(p.text)}</span></label>`).join("")}</details>`;
+  }
+  document.addEventListener("change", async (e) => {
+    const id = e.target.dataset?.prep;
+    if (!id) return;
+    try {
+      await api("/api/coach/settings", { method: "PUT", body: { sponsorPrep: { [id]: e.target.checked } } });
+      toast(e.target.checked ? "Checked off" : "Unchecked");
+      await load();
+    } catch (err) { toast(err.message); }
+  });
+
   function renderTodo() {
     const active = sponsors.filter((s) => (s.status === "committed" || s.status === "paid") && s.tasks.some((t) => !t.done));
     $("#todoList").innerHTML = active.length ? active.map((s) => `
