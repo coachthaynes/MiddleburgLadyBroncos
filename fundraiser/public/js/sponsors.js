@@ -41,7 +41,7 @@ const SPONSOR_LEVELS = [
   });
 
   // Sponsor wall and payment link
-  $("#payOnline").insertAdjacentHTML("afterend", appStepsHtml("#payOnline"));
+  $("#payOnline").insertAdjacentHTML("afterend", appStepsHtml("#payOnline", "<b>Lady Broncos sponsorship</b> and your business name"));
   let homeGames = [];
   const renderGames = () => {
     const keep = $("#spGame").value;

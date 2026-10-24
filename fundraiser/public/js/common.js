@@ -219,7 +219,7 @@ function playerMessage(name, settings) {
 // ---------- MySchoolBucks app help ----------
 // The MySchoolBucks app grabs our link and opens on the balances screen, so show how to find the item.
 // `linkSel` points at the pay link whose href the Copy link button copies.
-function appStepsHtml(linkSel) {
+function appStepsHtml(linkSel, noteHtml) {
   return `
     <div class="app-steps">
       <b>Did the MySchoolBucks app open instead?</b>
@@ -228,6 +228,7 @@ function appStepsHtml(linkSel) {
         <li>Choose <b>Middleburg High School</b>.</li>
         <li>Search <b>Girls Basketball</b> (or scroll down).</li>
         <li>Tap <b>MHS Girls Basketball Donations</b> and enter your amount.</li>
+        <li>In the note or comment box, type ${noteHtml}</li>
       </ol>
       <p><b>Rather use the website?</b> Tap Copy link, open Safari or Chrome, paste it in the address bar and press Go.</p>
       <button type="button" class="btn btn-glass btn-small" data-copy-pay="${esc(linkSel)}">Copy link</button>
@@ -269,8 +270,8 @@ function setupDonate({ options = [], slug = "team", settings }) {
           <div id="dnNext" class="hidden" style="text-align:center">
             <span class="eyebrow">Almost done</span>
             <h2 style="margin:8px 0">Thank you, <span id="dnThanksName"></span>!</h2>
-            <p>On the next page, enter <b id="dnAmt"></b>. If there is a note or comment box, type <b id="dnNote"></b> so we know who you are supporting.</p>
-            ${appStepsHtml("#dnPay")}
+            <p>On the next page, enter <b id="dnAmt"></b>. In the note or comment box, type <b class="dn-note"></b> so we know who you are supporting.</p>
+            ${appStepsHtml("#dnPay", '<b class="dn-note"></b>')}
             <a class="btn btn-primary btn-big" id="dnPay" href="#" target="_blank" rel="noopener" style="width:100%">Go to MySchoolBucks to pay</a>
           </div>
         </div>
@@ -303,7 +304,7 @@ function setupDonate({ options = [], slug = "team", settings }) {
         const forName = $("#dnFor").selectedOptions[0].dataset.label;
         $("#dnThanksName").textContent = $("#dnName").value.trim().split(/\s+/)[0];
         $("#dnAmt").textContent = fmtMoney(amount, true);
-        $("#dnNote").textContent = forSlug === "team" ? "Lady Broncos team" : `Lady Broncos, ${forName}`;
+        $$(".dn-note").forEach((n) => { n.textContent = forSlug === "team" ? "Lady Broncos team" : forName; });
         $("#dnPay").href = res.url;
         $("#dnForm").classList.add("hidden");
         $("#dnNext").classList.remove("hidden");
