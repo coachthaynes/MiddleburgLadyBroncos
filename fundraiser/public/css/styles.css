@@ -358,3 +358,5 @@ details.sp > summary::-webkit-details-marker { display: none; }
 @media (max-width: 860px) { .dash { grid-template-columns: minmax(0, 1fr); } }
 .task-proof input[type=url] { min-width: 0; flex: 1 1 140px; }
 .sp-controls > * { min-width: 0; }
+section[id] { scroll-margin-top: 96px; }
+.level-more { display: block; font-weight: 700; font-size: .85rem; margin: -6px 0 14px; }

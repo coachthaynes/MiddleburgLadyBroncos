@@ -40,6 +40,30 @@
   .qr b { font-size: 8.5pt; display: block; line-height: 1.25; }
   .qr small { font-size: 6.6pt; color: #6f5a5e; display: block; margin-top: 2px; }
   .fine { font-size: 7pt; color: #6f5a5e; margin: 0; text-align: center; }
+  .page { page-break-after: always; break-after: page; }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  .head.slim { padding: 0.16in 0.22in; }
+  .head.slim img { width: 0.75in; height: 0.75in; }
+  .head .price { margin-left: auto; text-align: right; font-family: Outfit, sans-serif; font-weight: 800; font-size: 28pt; line-height: 1; }
+  .head .price small { display: block; font-size: 8.5pt; font-weight: 700; letter-spacing: 0.08em; color: #ffd6dd; text-transform: uppercase; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.13in; }
+  .box { background: #fff; border-radius: 0.16in; padding: 0.13in 0.17in; border: 1px solid #f3d3d9; }
+  .box.dark { background: #2a1418; color: #fff; border: 0; }
+  .box.dark p, .box.dark li { color: #f3dde1; }
+  .box h3 { font-size: 12.5pt; margin-bottom: 5px; }
+  .box h3 b { color: #c8102e; } .box.dark h3 b { color: #ff6f86; }
+  .box p { margin: 0 0 4px; font-size: 9pt; line-height: 1.42; }
+  .box ul { margin: 0; padding-left: 0.16in; font-size: 8.8pt; line-height: 1.4; }
+  .box li + li { margin-top: 2px; }
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.1in; }
+  .flow div { background: #fff; border-radius: 0.14in; padding: 0.1in 0.12in; border: 1px solid #f3d3d9; font-size: 8.4pt; line-height: 1.35; }
+  .flow b { display: block; font-family: Outfit, sans-serif; font-size: 10.5pt; color: #c8102e; margin-bottom: 2px; }
+  .flow .n { display: inline-grid; place-items: center; width: 0.24in; height: 0.24in; border-radius: 0.07in; background: #c8102e; color: #fff; font-family: Outfit, sans-serif; font-weight: 800; font-size: 9pt; margin-bottom: 4px; }
+  .quote { font-family: Outfit, sans-serif; font-weight: 700; font-size: 13pt; text-align: center; color: #8e0b20; margin: 0; }
+  .foot { display: grid; grid-template-columns: 1fr 1.05in; gap: 0.14in; align-items: center; background: #fff; border: 1px solid #f3d3d9; border-radius: 0.16in; padding: 0.1in 0.16in; margin-top: auto; }
+  .foot img { width: 0.95in; height: 0.95in; }
+  .foot p { margin: 0; font-size: 8.6pt; line-height: 1.4; }
+  .foot .line { margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -52,7 +76,7 @@
     </div>
   </div>
 
-  <p class="pitch">Put your business in front of every home crowd, our families and our community while helping our girls compete. Sponsorships cover tournaments, travel, uniforms and gear, and every level comes with real recognition on game day and online. <b>Each level includes everything in the level before it.</b></p>
+  <p class="pitch">Put your business in front of every home crowd, our families and our community while helping our girls compete. Sponsorships cover tournaments, travel, uniforms and gear, and every level comes with real recognition on game day and online. <b>Each level includes everything in the level before it.</b> Herd Champion and Horsepower Title are explained in detail on pages 2 and 3.</p>
 
   <div class="levels">
     <div class="lvl">
@@ -98,6 +122,133 @@
   </div>
 
   <p class="fine">Benefits involving school facilities, games or player appearances are subject to Middleburg High School and Clay County approval. Player filming requires parent permission.</p>
+</div>
+
+<div class="page">
+  <div class="head slim">
+    <img src="../public/brand/logo.png" alt="">
+    <div><h1 style="font-size:24pt">Herd Champion</h1><p>Own a Lady Broncos game night</p></div>
+    <div class="price"><small>Level 3</small>$2,500</div>
+  </div>
+
+  <p class="pitch">Herd Champion puts your business at the center of a home game and in front of our crowd all season. It includes everything in the Bronco Backer and Stallion Partner levels, plus the benefits below.</p>
+
+  <div class="box dark">
+    <h3><b>Your game night:</b> a home game presented by your business</h3>
+    <div class="grid2" style="margin-top:6px">
+      <ul>
+        <li><b>Before the game:</b> a social post announcing that the game is presented by your business, tagging you.</li>
+        <li><b>At the door:</b> your logo in the featured spot on our game day entry banner.</li>
+      </ul>
+      <ul>
+        <li><b>Tip off:</b> the PA welcomes the crowd to a game presented by your business.</li>
+        <li><b>Halftime:</b> on court recognition of your business, and you and your team are welcome to join.</li>
+        <li><b>After:</b> a thank you post with photos from the night.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="box">
+      <h3><b>All season</b> at every home game</h3>
+      <ul>
+        <li>Large logo on the entry banner every fan walks past</li>
+        <li>Your logo on the back of our warmup shooting shirts, seen in pregame warmups and in team photos all season</li>
+        <li>PA mention of your business at every home game</li>
+        <li>Four season passes for your staff or customers (if the school allows)</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3><b>Online</b> with our families and fans</h3>
+      <ul>
+        <li>Player shout out reel: our players film a short, fun thank you to your business for the team Instagram</li>
+        <li>Two social posts, including a player spotlight presented by you</li>
+        <li>Your logo and link on our website sponsor wall</li>
+        <li>Your logo on our Team Store sponsor strip</li>
+      </ul>
+    </div>
+  </div>
+
+  <div>
+    <h3 style="font-size:12.5pt;margin-bottom:6px">Your season at a glance</h3>
+    <div class="flow">
+      <div><span class="n">1</span><b>Sign on</b>Send your logo and the link you want on our website.</div>
+      <div><span class="n">2</span><b>Before the season</b>Your logo goes on the entry banner and our shooting shirts.</div>
+      <div><span class="n">3</span><b>Your game night</b>We pick a home game together and make it yours.</div>
+      <div><span class="n">4</span><b>Season report</b>A private link with every benefit, with dates, photos and post links.</div>
+    </div>
+  </div>
+
+  <p class="quote">Families in our program support the businesses that support their daughters.</p>
+
+  <div class="foot">
+    <div>
+      <p><b>Ready to be a Herd Champion?</b> Sign up at ladybroncosfundraiser.netlify.app/sponsors or talk to a coach. Pay online through MySchoolBucks or by check payable to Middleburg High School, memo Lady Broncos Basketball sponsorship.</p>
+      <div class="line">Coach<span></span></div>
+    </div>
+    <img src="qr.svg" alt="QR code">
+  </div>
+  <p class="fine">Game day benefits, season passes and player appearances are subject to Middleburg High School and Clay County approval.</p>
+</div>
+
+<div class="page">
+  <div class="head slim">
+    <img src="../public/brand/logo.png" alt="">
+    <div><h1 style="font-size:24pt">Horsepower Title Sponsor</h1><p>Business Day and the top spot · Only 2 available</p></div>
+    <div class="price"><small>Level 4</small>$5,000</div>
+  </div>
+
+  <p class="pitch">Our title sponsors get the most visible spot in our program and a marketing piece they keep forever: a video made with our players at their business. It includes everything in every other level, including your own game night.</p>
+
+  <div class="box dark">
+    <h3><b>Business Day:</b> our players come to you</h3>
+    <p>The team visits your business for about an hour. You show the girls how it works: the people, the work and what makes you proud. We film the whole visit and turn it into a ready to post ad for your business, while our players get a real look at careers in their own hometown.</p>
+  </div>
+
+  <div class="flow">
+    <div><span class="n">1</span><b>Plan</b>A short call to pick a date and decide what you want to show off.</div>
+    <div><span class="n">2</span><b>Visit</b>Players tour, try a hands on task and ask questions while we film.</div>
+    <div><span class="n">3</span><b>Edit</b>We cut a 60 second ad, three short clips and a set of photos.</div>
+    <div><span class="n">4</span><b>Launch</b>We post it to team social and tag you. You get the files to use anywhere.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="box">
+      <h3><b>What you get</b> from Business Day</h3>
+      <ul>
+        <li>A 60 second video ad featuring your business and our players</li>
+        <li>Three short clips sized for Instagram, Facebook and TikTok</li>
+        <li>Photos from the visit</li>
+        <li>Files you can use on social, your website, in store screens or paid ads</li>
+        <li>A team post introducing your business to our families and fans</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3><b>The top spot</b> all season</h3>
+      <ul>
+        <li>Top logo spot on the entry banner and the shooting shirts</li>
+        <li>Senior Night or a holiday tournament named for your business</li>
+        <li>Presenting sponsor feature at the top of our fundraiser website</li>
+        <li>A jersey in Middleburg colors signed by every player, framed for your business</li>
+        <li>Plus your own game night and every Herd Champion benefit</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="quote">Your customers see a local business investing in local kids.</p>
+
+  <div class="box">
+    <h3><b>Good to know</b></h3>
+    <p>Business Day takes place on a date that works for your business and our schedule. Every player who appears has a signed parent permission form, and the visit follows Middleburg High School and Clay County guidelines. Video of our players is used to promote your business and the Lady Broncos.</p>
+  </div>
+
+  <div class="foot">
+    <div>
+      <p><b>Claim one of two title spots.</b> Sign up at ladybroncosfundraiser.netlify.app/sponsors or talk to a coach. Pay online through MySchoolBucks or by check payable to Middleburg High School, memo Lady Broncos Basketball sponsorship.</p>
+      <div class="line">Coach<span></span></div>
+    </div>
+    <img src="qr.svg" alt="QR code">
+  </div>
 </div>
 </body>
 </html>

@@ -9,11 +9,11 @@ const SPONSOR_LEVELS = [
     perks: ["Your logo on our game day entry banner", "PA mention at every home game", "Two social posts, including a player spotlight presented by you", "Your logo on the Team Store sponsor strip"],
   },
   {
-    key: "herd", name: "Herd Champion", price: 2500, featured: true,
+    key: "herd", name: "Herd Champion", price: 2500, featured: true, page: 2,
     perks: ["Large logo on the entry banner", "Your logo on the back of our warmup shooting shirts", "A home game presented by your business with halftime recognition", "Featured entry banner spot that night", "Player shout out reel on Instagram", "Four season passes (if the school allows)"],
   },
   {
-    key: "title", name: "Horsepower Title Sponsor", price: 5000, limit: "Only 2 available",
+    key: "title", name: "Horsepower Title Sponsor", price: 5000, limit: "Only 2 available", page: 3,
     perks: ["Business Day: our players visit and we make a 60 second ad plus three clips for you", "Top logo spot on the entry banner and shooting shirts", "Senior Night or a holiday tournament named for you", "Homepage feature on our fundraiser site", "Framed jersey signed by the team"],
   },
 ];
@@ -27,6 +27,7 @@ const SPONSOR_LEVELS = [
       <div class="level-price">${fmtMoney(l.price)}</div>
       ${i ? `<p class="muted level-inc">Everything in ${esc(SPONSOR_LEVELS[i - 1].name)}, plus:</p>` : ""}
       <ul>${l.perks.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>
+      ${l.page ? `<a class="level-more" href="/sponsor-packet.pdf#page=${l.page}" target="_blank" rel="noopener">Full details (PDF page ${l.page})</a>` : ""}
       <button class="btn ${l.featured ? "btn-primary" : "btn-glass"}" data-pick="${l.key}">Choose ${esc(l.name)}</button>
     </div>`).join("");
   $("#spLevel").innerHTML = SPONSOR_LEVELS.map((l) => `<option value="${l.key}">${esc(l.name)} (${fmtMoney(l.price)})</option>`).join("")
