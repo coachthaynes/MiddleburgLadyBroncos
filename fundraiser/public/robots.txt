@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /coach
+Disallow: /portal
+Disallow: /api/
+Disallow: /secretbinder
+Disallow: /sponsor-report/
+Disallow: /u/
+Disallow: /go/
+Disallow: /athletemonitor/

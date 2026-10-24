@@ -117,11 +117,13 @@ window.HOME = {
   },
 
   coaches: [
-    { name: "Tenise Haynes", role: "Head Coach", bio: "Builds players who compete on the court, lead in the classroom and grow through the Bronco Life Skills mentorship series." },
+    { name: "Tenise Haynes", role: "Head Coach", email: "tenise.haynes@myoneclay.net", bio: "Builds players who compete on the court, lead in the classroom and grow through the Bronco Life Skills mentorship series." },
+    { name: "Renardo Lassiter", role: "Assistant Varsity Coach" },
+    { name: "Megan Smith", role: "Head JV Coach" },
   ],
 
   recruiting: {
-    email: "coachthaynes@gmail.com",
+    email: "tenise.haynes@myoneclay.net",
     maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/basketball/girls/",
   },
 };

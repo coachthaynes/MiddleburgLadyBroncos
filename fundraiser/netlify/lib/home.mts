@@ -60,7 +60,8 @@ export function cleanHome(body: unknown) {
     }).filter(([n]) => n)),
     coaches: list(b.coaches, 10).map((c) => {
       const x = obj(c);
-      return { name: str(x.name, 60), role: str(x.role, 40), bio: str(x.bio, 400) };
+      const email = str(x.email, 120);
+      return { name: str(x.name, 60), role: str(x.role, 40), bio: str(x.bio, 400), email: /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email) ? email : "" };
     }).filter((c) => c.name),
     recruiting: { email: /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(str(rec.email, 120)) ? str(rec.email, 120) : "", maxpreps: url(rec.maxpreps) },
   };
@@ -139,7 +140,7 @@ export async function youtubeFeed(ref: string) {
 const ent = (s: string) => s.replace(/&#8599;/g, "").replace(/&#9733;/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"')
   .replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").trim();
 
-export function parseElevate(html: string) {
+export function parseElevate(html: string, base = "") {
   const vitals: Record<string, string> = {};
   for (const [, k, v] of html.matchAll(/<div class="info-row"><span>([^<]+)<\/span><span>([^<]*)<\/span><\/div>/g)) vitals[ent(k)] = ent(v);
   const statsBlock = /<h4>Season Stats<\/h4>([\s\S]*?)<\/table>/.exec(html)?.[1] || "";
@@ -151,7 +152,16 @@ export function parseElevate(html: string) {
     .map(([, href, label]) => ({ label: ent(label).replace(/^X, Twitter$/, "X"), url: ent(href) }))
     .filter((l, i, all) => /^https?:\/\//.test(l.url) && all.findIndex((x) => x.url === l.url) === i);
   const accolades = [...html.matchAll(/<li><span class="star">&#9733;<\/span>([^<]+)<\/li>/g)].map(([, t]) => ent(t)).filter(Boolean);
+  // Profile photo: the portrait on custom sites (unless it is the template's placeholder), otherwise the
+  // link preview image, skipping the generic Elevate Her card.
+  const portrait = ent(/<img id="portraitImg" src="([^"]+)"/.exec(html)?.[1] || "");
+  const og = ent(/<meta property="og:image" content="([^"]+)"/.exec(html)?.[1] || "");
+  const pick = [portrait && portrait !== "media/photos/portrait.jpg" ? portrait : "", og]
+    .find((src) => src && !/elevate-her-og|\/assets\//.test(src)) || "";
+  let photo = "";
+  try { photo = pick ? new URL(pick, base || "https://elevateherhoopsreport.com/").toString() : ""; } catch { photo = ""; }
   return {
+    photo,
     number: vitals["Jersey Number"] || "",
     position: vitals["Position"] || "",
     classYear: vitals["Class Of"] || "",
@@ -162,22 +172,25 @@ export function parseElevate(html: string) {
   };
 }
 
-export async function elevateProfiles(slugs: string[]) {
-  const list = [...new Set(slugs.map((s) => s.toLowerCase()).filter((s) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s) && s.length <= 60))].slice(0, 30);
+// paths are page paths on elevateherhoopsreport.com: /players/<slug> or a custom site like /aiyana-haynes/.
+export async function elevateProfiles(paths: string[]) {
+  const list = [...new Set(paths.map((p) => p.trim().toLowerCase().replace(/\/+$/, ""))
+    .filter((p) => /^\/(players\/)?[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p) && p.length <= 80))].slice(0, 30);
   const store = db();
   const out: Record<string, ReturnType<typeof parseElevate>> = {};
-  await Promise.all(list.map(async (slug) => {
-    const key = `cache/elevate/${slug}`;
+  await Promise.all(list.map(async (path) => {
+    const key = `cache/elevate${path}`;
     const cached = (await store.get(key, { type: "json" }).catch(() => null)) as { at: number; data: ReturnType<typeof parseElevate> | null } | null;
-    if (cached && Date.now() - cached.at < 6 * 60 * 60 * 1000) { if (cached.data) out[slug] = cached.data; return; }
+    if (cached && Date.now() - cached.at < 6 * 60 * 60 * 1000) { if (cached.data) out[path] = cached.data; return; }
     try {
-      const r = await fetch(`https://elevateherhoopsreport.com/players/${slug}`, { headers: { "user-agent": "mhsladybroncos.com" } });
-      const data = r.ok ? parseElevate(await r.text()) : null;
+      const pageUrl = `https://elevateherhoopsreport.com${path}${path.startsWith("/players/") ? "" : "/"}`;
+      const r = await fetch(pageUrl, { headers: { "user-agent": "mhsladybroncos.com" } });
+      const data = r.ok ? parseElevate(await r.text(), r.url || pageUrl) : null;
       await store.setJSON(key, { at: Date.now(), data });
-      if (data) out[slug] = data;
+      if (data) out[path] = data;
     } catch (err) {
-      console.error("elevate", slug, err);
-      if (cached?.data) out[slug] = cached.data;
+      console.error("elevate", path, err);
+      if (cached?.data) out[path] = cached.data;
     }
   }));
   return { players: out };

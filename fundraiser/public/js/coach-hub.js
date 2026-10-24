@@ -27,6 +27,8 @@
       ["Sponsor page", "/sponsor", "Sponsor levels and interest form"],
       ["Sponsor packet", "/sponsor-packet.pdf", "PDF to send to businesses"],
       ["Team Store", "https://ladybroncosstore.netlify.app", "Fan gear for families"],
+      ["Privacy Policy", "/privacy", "How the site handles information"],
+      ["Terms of Use", "/terms", "Rules for using the site"],
     ] },
     { group: "Coach logins", items: [
       ["Fundraiser dashboard", "#fundraiser", "Gifts, sponsors, players and outreach"],
@@ -130,8 +132,8 @@
       fields: [F("name", "Full name", { max: 60 }), F("number", "Jersey", { max: 3 }), F("position", "Position", { max: 30 }), F("classYear", "Class of", { max: 4 }),
         F("height", "Height", { max: 10 }), F("site", "Recruiting site", { type: "url", wide: true }), F("maxpreps", "MaxPreps", { type: "url", wide: true })] },
     coaches: { title: "Coaching staff", add: "Add a coach", max: 10,
-      blank: { name: "", role: "", bio: "" },
-      fields: [F("name", "Name", { max: 60 }), F("role", "Role", { ph: "Assistant Coach", max: 40 }), F("bio", "Short bio", { type: "area", max: 400, wide: true })] },
+      blank: { name: "", role: "", email: "", bio: "" },
+      fields: [F("name", "Name", { max: 60 }), F("role", "Role", { ph: "Assistant Coach", max: 40 }), F("email", "Email", { type: "email", max: 120 }), F("bio", "Short bio", { type: "area", max: 400, wide: true })] },
   };
   const SINGLE = [
     { title: "Hero and season", fields: [F("season", "Season", { ph: "2026/27", max: 20 }), F("heroLead", "Welcome line under LADY BRONCOS", { type: "area", max: 300, wide: true }),

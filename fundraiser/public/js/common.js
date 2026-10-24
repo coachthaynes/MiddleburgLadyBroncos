@@ -266,7 +266,7 @@ function setupDonate({ options = [], slug = "team", settings }) {
             <input type="text" id="dnCompany" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
             <p class="error" id="dnErr"></p>
             <button class="btn btn-primary btn-big" type="submit" id="dnGo">Continue to MySchoolBucks</button>
-            <p class="muted" style="margin:0;font-size:.85rem;text-align:center">Payment is made securely on the official school portal. Your name and amount appear in Recent supporters once the coach confirms your gift.</p>
+            <p class="muted" style="margin:0;font-size:.85rem;text-align:center">Payment is made securely on the official school portal. Your name and amount appear in Recent supporters once the coach confirms your gift. See our <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</p>
           </form>
           <div id="dnNext" class="hidden" style="text-align:center">
             <span class="eyebrow">Almost done</span>

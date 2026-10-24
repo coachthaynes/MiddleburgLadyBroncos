@@ -195,11 +195,10 @@
   // ----- coaches and recruiting -----
   $("#coachList").innerHTML = (H.coaches || []).map((c) => `
     <div class="glass coach"><div class="badge">${esc(initials(c.name))}</div>
-      <div><span class="role">${esc(c.role)}</span><h3>${esc(c.name)}</h3>${c.bio ? `<p>${esc(c.bio)}</p>` : ""}</div></div>`).join("");
+      <div><span class="role">${esc(c.role)}</span><h3>${esc(c.name)}</h3>${c.bio ? `<p>${esc(c.bio)}</p>` : ""}${c.email ? `<a class="coach-email" href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : ""}</div></div>`).join("");
   const rec = H.recruiting || {};
   const mail = (subject) => rec.email ? `mailto:${rec.email}?subject=${encodeURIComponent(subject)}` : "/sponsor";
   $("#recruitEmail").href = mail("College recruiting: Middleburg Lady Broncos");
-  $("#futureEmail").href = mail("Zoned for Middleburg: Lady Broncos basketball question");
   if (rec.maxpreps) $("#maxprepsLink").href = rec.maxpreps; else $("#maxprepsLink").classList.add("hidden");
 
   // ----- players: spotlight and roster -----
@@ -208,7 +207,7 @@
     return p.length > 1 ? `${p[0]} ${p[p.length - 1].charAt(0).toUpperCase()}.` : p[0];
   };
   // One playmaker card per player: the dashboard roster and spotlights, plus any fundraiser player not listed there.
-  // Spotlights add the headline, bio, stats and extra links. Fundraiser pages add the photo and a Support button.
+  // Spotlights add the headline, bio, stats and extra links. Elevate Her profiles add the photo (fundraiser photo as a backup), and fundraiser pages add a Support button.
   function playerList(fund) {
     const byShort = new Map();
     const add = (name, fields) => {
@@ -236,7 +235,8 @@
   }
 
   // Elevate Her profiles (stats, position, film links, accolades) fill whatever the dashboard leaves empty.
-  const elevateSlug = (url) => (/elevateherhoopsreport\.com\/players\/([a-z0-9-]+)/.exec(url || "") || [])[1] || "";
+  // Key for a player's Elevate Her page: /players/<slug>, or a custom site like /aiyana-haynes.
+  const elevatePath = (url) => (/^https:\/\/(?:www\.)?elevateherhoopsreport\.com(\/(?:players\/)?[a-z0-9-]+)\/?$/i.exec(url || "") || [])[1] || "";
   let elevate = {};
   const STAT_KEYS = [["ppg", "PPG"], ["reb", "RPG"], ["stl", "SPG"], ["ast", "APG"], ["blk", "BPG"], ["pts", "Total pts"]];
   const num0 = (v) => parseFloat(v) || 0;
@@ -277,13 +277,14 @@
     return "";
   }
   function withElevate(p) {
-    const e = elevate[elevateSlug(p.site)];
+    const e = elevate[elevatePath(p.site).toLowerCase()];
     if (!e) return p;
     const x = { ...p };
     ["number", "position", "classYear", "height"].forEach((f) => { if (!x[f] && e[f]) x[f] = e[f]; });
     if (!(x.stats || []).length && e.season) {
       x.stats = STAT_KEYS.filter(([k]) => num0(e.season[k]) > 0).slice(0, 4).map(([k, l]) => ({ v: e.season[k], l }));
     }
+    if (e.photo) x.photo = e.photo;
     if (!x.bio) x.bio = writeUp(x, e);
     if (!x.headline) x.headline = headlineFor(x, e);
     const have = new Set([...(x.links || []).map((l) => l.url), x.maxpreps].filter(Boolean));
@@ -291,9 +292,15 @@
     return x;
   }
 
+  // Roster order: graduation year (seniors first), then jersey number. Players without a class year go last.
+  const byClass = (a, b) => {
+    const ya = parseInt(a.classYear, 10) || 9999, yb = parseInt(b.classYear, 10) || 9999;
+    const na = parseInt(a.number, 10), nb = parseInt(b.number, 10);
+    return ya - yb || (na >= 0 ? na : 999) - (nb >= 0 ? nb : 999) || a.name.localeCompare(b.name);
+  };
   function renderPlayers(fund) {
     lastFund = fund;
-    const list = playerList(fund).map(withElevate);
+    const list = playerList(fund).map(withElevate).sort(byClass);
     $("#gPlayers").textContent = list.length;
     $("#spotlightList").innerHTML = list.length ? list.map((s) => {
       const f = s.fund;
@@ -305,7 +312,7 @@
       ].join("");
       const meta = [s.position || "Lady Bronco", s.height, s.classYear && "Class of " + s.classYear].filter(Boolean).join(" · ");
       return `<article class="glass spot">
-        ${photoHtml(f && f.photo, s.name, s.number)}
+        ${photoHtml(s.photo || (f && f.photo), s.name, s.number)}
         <div class="spot-body">
           ${s.number ? `<div class="spot-num">#${esc(s.number)}</div>` : ""}
           <h3>${esc(s.name)}</h3>
@@ -322,9 +329,9 @@
   api("/api/public")
     .then((d) => renderPlayers(d.players || []))
     .catch(() => renderPlayers([]));
-  const slugs = playerList([]).map((p) => elevateSlug(p.site)).filter(Boolean);
-  if (slugs.length) {
-    api(`/api/elevate?slugs=${encodeURIComponent(slugs.join(","))}`)
+  const paths = playerList([]).map((p) => elevatePath(p.site)).filter(Boolean);
+  if (paths.length) {
+    api(`/api/elevate?paths=${encodeURIComponent(paths.join(","))}`)
       .then((d) => { elevate = d.players || {}; renderPlayers(lastFund); })
       .catch(() => {});
   }

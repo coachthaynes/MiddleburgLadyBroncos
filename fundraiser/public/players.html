@@ -76,7 +76,7 @@
 </main>
 
 <footer class="site-dark">
-  <div class="wrap foot-base" style="margin-top:0;border-top:0;padding-top:0"><span>Lady Broncos · Middleburg High School</span><span><a href="/" style="color:inherit">mhsladybroncos.com</a></span></div>
+  <div class="wrap foot-base" style="margin-top:0;border-top:0;padding-top:0"><span>Lady Broncos · Middleburg High School</span><span><a href="/privacy" style="color:inherit">Privacy</a> · <a href="/terms" style="color:inherit">Terms</a> · <a href="/" style="color:inherit">mhsladybroncos.com</a></span></div>
 </footer>
 
 <script src="/js/common.js"></script>
@@ -92,17 +92,33 @@
       Object.entries(x).forEach(([k, v]) => { if (v && !p[k]) p[k] = v; });
       byName.set(name, p);
     });
-    const players = [...byName.values()].filter((p) => p.site)
-      .sort((a, b) => (a.headline ? 0 : 1) - (b.headline ? 0 : 1) || a.name.localeCompare(b.name));
-    $("#siteGrid").innerHTML = players.map((s) => {
-      const meta = [s.position, s.height, s.classYear && "Class of " + s.classYear].filter(Boolean).join(" · ");
-      return `<a class="glass tool" href="${esc(s.site)}" target="_blank" rel="noopener">
-        <span class="ico" style="font:700 1.3rem var(--print);color:#fff">${s.number ? "#" + esc(s.number) : esc(initials(s.name))}</span>
-        <h3>${esc(s.name)}</h3>
-        <p>${esc([meta, s.headline].filter(Boolean).join(". ") || "Middleburg Lady Bronco")}</p>
-        <span class="go">View recruiting site →</span>
-      </a>`;
-    }).join("") || '<div class="glass card"><p class="muted" style="margin:0">Player recruiting sites are on the way.</p></div>';
+    const all = [...byName.values()].filter((p) => p.site);
+    const render = (elevate = {}) => {
+      const players = all.map((p) => {
+        // Fill blanks from her Elevate Her profile, the same way the home page does.
+        const path = (/^https:\/\/(?:www\.)?elevateherhoopsreport\.com(\/(?:players\/)?[a-z0-9-]+)\/?$/i.exec(p.site) || [])[1];
+        const e = path && elevate[path.toLowerCase()];
+        const x = { ...p };
+        if (e) ["number", "position", "classYear", "height"].forEach((f) => { if (!x[f] && e[f]) x[f] = e[f]; });
+        return x;
+      })
+        // Graduation year (seniors first), then jersey number. Players without a class year go last.
+        .sort((a, b) => (parseInt(a.classYear, 10) || 9999) - (parseInt(b.classYear, 10) || 9999)
+          || (parseInt(a.number, 10) >= 0 ? parseInt(a.number, 10) : 999) - (parseInt(b.number, 10) >= 0 ? parseInt(b.number, 10) : 999)
+          || a.name.localeCompare(b.name));
+      $("#siteGrid").innerHTML = players.map((s) => {
+        const meta = [s.position, s.height, s.classYear && "Class of " + s.classYear].filter(Boolean).join(" · ");
+        return `<a class="glass tool" href="${esc(s.site)}" target="_blank" rel="noopener">
+          <span class="ico" style="font:700 1.3rem var(--print);color:#fff">${s.number ? "#" + esc(s.number) : esc(initials(s.name))}</span>
+          <h3>${esc(s.name)}</h3>
+          <p>${esc([meta, s.headline].filter(Boolean).join(". ") || "Middleburg Lady Bronco")}</p>
+          <span class="go">View recruiting site →</span>
+        </a>`;
+      }).join("") || '<div class="glass card"><p class="muted" style="margin:0">Player recruiting sites are on the way.</p></div>';
+    };
+    render();
+    const paths = all.map((p) => (/^https:\/\/(?:www\.)?elevateherhoopsreport\.com(\/(?:players\/)?[a-z0-9-]+)\/?$/i.exec(p.site) || [])[1]).filter(Boolean);
+    if (paths.length) api(`/api/elevate?paths=${encodeURIComponent(paths.join(","))}`).then((d) => render(d.players || {})).catch(() => {});
   });
 </script>
 </body>
