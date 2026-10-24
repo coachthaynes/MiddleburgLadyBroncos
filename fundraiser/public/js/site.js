@@ -35,7 +35,7 @@
   const next = upcoming[0];
 
   const notePills = (g) => (g.note || "").split("·").map((n) => n.trim()).filter(Boolean).map((n) => `<span class="pill red">${esc(n)}</span>`).join("");
-  const tagFor = (g) => (g.home ? '<span class="tag">Home</span>' : '<span class="tag grey">Away</span>');
+  const tagFor = (g) => (g.home ? '<span class="tag">Home</span>' : /tbd/i.test(g.location || "") ? '<span class="tag grey">TBD</span>' : '<span class="tag grey">Away</span>');
   function renderSchedule(filter) {
     const list = schedule.filter((g) => filter === "all" || (filter === "home" ? g.home : !g.home));
     const label = { home: "home", away: "away", all: "" }[filter];
@@ -125,8 +125,8 @@
   // Ticker
   const tickerItems = ["Go Broncos"];
   if (next) tickerItems.push(`Next up: ${next.home ? "vs" : "at"} ${next.opponent} ${dayFmt(next.at, { month: "short", day: "numeric" })} ${next.time || ""}`);
-  schedule.filter((g) => (g.note || g.featured) && upcoming.includes(g) && !/^(JV|Varsity only|Tournament)/.test(g.note || ""))
-    .forEach((g) => tickerItems.push(`${(g.note || "Big game").replace(/\s*·\s*/g, " and ")} ${dayFmt(g.at, { month: "short", day: "numeric" })} ${g.home ? "vs" : "at"} ${g.opponent}`));
+  schedule.filter((g) => (g.note || g.featured) && upcoming.includes(g) && !/^(JV 6:00|Varsity only|Tournament|Preseason)$/.test(g.note || ""))
+    .forEach((g) => tickerItems.push(`${(g.note || "Big game").split("·").map((n) => n.trim()).filter((n) => !/^JV /.test(n)).join(" and ")} ${dayFmt(g.at, { month: "short", day: "numeric" })} ${g.home ? "vs" : "at"} ${g.opponent}`));
   tickerItems.push(...(H.ticker || []));
   const tickerHtml = tickerItems.map((t) => `<span>${esc(t)}</span>`).join("");
   $("#ticker").innerHTML = tickerHtml + tickerHtml;
