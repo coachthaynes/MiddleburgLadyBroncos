@@ -15,6 +15,7 @@ export function cleanHome(body: unknown) {
   return {
     season: str(b.season, 20),
     heroLead: str(b.heroLead, 300),
+    slogans: list(b.slogans, 4).map((t) => str(t, 40)).filter(Boolean),
     ticker: list(b.ticker, 8).map((t) => str(t, 80)).filter(Boolean),
     youtube: { channel: url(yt.channel) },
     highlights: list(b.highlights, 6).map((h) => {
@@ -50,7 +51,10 @@ export function cleanHome(body: unknown) {
     }).filter((s) => s.name),
     rosterExtras: Object.fromEntries(list(b.roster, 30).map((r) => {
       const x = obj(r);
-      return [str(x.name, 60), { classYear: str(x.classYear, 4), height: str(x.height, 10), site: url(x.site) }];
+      return [str(x.name, 60), {
+        number: str(x.number, 3), position: str(x.position, 30), classYear: str(x.classYear, 4),
+        height: str(x.height, 10), site: url(x.site), maxpreps: url(x.maxpreps),
+      }];
     }).filter(([n]) => n)),
     coaches: list(b.coaches, 10).map((c) => {
       const x = obj(c);

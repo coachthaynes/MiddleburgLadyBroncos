@@ -48,3 +48,4 @@
 .yt-thumb.empty { display: grid; place-items: center; color: #aaa; font-size: 0.75rem; font-weight: 700; }
 .links-row { margin-bottom: 8px; }
 .ed-row.sched { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+.hub-slogan { margin: 0 0 8px; font: 800 0.85rem var(--display); letter-spacing: 0.16em; text-transform: uppercase; color: var(--red); }

@@ -5,6 +5,11 @@
 
   $$("[data-season]").forEach((el) => { el.textContent = H.season || ""; });
   if (H.heroLead) $("#heroLead").textContent = H.heroLead;
+  const slogans = (H.slogans || []).filter(Boolean);
+  $$("[data-slogans]").forEach((el) => {
+    el.innerHTML = slogans.map((t) => `<span>${esc(t)}</span>`).join("");
+    el.classList.toggle("hidden", !slogans.length);
+  });
 
   // Mobile menu
   const menu = $("#menu");
@@ -149,9 +154,14 @@
     const p = String(full).trim().split(/\s+/);
     return p.length > 1 ? `${p[0]} ${p[p.length - 1].charAt(0).toUpperCase()}.` : p[0];
   };
+  // Roster entries from the dashboard, keyed by short name so they match fundraiser pages ("Aiyana H.").
   const extras = {};
-  Object.entries(H.rosterExtras || {}).forEach(([k, v]) => { extras[shortName(k)] = v; });
-  (H.spotlights || []).forEach((s) => { extras[shortName(s.name)] = { classYear: s.classYear, height: s.height, site: s.site, ...extras[shortName(s.name)] }; });
+  Object.entries(H.rosterExtras || {}).forEach(([k, v]) => { extras[shortName(k)] = { ...v, fullName: k }; });
+  (H.spotlights || []).forEach((s) => {
+    const k = shortName(s.name);
+    const x = (extras[k] ||= { fullName: s.name });
+    ["number", "position", "classYear", "height", "site"].forEach((f) => { if (!x[f] && s[f]) x[f] = s[f]; });
+  });
 
   function renderSpotlights(players) {
     const byName = Object.fromEntries(players.map((p) => [p.name, p]));
@@ -178,17 +188,25 @@
   }
 
   function renderRoster(players) {
-    const list = players.length ? players : (H.spotlights || []).map((s) => ({ name: shortName(s.name), number: s.number, position: s.position }));
-    const sorted = [...list].sort((a, b) => (parseInt(a.number, 10) || 999) - (parseInt(b.number, 10) || 999));
+    // Fundraiser players plus everyone on the dashboard roster who does not have a fundraiser page.
+    const have = new Set(players.map((p) => p.name));
+    const list = [
+      ...players.map((p) => ({ ...p, x: extras[p.name] || {} })),
+      ...Object.entries(extras).filter(([k]) => !have.has(k)).map(([, x]) => ({ x })),
+    ];
+    const num = (p) => parseInt(p.number || p.x.number, 10);
+    const sorted = list.sort((a, b) => (num(a) || 999) - (num(b) || 999) || (a.x.fullName || a.name).localeCompare(b.x.fullName || b.name));
     $("#gPlayers").textContent = sorted.length;
     $("#rosterGrid").innerHTML = sorted.length ? sorted.map((p) => {
-      const x = extras[p.name] || {};
-      const meta = [p.position || "Lady Bronco", x.height, x.classYear && "Class of " + x.classYear].filter(Boolean).join(" · ");
+      const x = p.x;
+      const name = x.fullName || p.name;
+      const number = p.number || x.number;
+      const meta = [p.position || x.position || "Lady Bronco", x.height, x.classYear && "Class of " + x.classYear].filter(Boolean).join(" · ");
       return `<div class="glass rcard">
-        ${photoHtml(p.photo, p.name, p.number)}
-        <h3>${esc(p.name)}</h3>
+        ${photoHtml(p.photo, name, number)}
+        <h3>${esc(name)}</h3>
         <div class="meta">${esc(meta)}</div>
-        <div class="links">${x.site ? `<a class="red" href="${esc(x.site)}" target="_blank" rel="noopener">Profile</a>` : ""}${p.slug ? `<a href="/donate/${esc(p.slug)}">Support ${esc(p.first || "her")}</a>` : ""}</div>
+        <div class="links">${x.site ? `<a class="red" href="${esc(x.site)}" target="_blank" rel="noopener">Profile</a>` : ""}${x.maxpreps ? `<a href="${esc(x.maxpreps)}" target="_blank" rel="noopener">MaxPreps</a>` : ""}${p.slug ? `<a href="/donate/${esc(p.slug)}">Support ${esc(p.first || "her")}</a>` : ""}</div>
       </div>`;
     }).join("") : '<div class="glass card"><p class="muted" style="margin:0">The roster posts here once tryouts wrap up.</p></div>';
   }

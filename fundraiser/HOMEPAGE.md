@@ -7,7 +7,8 @@ The main team home page lives in this folder, on the same Netlify site as the fu
 * **Content:** the starting content lives in `public/js/home-data.js`. Once a coach saves on the dashboard, the saved version replaces it, so edit on the dashboard from then on:
   * `schedule`: games, times, notes and results (`"W 54 41"`). Add away games with `home: false` and an optional `location`.
   * `highlights`: six slots. Paste a YouTube link into `url`; empty slots show Coming soon. Set `youtube.channel` to the team channel.
-  * `spotlights`, `rosterExtras`, `coaches`, `recruiting`: player spotlight cards, class year and height on roster cards, staff and the recruiting email.
+  * `spotlights`, `rosterExtras`, `coaches`, `recruiting`: player spotlight cards, the roster (every player listed shows on the home page and Player Hub with her Elevate Her site and MaxPreps, and fundraiser players add their photo), staff and the recruiting email.
+  * `slogans`: Bronco Built and Fear the Herd, shown in the hero, the slogan band, the ticker, the footer and the Player Hub.
   * `instagram.handle`: the team account, no @.
 * **Roster and sponsors are live:** player cards come from the coach dashboard (`/api/public`, active players with consent). Sponsors come from `/api/sponsors` (committed or paid, Show on wall checked): Horsepower Title and Herd Champion show near the top, Stallion Partners and Bronco Backers near the bottom.
 * **Instagram feed:** set `INSTAGRAM_TOKEN` on the Netlify site to an Instagram API with Instagram Login access token for the team professional account. `/api/instagram` then shows the latest posts, cached 30 minutes, and refreshes the token weekly. Without a token the page shows any post links in `instagram.posts` as Instagram embeds.

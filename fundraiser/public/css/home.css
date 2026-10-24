@@ -250,3 +250,13 @@ body.dark .ph .jersey { background: var(--red); color: #fff; font-family: var(--
 .tool p { margin: 0; color: var(--muted); flex: 1; }
 .tool .go { font-weight: 700; color: #ff4d67; font-size: 0.92rem; }
 .tool .addr { font-size: 0.8rem; color: var(--grey); font-weight: 600; letter-spacing: 0.02em; }
+
+/* Slogans */
+.slogans { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 22px; }
+.slogans span { font: 700 0.95rem var(--print); text-transform: uppercase; letter-spacing: 0.16em; color: #fff; padding: 7px 16px; border: 2px solid var(--red); border-radius: 6px; transform: rotate(-2deg); background: rgba(200, 16, 46, 0.14); }
+.slogans span:nth-child(even) { transform: rotate(1.5deg); background: transparent; border-color: rgba(255, 255, 255, 0.5); }
+.slogan-band { margin-top: 80px; padding: clamp(36px, 7vw, 70px) 0; border-block: 1px solid var(--line); background: radial-gradient(600px 220px at 50% 50%, rgba(200, 16, 46, 0.22), transparent 70%); text-align: center; }
+.slogan-band .wrap { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 0 clamp(18px, 4vw, 48px); }
+.slogan-band span { font: 700 clamp(2.6rem, 9vw, 6rem) var(--print); text-transform: uppercase; line-height: 1; letter-spacing: -0.01em; color: #fff; }
+.slogan-band span:nth-child(even) { color: transparent; -webkit-text-stroke: 2px #ff2e4d; }
+.foot-slogans { display: inline-flex; gap: 18px; }

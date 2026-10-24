@@ -3,10 +3,13 @@
 window.HOME = {
   season: "2026/27",
 
+  // Team slogans, shown in the hero, the slogan band, the ticker and the footer.
+  slogans: ["Bronco Built", "Fear the Herd"],
+
   heroLead: "Grit, speed and heart in red and white. Come pack the gym, meet our players and help us build a program Middleburg is proud of.",
 
   // Extra lines for the red ticker under the hero. The next game and noted games are added on their own.
-  ticker: ["Pack the gym", "Support the team at mhsladybroncos.com/donate", "Red and white all night"],
+  ticker: ["Bronco Built", "Fear the Herd", "Pack the gym", "Support the team at mhsladybroncos.com/donate", "Red and white all night"],
 
   // YouTube channel for the highlight section and the Watch button.
   youtube: {
@@ -57,7 +60,7 @@ window.HOME = {
       headline: "Two way guard with college offers",
       bio: "Calm off the court and relentless on it. Aiyana heads into her senior season with 799 career points and college offers from Southwest Arkansas and Taft College.",
       stats: [{ v: "12.5", l: "PPG" }, { v: "7.6", l: "RPG" }, { v: "4.3", l: "SPG" }, { v: "799", l: "Career pts" }],
-      site: "https://aiyanahaynes.elevateherhoopsreport.com",
+      site: "https://elevateherhoopsreport.com/aiyana-haynes/",
       links: [
         { label: "Hudl", url: "https://www.hudl.com/profile/20899818/Aiyana-Haynes" },
         { label: "MaxPreps", url: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/aiyana-haynes/?careerid=5d7kddlh57g11" },
@@ -69,16 +72,23 @@ window.HOME = {
       headline: "Fearless scorer, quick hands",
       bio: "As a freshman Kennedy led the Lady Broncos attack, pouring in 380 points while averaging 17.3 points and 3.2 steals per game.",
       stats: [{ v: "17.3", l: "PPG" }, { v: "4.1", l: "RPG" }, { v: "3.2", l: "SPG" }, { v: "380", l: "Season pts" }],
-      site: "https://kennedyjeffress.elevateherhoopsreport.com",
+      site: "https://elevateherhoopsreport.com/kennedy-jeffress",
       links: [],
     },
   ],
 
-  // Extra roster details matched to fundraiser player pages by first and last name.
-  // The roster itself (names, numbers, photos) comes from the coach dashboard.
+  // Roster. Players with a fundraiser page are matched by first name and last initial and get their photo
+  // and Support link; everyone here shows on the roster with her full name, site and MaxPreps.
   rosterExtras: {
-    "Aiyana Haynes": { classYear: "2027", height: "5'8\"", site: "https://aiyanahaynes.elevateherhoopsreport.com" },
-    "Kennedy Jeffress": { classYear: "2029", height: "5'6\"", site: "https://kennedyjeffress.elevateherhoopsreport.com" },
+    "Aiyana Haynes": { number: "20", position: "Guard", classYear: "2027", height: "5'8\"", site: "https://elevateherhoopsreport.com/aiyana-haynes/", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/aiyana-haynes/?careerid=5d7kddlh57g11" },
+    "Kennedy Jeffress": { number: "2", position: "Guard", classYear: "2029", height: "5'6\"", site: "https://elevateherhoopsreport.com/kennedy-jeffress" },
+    "Nyla Parsons": { site: "https://elevateherhoopsreport.com/players/nyla-parsons", maxpreps: "https://www.maxpreps.com/fl/orange-park/oakleaf-knights/athletes/nyla-parsons/?careerid=ldj8gsjp4kcrb" },
+    "Maliya Lassiter": { site: "https://elevateherhoopsreport.com/players/maliya-lassiter", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/maliya-lassiter/?careerid=ulmhdcn099e00" },
+    "Janiyla Owens": { site: "https://elevateherhoopsreport.com/players/janiyla-owens", maxpreps: "https://www.maxpreps.com/fl/orange-park/oakleaf-knights/athletes/janiyla-owens/?careerid=7r7uliehmedue" },
+    "Sophia Butler": { site: "https://elevateherhoopsreport.com/players/sophia-butler", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/sophia-butler/?careerid=8vrcld9u7susc" },
+    "Catherine Bodway": { site: "https://elevateherhoopsreport.com/players/catherine-bodway", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/catherine-bodway/?careerid=fn361pimiao11" },
+    "Aliyna McCobb": { site: "https://elevateherhoopsreport.com/players/aliyna-mccobb", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/aliyna-mccobb/?careerid=vm6vokeo1c6rb" },
+    "Savanna Padgett": { site: "https://elevateherhoopsreport.com/players/savanna-padgett", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/savanna-padgett/?careerid=gmf4ef3javdcc" },
   },
 
   coaches: [
