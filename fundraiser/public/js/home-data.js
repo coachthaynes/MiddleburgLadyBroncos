@@ -112,6 +112,7 @@ window.HOME = {
     "Sophia Butler": { number: "11", site: "https://elevateherhoopsreport.com/players/sophia-butler", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/sophia-butler/?careerid=8vrcld9u7susc" },
     "Catherine Bodway": { number: "14", site: "https://elevateherhoopsreport.com/players/catherine-bodway", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/catherine-bodway/?careerid=fn361pimiao11" },
     "Aliyna McCobb": { number: "1", site: "https://elevateherhoopsreport.com/players/aliyna-mccobb", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/aliyna-mccobb/?careerid=vm6vokeo1c6rb" },
+    "Andrea Brady": { site: "https://elevateherhoopsreport.com/players/andrea-brady" },
     "Savanna Padgett": { number: "30", site: "https://elevateherhoopsreport.com/players/savanna-padgett", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/savanna-padgett/?careerid=gmf4ef3javdcc" },
   },
 

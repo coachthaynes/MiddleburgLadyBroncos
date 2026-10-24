@@ -207,66 +207,63 @@
     const p = String(full).trim().split(/\s+/);
     return p.length > 1 ? `${p[0]} ${p[p.length - 1].charAt(0).toUpperCase()}.` : p[0];
   };
-  // Roster entries from the dashboard, keyed by short name so they match fundraiser pages ("Aiyana H.").
-  const extras = {};
-  Object.entries(H.rosterExtras || {}).forEach(([k, v]) => { extras[shortName(k)] = { ...v, fullName: k }; });
-  (H.spotlights || []).forEach((s) => {
-    const k = shortName(s.name);
-    const x = (extras[k] ||= { fullName: s.name });
-    ["number", "position", "classYear", "height", "site"].forEach((f) => { if (!x[f] && s[f]) x[f] = s[f]; });
-  });
-
-  function renderSpotlights(players) {
-    const byName = Object.fromEntries(players.map((p) => [p.name, p]));
-    $("#spotlightList").innerHTML = (H.spotlights || []).map((s) => {
-      const p = byName[shortName(s.name)];
-      const links = [
-        s.site ? `<a class="btn btn-primary btn-small" href="${esc(s.site)}" target="_blank" rel="noopener">Recruiting profile</a>` : "",
-        ...(s.links || []).map((l) => `<a class="btn btn-glass btn-small" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`),
-        p ? `<a class="btn btn-glass btn-small" href="/donate/${esc(p.slug)}">Support ${esc(p.first)}</a>` : "",
-      ].join("");
-      return `<article class="glass spot">
-        ${photoHtml(p && p.photo, s.name, s.number)}
-        <div class="spot-body">
-          <div class="spot-num">#${esc(s.number)}</div>
-          <h3>${esc(s.name)}</h3>
-          <div class="pos">${esc([s.position, s.height, s.classYear && "Class of " + s.classYear].filter(Boolean).join(" · "))}</div>
-          ${s.headline ? `<p class="headline">${esc(s.headline)}</p>` : ""}
-          <p>${esc(s.bio || "")}</p>
-          ${(s.stats || []).length ? `<div class="statline">${s.stats.map((x) => `<div><b>${esc(x.v)}</b><span>${esc(x.l)}</span></div>`).join("")}</div>` : ""}
-          <div class="btn-row">${links}</div>
-        </div></article>`;
-    }).join("");
-    if (!(H.spotlights || []).length) $("#spotlight").classList.add("hidden");
+  // One playmaker card per player: the dashboard roster and spotlights, plus any fundraiser player not listed there.
+  // Spotlights add the headline, bio, stats and extra links. Fundraiser pages add the photo and a Support button.
+  function playerList(fund) {
+    const byShort = new Map();
+    const add = (name, fields) => {
+      const k = shortName(name);
+      const p = byShort.get(k) || { name };
+      if (name.trim().includes(" ") && !p.name.includes(" ")) p.name = name;
+      Object.entries(fields || {}).forEach(([f, v]) => {
+        const empty = v == null || v === "" || (Array.isArray(v) && !v.length);
+        if (!empty && (p[f] == null || p[f] === "" || (Array.isArray(p[f]) && !p[f].length))) p[f] = v;
+      });
+      byShort.set(k, p);
+    };
+    (H.spotlights || []).forEach((s) => add(s.name, s));
+    Object.entries(H.rosterExtras || {}).forEach(([n, x]) => add(n, x));
+    fund.forEach((f) => {
+      const k = f.name;
+      const p = byShort.get(k) || { name: f.name };
+      p.fund = f;
+      if (!p.number && f.number) p.number = f.number;
+      if (!p.position && f.position) p.position = f.position;
+      byShort.set(k, p);
+    });
+    const num = (p) => parseInt(p.number, 10);
+    return [...byShort.values()].sort((a, b) => (num(a) >= 0 ? num(a) : 999) - (num(b) >= 0 ? num(b) : 999) || a.name.localeCompare(b.name));
   }
 
-  function renderRoster(players) {
-    // Fundraiser players plus everyone on the dashboard roster who does not have a fundraiser page.
-    const have = new Set(players.map((p) => p.name));
-    const list = [
-      ...players.map((p) => ({ ...p, x: extras[p.name] || {} })),
-      ...Object.entries(extras).filter(([k]) => !have.has(k)).map(([, x]) => ({ x })),
-    ];
-    const num = (p) => parseInt(p.number || p.x.number, 10);
-    const sorted = list.sort((a, b) => (num(a) || 999) - (num(b) || 999) || (a.x.fullName || a.name).localeCompare(b.x.fullName || b.name));
-    $("#gPlayers").textContent = sorted.length;
-    $("#rosterGrid").innerHTML = sorted.length ? sorted.map((p) => {
-      const x = p.x;
-      const name = x.fullName || p.name;
-      const number = p.number || x.number;
-      const meta = [p.position || x.position || "Lady Bronco", x.height, x.classYear && "Class of " + x.classYear].filter(Boolean).join(" · ");
-      return `<div class="glass rcard">
-        ${photoHtml(p.photo, name, number)}
-        <h3>${esc(name)}</h3>
-        <div class="meta">${esc(meta)}</div>
-        <div class="links">${x.site ? `<a class="red" href="${esc(x.site)}" target="_blank" rel="noopener">Profile</a>` : ""}${x.maxpreps ? `<a href="${esc(x.maxpreps)}" target="_blank" rel="noopener">MaxPreps</a>` : ""}${p.slug ? `<a href="/donate/${esc(p.slug)}">Support ${esc(p.first || "her")}</a>` : ""}</div>
-      </div>`;
-    }).join("") : '<div class="glass card"><p class="muted" style="margin:0">The roster posts here once tryouts wrap up.</p></div>';
+  function renderPlayers(fund) {
+    const list = playerList(fund);
+    $("#gPlayers").textContent = list.length;
+    $("#spotlightList").innerHTML = list.length ? list.map((s) => {
+      const f = s.fund;
+      const links = [
+        s.site ? `<a class="btn btn-primary btn-small" href="${esc(s.site)}" target="_blank" rel="noopener">Recruiting profile</a>` : "",
+        s.maxpreps && !(s.links || []).some((l) => /maxpreps/i.test(l.url)) ? `<a class="btn btn-glass btn-small" href="${esc(s.maxpreps)}" target="_blank" rel="noopener">MaxPreps</a>` : "",
+        ...(s.links || []).map((l) => `<a class="btn btn-glass btn-small" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`),
+        f ? `<a class="btn btn-glass btn-small" href="/donate/${esc(f.slug)}">Support ${esc(f.first)}</a>` : "",
+      ].join("");
+      const meta = [s.position || "Lady Bronco", s.height, s.classYear && "Class of " + s.classYear].filter(Boolean).join(" · ");
+      return `<article class="glass spot">
+        ${photoHtml(f && f.photo, s.name, s.number)}
+        <div class="spot-body">
+          ${s.number ? `<div class="spot-num">#${esc(s.number)}</div>` : ""}
+          <h3>${esc(s.name)}</h3>
+          <div class="pos">${esc(meta)}</div>
+          ${s.headline ? `<p class="headline">${esc(s.headline)}</p>` : ""}
+          ${s.bio ? `<p>${esc(s.bio)}</p>` : s.site ? '<p class="muted">Film, stats and contact details on her recruiting profile.</p>' : ""}
+          ${(s.stats || []).length ? `<div class="statline">${s.stats.map((x) => `<div><b>${esc(x.v)}</b><span>${esc(x.l)}</span></div>`).join("")}</div>` : ""}
+          ${links ? `<div class="btn-row">${links}</div>` : ""}
+        </div></article>`;
+    }).join("") : '<div class="glass card"><p class="muted" style="margin:0">Our players post here once tryouts wrap up.</p></div>';
   }
 
   api("/api/public")
-    .then((d) => { renderSpotlights(d.players || []); renderRoster(d.players || []); })
-    .catch(() => { renderSpotlights([]); renderRoster([]); });
+    .then((d) => renderPlayers(d.players || []))
+    .catch(() => renderPlayers([]));
 
   // ----- sponsors: top levels near the top, the rest near the bottom -----
   const logoBox = (s) => s.logo ? `<img src="${esc(s.logo)}" alt="${esc(s.business)}" loading="lazy">` : `<span class="wall-name">${esc(s.business)}</span>`;
