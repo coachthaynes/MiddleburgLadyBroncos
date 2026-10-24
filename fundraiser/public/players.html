@@ -81,14 +81,14 @@
 <script src="/js/common.js"></script>
 <script src="/js/home-data.js"></script>
 <script>
-  // Recruiting site cards come from the spotlights in home-data.js.
-  $("#siteGrid").innerHTML = (window.HOME.spotlights || []).filter((s) => s.site).map((s) => `
+  // Recruiting site cards come from the home page spotlights.
+  window.loadHome().then(() => $("#siteGrid").innerHTML = (window.HOME.spotlights || []).filter((s) => s.site).map((s) => `
     <a class="glass tool" href="${esc(s.site)}" target="_blank" rel="noopener">
       <span class="ico" style="font:700 1.3rem var(--print);color:#fff">#${esc(s.number)}</span>
       <h3>${esc(s.name)}</h3>
       <p>${esc([s.position, s.height, s.classYear && "Class of " + s.classYear].filter(Boolean).join(" · "))}. ${esc(s.headline || "")}</p>
       <span class="go">View recruiting site →</span>
-    </a>`).join("") || '<div class="glass card"><p class="muted" style="margin:0">Player recruiting sites are on the way.</p></div>';
+    </a>`).join("") || '<div class="glass card"><p class="muted" style="margin:0">Player recruiting sites are on the way.</p></div>');
 </script>
 </body>
 </html>

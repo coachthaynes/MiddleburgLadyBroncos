@@ -3,7 +3,8 @@
 The main team home page lives in this folder, on the same Netlify site as the fundraiser (site id `d088a79e-2a7f-4d97-bf8c-dcffc20e6afa`, primary domain mhsladybroncos.com).
 
 * **Edit:** `fundraiser/public/index.html` (layout), `public/css/home.css` (black, red, white and grey look on top of `styles.css`) and `public/js/site.js` (rendering). Extra pages, images and scripts go in `fundraiser/public/` too.
-* **Content:** almost everything you change week to week lives in `public/js/home-data.js`:
+* **Coaches dashboard:** `/coach` (same coach password as before) has three tabs. **Hub** links every login and admin page, plus coach only My links. **Home page** edits everything below and publishes it right away (saved in Blobs at `home/content`, served by `/api/home`). **Fundraiser** is the original gifts, sponsors, players and outreach dashboard. The editor flags hyphens and dashes in page text.
+* **Content:** the starting content lives in `public/js/home-data.js`. Once a coach saves on the dashboard, the saved version replaces it, so edit on the dashboard from then on:
   * `schedule`: games, times, notes and results (`"W 54 41"`). Add away games with `home: false` and an optional `location`.
   * `highlights`: six slots. Paste a YouTube link into `url`; empty slots show Coming soon. Set `youtube.channel` to the team channel.
   * `spotlights`, `rosterExtras`, `coaches`, `recruiting`: player spotlight cards, class year and height on roster cards, staff and the recruiting email.

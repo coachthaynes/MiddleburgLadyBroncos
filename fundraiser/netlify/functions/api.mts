@@ -13,6 +13,7 @@ import {
   normalizeEmail, providerStatus, renderEmail, renderSms, saveContacts, saveWaves,
   sendEmail, SendLog, siteOrigin, unsubUrl, Wave,
 } from "../lib/messaging.mts";
+import { getHome, getLinks, saveHome, saveLinks } from "../lib/home.mts";
 
 export default async (req: Request, context: Context) => {
   const url = new URL(req.url);
@@ -29,6 +30,7 @@ export default async (req: Request, context: Context) => {
     if (parts[0] === "sponsor" && parts[1] && parts[2] === "logo" && method === "POST") return sponsorLogoUpload(req, parts[1]);
     if (parts[0] === "sponsors" && method === "GET") return sponsorWall();
     if (parts[0] === "instagram" && method === "GET") return instagramFeed();
+    if (parts[0] === "home" && method === "GET") return json({ content: (await getHome())?.content || null }, 200, { "cache-control": "public, max-age=60" });
     if (parts[0] === "sponsor-report" && parts[1] && method === "GET") return sponsorReport(parts[1]);
 
     // ----- sessions -----
@@ -444,6 +446,12 @@ async function playerRoutes(req: Request, parts: string[], player: Player) {
 
 async function coachRoutes(req: Request, parts: string[], _s: Session) {
   const method = req.method;
+
+  // Home page content and the dashboard's own links
+  if (parts[0] === "home" && method === "GET") return json((await getHome()) || { content: null, updatedAt: "" });
+  if (parts[0] === "home" && method === "PUT") return json({ ok: true, ...(await saveHome(await req.json().catch(() => ({})))) });
+  if (parts[0] === "links" && method === "GET") return json({ links: await getLinks() });
+  if (parts[0] === "links" && method === "PUT") return json({ ok: true, links: await saveLinks(await req.json().catch(() => ({}))) });
 
   if (parts[0] === "overview" && method === "GET") {
     const [settings, players, stats, gifts] = await Promise.all([getSettings(), listPlayers(), allStats(), listGifts()]);

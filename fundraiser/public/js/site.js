@@ -1,9 +1,10 @@
-// Home page. Content comes from js/home-data.js, players from /api/public, sponsors from /api/sponsors.
-(function () {
-  const H = window.HOME || {};
+// Home page. Content comes from the coach dashboard (or js/home-data.js), players from /api/public, sponsors from /api/sponsors.
+(async function () {
+  const H = await window.loadHome();
   const schedule = (H.schedule || []).map((g) => ({ ...g, at: gameTime(g) })).sort((a, b) => a.at - b.at);
 
   $$("[data-season]").forEach((el) => { el.textContent = H.season || ""; });
+  if (H.heroLead) $("#heroLead").textContent = H.heroLead;
 
   // Mobile menu
   const menu = $("#menu");
@@ -102,7 +103,7 @@
   const tickerItems = ["Go Broncos"];
   if (next) tickerItems.push(`Next up: ${next.home ? "vs" : "at"} ${next.opponent} ${dayFmt(next.at, { month: "short", day: "numeric" })} ${next.time || ""}`);
   schedule.filter((g) => g.note && upcoming.includes(g)).forEach((g) => tickerItems.push(`${g.note} ${dayFmt(g.at, { month: "short", day: "numeric" })} vs ${g.opponent}`));
-  tickerItems.push("Pack the gym", "Support the team at mhsladybroncos.com/donate", "Red and white all night");
+  tickerItems.push(...(H.ticker || []));
   const tickerHtml = tickerItems.map((t) => `<span>${esc(t)}</span>`).join("");
   $("#ticker").innerHTML = tickerHtml + tickerHtml;
 

@@ -15,6 +15,7 @@
     $("#logout").classList.remove("hidden");
     render();
     show("dash");
+    document.dispatchEvent(new CustomEvent("coach:ready", { detail: data }));
   }
 
   function statusPill(p) {

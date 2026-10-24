@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Coach Dashboard</title>
+<title>Coaches Dashboard</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#c8102e">
 <link rel="icon" href="/brand/logo.png" type="image/png">
@@ -12,15 +12,16 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/coach-hub.css">
 </head>
 <body>
 <div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
 
 <header class="nav wrap">
   <div class="glass">
-    <a class="brand" href="/"><img data-logo src="/brand/logo.png" alt=""><span>Coach Dashboard</span></a>
+    <a class="brand" href="/"><img data-logo src="/brand/logo.png" alt=""><span>Coaches Dashboard</span></a>
     <nav class="nav-links">
-      <a class="hide-sm" href="/donate" target="_blank" rel="noopener">View site</a>
+      <a class="hide-sm" href="/" target="_blank" rel="noopener">View site</a>
       <a href="#" id="logout" class="hidden">Log out</a>
     </nav>
   </div>
@@ -38,6 +39,54 @@
   </section>
 
   <section id="dash" class="hidden">
+    <nav class="coach-tabs glass" role="tablist" aria-label="Dashboard sections">
+      <button role="tab" id="tb-hub" aria-controls="tabHub" data-tab="hub">Hub</button>
+      <button role="tab" id="tb-home" aria-controls="tabHome" data-tab="home">Home page</button>
+      <button role="tab" id="tb-fundraiser" aria-controls="tabFund" data-tab="fundraiser">Fundraiser</button>
+    </nav>
+
+    <div class="tab-panel" id="tabHub" role="tabpanel" aria-labelledby="tb-hub" hidden>
+      <div class="hub-top">
+        <div class="glass card hub-welcome fade-in">
+          <span class="eyebrow">Coaches dashboard</span>
+          <h2 style="margin:10px 0 6px">Welcome back, Coach</h2>
+          <p class="muted" style="margin:0 0 14px">Every login and admin page for the Lady Broncos in one place, plus the tools to keep mhsladybroncos.com up to date.</p>
+          <div class="btn-row">
+            <button class="btn btn-primary" data-go="home">Edit the home page</button>
+            <button class="btn btn-glass" data-go="fundraiser">Fundraiser and sponsors</button>
+            <a class="btn btn-glass" href="/" target="_blank" rel="noopener">View the home page</a>
+          </div>
+        </div>
+        <div class="hub-stats">
+          <div class="glass stat-card"><span class="eyebrow">Next game</span><b id="hubNext">None scheduled</b><small id="hubNextWhen"></small></div>
+          <div class="glass stat-card"><span class="eyebrow">Home page</span><b id="hubSaved">Not edited yet</b><small id="hubSavedWhen">Showing the starting content</small></div>
+        </div>
+      </div>
+      <div id="hubLinks"></div>
+      <div class="glass card" style="margin-top:22px">
+        <div class="section-head" style="margin-bottom:10px">
+          <div><h3 style="margin:0">My links</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Add any other login or admin page you use. Only coaches see these. Never type passwords here.</p></div>
+          <button class="btn btn-glass btn-small" id="linkAdd">Add a link</button>
+        </div>
+        <div id="myLinks"></div>
+        <div class="btn-row" style="margin-top:12px"><button class="btn btn-primary btn-small" id="linkSave">Save my links</button><span class="muted" id="linkMsg" style="align-self:center;font-size:.9rem"></span></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tabHome" role="tabpanel" aria-labelledby="tb-home" hidden>
+      <div class="glass save-bar">
+        <div><b>Home page content</b><span class="muted" id="homeStatus">Loading...</span></div>
+        <div class="btn-row">
+          <a class="btn btn-glass btn-small" href="/" target="_blank" rel="noopener">View page</a>
+          <button class="btn btn-glass btn-small" id="homeUndo" disabled>Undo changes</button>
+          <button class="btn btn-primary btn-small" id="homeSave" disabled>Save and publish</button>
+        </div>
+      </div>
+      <div class="notice warn hidden" id="dashWarn" style="margin-top:12px"></div>
+      <div id="homeEditor"></div>
+    </div>
+
+    <div class="tab-panel" id="tabFund" role="tabpanel" aria-labelledby="tb-fundraiser" hidden>
     <div class="dash">
       <div class="glass card span fade-in">
         <div class="section-head" style="margin:0 0 14px">
@@ -193,6 +242,7 @@
         </div>
       </div>
     </div>
+    </div>
   </section>
 </main>
 
@@ -220,10 +270,12 @@
   </div>
 </div>
 
-<footer class="site wrap"><div class="glass"><span>Lady Broncos Coach Dashboard</span><span><a href="/donate">Team page</a></span></div></footer>
+<footer class="site wrap"><div class="glass"><span>Lady Broncos Coaches Dashboard</span><span><a href="/donate">Team page</a></span></div></footer>
 
 <script src="/js/common.js"></script>
 <script src="/js/outreach.js"></script>
 <script src="/js/coach.js"></script>
+<script src="/js/home-data.js"></script>
+<script src="/js/coach-hub.js"></script>
 </body>
 </html>

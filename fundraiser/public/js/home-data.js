@@ -1,7 +1,12 @@
-/* Everything the home page shows that does not come from the fundraiser database lives here.
-   Edit this file, then deploy. Keep visible text free of hyphens and dashes. */
+/* Starting content for the home page. Coaches edit it on the dashboard (/coach, Home page tab);
+   once saved there, the saved version replaces this file. Keep visible text free of hyphens and dashes. */
 window.HOME = {
   season: "2026/27",
+
+  heroLead: "Grit, speed and heart in red and white. Come pack the gym, meet our players and help us build a program Middleburg is proud of.",
+
+  // Extra lines for the red ticker under the hero. The next game and noted games are added on their own.
+  ticker: ["Pack the gym", "Support the team at mhsladybroncos.com/donate", "Red and white all night"],
 
   // YouTube channel for the highlight section and the Watch button.
   youtube: {
@@ -84,4 +89,14 @@ window.HOME = {
     email: "coachthaynes@gmail.com",
     maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/basketball/girls/",
   },
+};
+
+// Saved dashboard content wins over the defaults above.
+window.loadHome = async function () {
+  try {
+    const r = await fetch("/api/home");
+    const d = r.ok ? await r.json() : {};
+    if (d.content) window.HOME = { ...window.HOME, ...d.content };
+  } catch { /* keep the defaults */ }
+  return window.HOME;
 };
