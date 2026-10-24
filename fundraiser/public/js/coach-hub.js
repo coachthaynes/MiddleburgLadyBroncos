@@ -26,7 +26,7 @@
       ["Donate page", "/donate", "Team fundraiser"],
       ["Sponsor page", "/sponsor", "Sponsor levels and interest form"],
       ["Sponsor packet", "/sponsor-packet.pdf", "PDF to send to businesses"],
-      ["Team Store", "https://ladybroncosstore.netlify.app", "Fan gear for families"],
+      ["Team Store", "/store/", "Fan gear for families"],
       ["Privacy Policy", "/privacy", "How the site handles information"],
       ["Terms of Use", "/terms", "Rules for using the site"],
     ] },
@@ -34,22 +34,22 @@
       ["Fundraiser dashboard", "#fundraiser", "Gifts, sponsors, players and outreach"],
       ["Athlete Monitor", "/athletemonitor/", "Testing, training, game stats and weekly reports"],
       ["MHS Secret Binder", "/secretbinder/", "Offense and defense playbook"],
-      ["Recruit Board admin", "https://recruitingboard.elevateherhoopsreport.com/admin/", "College coach lists, drips and leads"],
-      ["Madi Visuals dashboard", "https://madivisuals.netlify.app", "Photos and video for the player sites"],
-      ["Social Scheduler", "https://social-schdeuler.netlify.app", "Schedule Instagram and Facebook posts"],
-      ["Bronco Life Skills", "https://broncolifeskills.netlify.app", "Mentorship lessons"],
+      ["Recruit Board admin", "/recruitboard", "College coach lists, drips and leads"],
+      ["Madi Visuals dashboard", "/madivisuals", "Photos and video for the player sites"],
+      ["Social Scheduler", "/scheduler", "Schedule Instagram and Facebook posts"],
+      ["Bronco Life Skills", "/lifeskills/", "Mentorship lessons"],
     ] },
     { group: "Player sites and logins", items: [
-      ["Aiyana Haynes", "https://elevateherhoopsreport.com/aiyana-haynes/", "Recruiting site"],
-      ["Kennedy Jeffress", "https://elevateherhoopsreport.com/kennedy-jeffress", "Recruiting site"],
-      ["Aliyna McCobb", "https://elevateherhoopsreport.com/players/aliyna-mccobb", "Recruiting site"],
-      ["Andrea Brady", "https://elevateherhoopsreport.com/players/andrea-brady", "Recruiting site"],
-      ["Catherine Bodway", "https://elevateherhoopsreport.com/players/catherine-bodway", "Recruiting site"],
-      ["Janiyla Owens", "https://elevateherhoopsreport.com/players/janiyla-owens", "Recruiting site"],
-      ["Maliya Lassiter", "https://elevateherhoopsreport.com/players/maliya-lassiter", "Recruiting site"],
-      ["Nyla Parsons", "https://elevateherhoopsreport.com/players/nyla-parsons", "Recruiting site"],
-      ["Savanna Padgett", "https://elevateherhoopsreport.com/players/savanna-padgett", "Recruiting site"],
-      ["Sophia Butler", "https://elevateherhoopsreport.com/players/sophia-butler", "Recruiting site"],
+      ["Aiyana Haynes", "/aiyanahaynes", "Recruiting site"],
+      ["Kennedy Jeffress", "/kennedyjeffress", "Recruiting site"],
+      ["Aliyna McCobb", "/aliynamccobb", "Recruiting site"],
+      ["Andrea Brady", "/andreabrady", "Recruiting site"],
+      ["Catherine Bodway", "/catherinebodway", "Recruiting site"],
+      ["Janiyla Owens", "/janiylaowens", "Recruiting site"],
+      ["Maliya Lassiter", "/maliyalassiter", "Recruiting site"],
+      ["Nyla Parsons", "/nylaparsons", "Recruiting site"],
+      ["Savanna Padgett", "/savannapadgett", "Recruiting site"],
+      ["Sophia Butler", "/sophiabutler", "Recruiting site"],
       ["Players directory", "https://elevateherhoopsreport.com/players-directory.html", "Elevate Her player sites"],
       ["Elevate Her Hoops Report", "https://elevateherhoopsreport.com", "Player site program"],
       ["Fundraiser player login", "/portal", "Players sign in with their code"],
@@ -69,7 +69,7 @@
   ];
   const ext = (u) => /^https?:/.test(u);
   const linkCard = (label, url, note) => `<a class="glass hub-link" href="${esc(url)}"${ext(url) ? ' target="_blank" rel="noopener"' : url.startsWith("#") ? "" : ' target="_blank" rel="noopener"'}>
-      <b>${esc(label)}</b>${note ? `<span>${esc(note)}</span>` : ""}<small>${esc(url.startsWith("#") ? "This dashboard" : url.replace(/^https?:\/\//, "").replace(/\/$/, "") || "mhsladybroncos.com")}</small></a>`;
+      <b>${esc(label)}</b>${note ? `<span>${esc(note)}</span>` : ""}<small>${esc(url.startsWith("#") ? "This dashboard" : url.startsWith("/") ? "mhsladybroncos.com" + url.replace(/\/$/, "").replace(/^\/$/, "") : url.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</small></a>`;
 
   let myLinks = [];
   function renderHubLinks() {

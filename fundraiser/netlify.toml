@@ -73,6 +73,106 @@
   status = 200
   force = true
 
+# Team sites served under mhsladybroncos.com. Both load their files with page relative paths.
+[[redirects]]
+  from = "/store/*"
+  to = "https://ladybroncosstore.netlify.app/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lifeskills/*"
+  to = "https://broncolifeskills.netlify.app/:splat"
+  status = 200
+  force = true
+
+# Player recruiting sites: mhsladybroncos.com/<firstlast> goes to her Elevate Her page.
+# Keep this list in step with shortLinks in public/js/home-data.js.
+[[redirects]]
+  from = "/aiyanahaynes"
+  to = "https://elevateherhoopsreport.com/aiyana-haynes/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/kennedyjeffress"
+  to = "https://elevateherhoopsreport.com/kennedy-jeffress"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/nylaparsons"
+  to = "https://elevateherhoopsreport.com/players/nyla-parsons"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/maliyalassiter"
+  to = "https://elevateherhoopsreport.com/players/maliya-lassiter"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/janiylaowens"
+  to = "https://elevateherhoopsreport.com/players/janiyla-owens"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/sophiabutler"
+  to = "https://elevateherhoopsreport.com/players/sophia-butler"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/catherinebodway"
+  to = "https://elevateherhoopsreport.com/players/catherine-bodway"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/aliynamccobb"
+  to = "https://elevateherhoopsreport.com/players/aliyna-mccobb"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/andreabrady"
+  to = "https://elevateherhoopsreport.com/players/andrea-brady"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/savannapadgett"
+  to = "https://elevateherhoopsreport.com/players/savanna-padgett"
+  status = 302
+  force = true
+
+# Coach tool shortcuts.
+[[redirects]]
+  from = "/recruitboard"
+  to = "https://recruitingboard.elevateherhoopsreport.com/admin/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/madivisuals"
+  to = "https://madivisuals.netlify.app/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/scheduler"
+  to = "https://social-schdeuler.netlify.app/"
+  status = 302
+  force = true
+
+# Life Skills opened without its trailing slash asks for /assets/...; this site has no /assets of its own.
+[[redirects]]
+  from = "/assets/*"
+  to = "https://broncolifeskills.netlify.app/assets/:splat"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]

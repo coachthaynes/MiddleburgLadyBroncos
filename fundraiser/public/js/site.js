@@ -305,7 +305,7 @@
     $("#spotlightList").innerHTML = list.length ? list.map((s) => {
       const f = s.fund;
       const links = [
-        s.site ? `<a class="btn btn-primary btn-small" href="${esc(s.site)}" target="_blank" rel="noopener">Recruiting profile</a>` : "",
+        s.site ? `<a class="btn btn-primary btn-small" href="${esc((H.shortLinks || {})[s.name] || s.site)}" target="_blank" rel="noopener">Recruiting profile</a>` : "",
         s.maxpreps && !(s.links || []).some((l) => /maxpreps/i.test(l.url)) ? `<a class="btn btn-glass btn-small" href="${esc(s.maxpreps)}" target="_blank" rel="noopener">MaxPreps</a>` : "",
         ...(s.links || []).map((l) => `<a class="btn btn-glass btn-small" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`),
         f ? `<a class="btn btn-glass btn-small" href="/donate/${esc(f.slug)}">Support ${esc(f.first)}</a>` : "",

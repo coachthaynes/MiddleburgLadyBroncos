@@ -3,7 +3,7 @@ window.STORE = {
   giveBackPercent: 30,
   season: "26/27",
   sayings: ["No Mercy. All Heart.", "United as One.", "Battle Tested."],
-  fundraiserUrl: "https://ladybroncosfundraiser.netlify.app",
+  fundraiserUrl: "https://mhsladybroncos.com/donate",
   // Where buyers pay after ordering (Square, Venmo, Cash App or a Stripe payment link). Leave blank to have coaches follow up.
   paymentUrl: "",
   shipping: 6,

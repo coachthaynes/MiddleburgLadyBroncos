@@ -1,6 +1,20 @@
 /* Starting content for the home page. Coaches edit it on the dashboard (/coach, Home page tab);
    once saved there, the saved version replaces this file. Keep visible text free of hyphens and dashes. */
 window.HOME = {
+  // Short links on mhsladybroncos.com for each player's recruiting site (set up in netlify.toml).
+  shortLinks: {
+    "Aiyana Haynes": "/aiyanahaynes",
+    "Kennedy Jeffress": "/kennedyjeffress",
+    "Nyla Parsons": "/nylaparsons",
+    "Maliya Lassiter": "/maliyalassiter",
+    "Janiyla Owens": "/janiylaowens",
+    "Sophia Butler": "/sophiabutler",
+    "Catherine Bodway": "/catherinebodway",
+    "Aliyna McCobb": "/aliynamccobb",
+    "Andrea Brady": "/andreabrady",
+    "Savanna Padgett": "/savannapadgett",
+  },
+
   season: "2026/27",
 
   // Team slogans, shown in the hero, the slogan band, the ticker and the footer.

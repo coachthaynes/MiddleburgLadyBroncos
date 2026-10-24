@@ -59,7 +59,7 @@
         <span class="addr">mhsladybroncos.com/secretbinder</span>
         <span class="go">Open the binder →</span>
       </a>
-      <a class="glass tool" href="https://broncolifeskills.netlify.app" target="_blank" rel="noopener">
+      <a class="glass tool" href="/lifeskills/" target="_blank" rel="noopener">
         <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l10 5-10 5L2 8z"/><path d="M6 10.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-5.5"/></svg></span>
         <h3>Bronco Life Skills</h3>
         <p>The mentorship series: money, leadership, college readiness and the skills that last after basketball.</p>
@@ -108,7 +108,7 @@
           || a.name.localeCompare(b.name));
       $("#siteGrid").innerHTML = players.map((s) => {
         const meta = [s.position, s.height, s.classYear && "Class of " + s.classYear].filter(Boolean).join(" · ");
-        return `<a class="glass tool" href="${esc(s.site)}" target="_blank" rel="noopener">
+        return `<a class="glass tool" href="${esc((H.shortLinks || {})[s.name] || s.site)}" target="_blank" rel="noopener">
           <span class="ico" style="font:700 1.3rem var(--print);color:#fff">${s.number ? "#" + esc(s.number) : esc(initials(s.name))}</span>
           <h3>${esc(s.name)}</h3>
           <p>${esc([meta, s.headline].filter(Boolean).join(". ") || "Middleburg Lady Bronco")}</p>

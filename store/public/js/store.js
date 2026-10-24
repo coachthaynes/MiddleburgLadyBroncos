@@ -6,7 +6,7 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const IMG = "/img/products/";
+  const IMG = "img/products/";
   const photo = (file, alt = "") => `<img src="${IMG}${file}" alt="${esc(alt)}" loading="lazy" draggable="false">`;
   const CATEGORIES = { All: null, Tees: "tees", Hoodies: "hoodies", Warmups: "warmups", Bottoms: "bottoms", Hats: "hats" };
   const sizesFor = (p) => p.sizes || [...S.youth, ...S.adult];
@@ -242,7 +242,7 @@
     btn.disabled = true;
     btn.textContent = "Sending...";
     try {
-      const res = await fetch("/", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: data.toString() });
+      const res = await fetch("./", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: data.toString() });
       if (!res.ok) throw new Error();
       cart = [];
       saveCart();

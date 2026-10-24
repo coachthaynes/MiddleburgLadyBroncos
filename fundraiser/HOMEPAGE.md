@@ -25,6 +25,10 @@ The main team home page lives in this folder, on the same Netlify site as the fu
 | `/api/*`, `/go/*`, `/img/*`, `/u/*` | Netlify Functions |
 | `/players` | `public/players.html` (Player Hub) |
 | `/athletemonitor/` | proxy to the `athletemonitor` Netlify site (source: `coachthaynes/social_scheduler`, `performance/`) |
+| `/store/` | proxy to the `ladybroncosstore` site (source: `store/`, page relative paths, orders post to `./`) |
+| `/lifeskills/` | proxy to the `broncolifeskills` site |
+| `/aiyanahaynes`, `/kennedyjeffress`, ... | 302 links to each player's Elevate Her page. Add a new player in both `netlify.toml` and `shortLinks` in `public/js/home-data.js`. |
+| `/recruitboard`, `/madivisuals`, `/scheduler` | 302 shortcuts to the coach tools |
 | `/secretbinder/` | `netlify/functions/binder.mts`: the MHS Secret Binder behind the team code (`BINDER_CODE` on Netlify, never in this repo). Signed in coaches go straight in. To update the binder, replace `netlify/binder/index.html`, run `node netlify/binder/build.mjs`, then deploy. |
 
 Athlete Monitor loads its files and calls its API with page relative paths (`api/...`, not `/api/...`), so it works both at athletemonitor.netlify.app and inside `/athletemonitor/` without touching this site's `/api`. Keep it that way when editing it.
