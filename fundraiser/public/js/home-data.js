@@ -117,7 +117,7 @@ window.HOME = {
   },
 
   coaches: [
-    { name: "Tenise Haynes", role: "Head Coach", email: "tenise.haynes@myoneclay.net", bio: "Builds players who compete on the court, lead in the classroom and grow through the Bronco Life Skills mentorship series." },
+    { name: "Tenise Haynes", role: "Head Coach", email: "tenise.haynes@myoneclay.net" },
     { name: "Renardo Lassiter", role: "Assistant Varsity Coach" },
     { name: "Megan Smith", role: "Head JV Coach" },
   ],
