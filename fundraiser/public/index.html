@@ -3,49 +3,248 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Middleburg Lady Broncos</title>
-<meta name="description" content="Middleburg High School Lady Bronco Basketball. Support the team, sponsor a season and shop the Team Store.">
+<title>Middleburg Lady Broncos Basketball</title>
+<meta name="description" content="Middleburg High School Lady Bronco Basketball. Game schedule, highlights, player profiles, recruiting info and ways to support the team.">
 <meta property="og:title" content="Middleburg Lady Broncos Basketball">
-<meta property="og:description" content="Support the team, sponsor a season and shop the Team Store.">
-<meta name="theme-color" content="#c8102e">
+<meta property="og:description" content="Game schedule, highlights, player profiles and ways to support the Lady Broncos.">
+<meta property="og:image" content="/brand/logo.png">
+<meta name="theme-color" content="#0a0a0a">
 <link rel="icon" href="/brand/logo.png" type="image/png">
 <link rel="apple-touch-icon" href="/brand/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/home.css">
 </head>
-<body>
-<!-- Placeholder home page. The full mhsladybroncos.com home page replaces this file (see HOMEPAGE.md). -->
+<body class="dark">
 <div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
 
 <header class="nav wrap">
   <div class="glass">
     <a class="brand" href="/"><img src="/brand/logo.png" alt=""><span>Lady Broncos</span></a>
-    <nav class="nav-links">
+    <nav class="nav-links" aria-label="Main">
+      <a class="hide-md" href="#schedule">Schedule</a>
+      <a class="hide-md" href="#highlights">Highlights</a>
+      <a class="hide-md" href="#roster">Roster</a>
+      <a class="hide-md" href="#recruiting">Recruiting</a>
       <a class="hide-sm" href="/sponsor">Sponsor</a>
-      <a class="hide-sm" href="https://ladybroncosstore.netlify.app">Team Store</a>
-      <a href="/donate">Donate</a>
+      <a class="btn btn-primary btn-small" href="/donate">Donate</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
     </nav>
+  </div>
+  <div class="glass menu" id="menu" hidden>
+    <a href="#schedule">Schedule</a>
+    <a href="#highlights">Highlights</a>
+    <a href="#roster">Roster</a>
+    <a href="#recruiting">Recruiting</a>
+    <a href="#instagram">Instagram</a>
+    <a href="#sponsors">Sponsors</a>
+    <a href="/players">Player Hub</a>
+    <a href="/sponsor">Become a sponsor</a>
+    <a href="https://ladybroncosstore.netlify.app">Team Store</a>
   </div>
 </header>
 
-<main class="wrap">
-  <section class="glass center-card wide fade-in" style="text-align:center">
-    <img class="hero-logo" src="/brand/logo.png" alt="Middleburg High School horseshoe logo">
-    <span class="eyebrow">Middleburg High School · Lady Bronco Basketball</span>
-    <h1 style="margin:12px 0 10px;font-size:clamp(2.2rem,6vw,3.4rem)">Welcome to the <span class="red">Lady Broncos</span></h1>
-    <p class="lead" style="margin:0 auto 22px">Our new team home page is coming soon. Until then, here is how you can support our girls this season.</p>
-    <div class="btn-row" style="justify-content:center">
-      <a class="btn btn-primary btn-big" href="/donate">Donate to the team</a>
-      <a class="btn btn-glass btn-big" href="/sponsor">Become a sponsor</a>
-      <a class="btn btn-glass btn-big" href="https://ladybroncosstore.netlify.app">Shop the Team Store</a>
+<main>
+  <!-- Hero -->
+  <section class="hero-home wrap">
+    <div class="hero-copy fade-in">
+      <span class="kicker"><span>Middleburg High School · Girls Basketball · <span data-season></span> Season</span></span>
+      <h1 class="print-title">Lady<br><span>Broncos</span></h1>
+      <p class="lead">Grit, speed and heart in red and white. Come pack the gym, meet our players and help us build a program Middleburg is proud of.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-big" href="#schedule">See the schedule</a>
+        <a class="btn btn-glass btn-big" href="/donate">Support the team</a>
+      </div>
+    </div>
+    <aside class="glass next-game fade-in" id="nextGame" aria-live="polite" style="animation-delay:.1s">
+      <span class="tag">Next game</span>
+      <div class="ng-body"><p class="muted" style="margin:0">Loading the schedule...</p></div>
+    </aside>
+  </section>
+
+  <div class="ticker-wrap" aria-hidden="true"><div class="ticker"><div class="ticker-track" id="ticker"></div></div></div>
+
+  <!-- Top sponsors -->
+  <section class="wrap block top-sponsors" id="sponsors">
+    <div class="print-head center">
+      <span class="kicker">Presented by</span>
+      <h2>Our champion partners</h2>
+    </div>
+    <div class="sponsor-top" id="sponsorTop">
+      <a class="glass sponsor-open" href="/sponsor"><b>Your business here</b><span>Horsepower Title and Herd Champion partners are featured right here. See sponsor levels</span></a>
+    </div>
+  </section>
+
+  <!-- At a glance -->
+  <section class="wrap block">
+    <div class="glance">
+      <div class="glass g"><b id="gPlayers">0</b><span>Lady Broncos</span></div>
+      <div class="glass g"><b id="gHome">0</b><span>Home games</span></div>
+      <div class="glass g"><b id="gGames">0</b><span>Games on the schedule</span></div>
+      <div class="glass g"><b id="gRecord">0 and 0</b><span>Season record</span></div>
+    </div>
+  </section>
+
+  <!-- Schedule -->
+  <section class="wrap block" id="schedule">
+    <div class="print-head">
+      <div><span class="kicker">Come watch</span><h2><span data-season></span> Game Schedule</h2></div>
+      <div class="seg" role="group" aria-label="Filter games">
+        <button aria-pressed="true" data-filter="all">All</button>
+        <button aria-pressed="false" data-filter="home">Home</button>
+        <button aria-pressed="false" data-filter="away">Away</button>
+      </div>
+    </div>
+    <div class="glass sched-card">
+      <ol class="schedule" id="scheduleList"></ol>
+      <div class="sched-foot">
+        <span class="muted"><b class="dot-home"></b> Home games at <a id="venueLink" href="#" target="_blank" rel="noopener"></a>. Varsity times shown.</span>
+        <button class="btn btn-glass btn-small" id="icsBtn">Add games to my calendar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Highlights -->
+  <section class="wrap block" id="highlights">
+    <div class="print-head">
+      <div><span class="kicker">Film room</span><h2>Highlights</h2></div>
+      <a class="btn btn-glass btn-small" id="ytChannel" href="#" target="_blank" rel="noopener">Watch on YouTube</a>
+    </div>
+    <div class="highlights" id="highlightGrid"></div>
+  </section>
+
+  <!-- Spotlight -->
+  <section class="wrap block" id="spotlight">
+    <div class="print-head">
+      <div><span class="kicker">Player spotlight</span><h2>Meet the playmakers</h2></div>
+    </div>
+    <div class="spotlights" id="spotlightList"></div>
+  </section>
+
+  <!-- Roster -->
+  <section class="wrap block" id="roster">
+    <div class="print-head">
+      <div><span class="kicker">The team</span><h2>Player profiles</h2></div>
+      <a class="btn btn-glass btn-small" href="/players">Player Hub</a>
+    </div>
+    <div class="roster-dark" id="rosterGrid"></div>
+  </section>
+
+  <!-- Coaches -->
+  <section class="wrap block" id="coaches">
+    <div class="print-head"><div><span class="kicker">Leadership</span><h2>Coaching staff</h2></div></div>
+    <div class="coaches" id="coachList"></div>
+  </section>
+
+  <!-- Recruiting and Future Broncos -->
+  <section class="wrap block" id="recruiting">
+    <div class="split">
+      <div class="glass card recruit">
+        <span class="kicker">For college coaches</span>
+        <h2>Recruit a Lady Bronco</h2>
+        <p>Our players compete in a tough North Florida schedule, train with a structured strength and monitoring program, and carry their work into the classroom. Every featured player links to film, stats and contact details.</p>
+        <ul class="checks">
+          <li>Full game film and highlight reels on request</li>
+          <li>Transcripts and academic details through the head coach</li>
+          <li>Personal recruiting sites for our featured players</li>
+          <li>Visits welcome at any home game or practice</li>
+        </ul>
+        <div class="btn-row">
+          <a class="btn btn-primary" id="recruitEmail" href="#">Email the head coach</a>
+          <a class="btn btn-glass" id="maxprepsLink" href="#" target="_blank" rel="noopener">Team stats on MaxPreps</a>
+        </div>
+      </div>
+      <div class="glass card future">
+        <span class="kicker">Future Broncos</span>
+        <h2>Middle school and youth players</h2>
+        <p>Want to wear the horseshoe one day? Come to a game, meet the team and ask about summer workouts, open gyms and youth camps.</p>
+        <div class="btn-row">
+          <a class="btn btn-glass" id="futureEmail" href="#">Ask about joining</a>
+          <a class="btn btn-glass" href="#schedule">Come to a game</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Instagram -->
+  <section class="wrap block" id="instagram">
+    <div class="print-head">
+      <div><span class="kicker">On the gram</span><h2>Latest from Instagram</h2></div>
+      <a class="btn btn-glass btn-small" id="igFollow" href="#" target="_blank" rel="noopener">Follow us</a>
+    </div>
+    <div class="ig-grid" id="igGrid"></div>
+  </section>
+
+  <!-- Support -->
+  <section class="wrap block">
+    <div class="support-band">
+      <div class="glass sb">
+        <span class="kicker">Give</span>
+        <h3>Donate to the team</h3>
+        <p class="muted">Every gift goes straight to Middleburg High School through the official school payment portal.</p>
+        <a class="btn btn-primary" href="/donate">Donate</a>
+      </div>
+      <div class="glass sb">
+        <span class="kicker">Partner</span>
+        <h3>Sponsor a season</h3>
+        <p class="muted">Banners, game nights, shout outs and a spot on this page for your business.</p>
+        <a class="btn btn-primary" href="/sponsor">See sponsor levels</a>
+      </div>
+      <div class="glass sb">
+        <span class="kicker">Rep the horseshoe</span>
+        <h3>Shop the Team Store</h3>
+        <p class="muted">Shirts, hoodies and fan gear for game day.</p>
+        <a class="btn btn-glass" href="https://ladybroncosstore.netlify.app">Shop now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Community sponsors -->
+  <section class="wrap block" id="community">
+    <div class="print-head center">
+      <span class="kicker">Thank you</span>
+      <h2>Community partners</h2>
+    </div>
+    <div class="sponsor-rows" id="sponsorRest">
+      <p class="muted center-text">Stallion Partners and Bronco Backers are thanked here. <a href="/sponsor">Join them</a>.</p>
     </div>
   </section>
 </main>
 
-<footer class="site wrap">
-  <div class="glass"><span>Lady Bronco Basketball · Middleburg High School</span><span><a href="/portal">Player login</a></span></div>
+<footer class="site-dark">
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <img src="/brand/logo.png" alt="">
+      <div><b>Lady Broncos</b><span>Middleburg High School Girls Basketball</span></div>
+    </div>
+    <nav aria-label="Team">
+      <b>Team</b>
+      <a href="#schedule">Schedule</a>
+      <a href="#roster">Roster</a>
+      <a href="#recruiting">Recruiting</a>
+      <a href="/players">Player Hub</a>
+    </nav>
+    <nav aria-label="Support">
+      <b>Support</b>
+      <a href="/donate">Donate</a>
+      <a href="/sponsor">Sponsor</a>
+      <a href="https://ladybroncosstore.netlify.app">Team Store</a>
+    </nav>
+    <nav aria-label="Players and staff">
+      <b>Players and staff</b>
+      <a href="/portal">Player login</a>
+      <a href="/athletemonitor/">Athlete Monitor</a>
+      <a href="/secretbinder/">MHS Secret Binder</a>
+      <a href="/coach">Coach login</a>
+    </nav>
+  </div>
+  <div class="wrap foot-base"><span>Go Broncos</span><span>mhsladybroncos.com</span></div>
 </footer>
+
+<script src="/js/common.js"></script>
+<script src="/js/home-data.js"></script>
+<script src="/js/site.js"></script>
 </body>
 </html>

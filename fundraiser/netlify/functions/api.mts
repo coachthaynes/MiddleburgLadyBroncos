@@ -28,6 +28,7 @@ export default async (req: Request, context: Context) => {
     if (parts[0] === "sponsor" && parts.length === 1 && method === "POST") return createSponsor(req);
     if (parts[0] === "sponsor" && parts[1] && parts[2] === "logo" && method === "POST") return sponsorLogoUpload(req, parts[1]);
     if (parts[0] === "sponsors" && method === "GET") return sponsorWall();
+    if (parts[0] === "instagram" && method === "GET") return instagramFeed();
     if (parts[0] === "sponsor-report" && parts[1] && method === "GET") return sponsorReport(parts[1]);
 
     // ----- sessions -----
@@ -164,6 +165,54 @@ async function sponsorWall() {
   const taken = takenGames(sponsors);
   const homeGames = HOME_GAMES.map((g) => ({ ...g, taken: !!taken[g.id] }));
   return json({ sponsors: wall, payUrl: settings.donateUrl, homeGames }, 200, { "cache-control": "public, max-age=60" });
+}
+
+// ================= instagram (home page feed) =================
+
+// Latest posts from the team Instagram professional account, cached for 30 minutes.
+// Needs INSTAGRAM_TOKEN (an Instagram API with Instagram Login access token).
+// Long lived tokens last 60 days, so the token is refreshed once a week and kept in Blobs.
+async function instagramFeed() {
+  const headers = { "cache-control": "public, max-age=300" };
+  const store = db();
+  const cached = (await store.get("cache/instagram", { type: "json" }).catch(() => null)) as { at: number; handle: string; posts: unknown[] } | null;
+  if (cached && Date.now() - cached.at < 30 * 60 * 1000) return json({ handle: cached.handle, posts: cached.posts }, 200, headers);
+
+  // A new INSTAGRAM_TOKEN on Netlify replaces the refreshed one kept in Blobs.
+  const source = process.env.INSTAGRAM_TOKEN || "";
+  if (!source) return json({ handle: "", posts: [] }, 200, headers);
+  const kept = (await store.get("cache/instagram-token", { type: "json" }).catch(() => null)) as { token: string; at: number; source: string } | null;
+  const saved = kept && kept.source === source ? kept : null;
+  let token = saved?.token || source;
+
+  try {
+    if (!saved || Date.now() - saved.at > 7 * 864e5) {
+      const r = await fetch(`https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${encodeURIComponent(token)}`);
+      const d = await r.json().catch(() => ({}));
+      if (r.ok && d.access_token) token = d.access_token;
+      await store.setJSON("cache/instagram-token", { token, at: Date.now(), source });
+    }
+    const fields = "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,username";
+    const r = await fetch(`https://graph.instagram.com/me/media?fields=${fields}&limit=12&access_token=${encodeURIComponent(token)}`);
+    const d = await r.json();
+    if (!r.ok) throw new Error(d?.error?.message || `Instagram ${r.status}`);
+    const posts = (d.data || [])
+      .map((m: any) => ({
+        url: m.permalink,
+        image: m.media_type === "VIDEO" ? m.thumbnail_url : m.media_url,
+        video: m.media_type === "VIDEO",
+        caption: clean(m.caption || "", 300),
+        at: m.timestamp,
+      }))
+      .filter((p: any) => p.url && p.image)
+      .slice(0, 8);
+    const handle = d.data?.[0]?.username || "";
+    await store.setJSON("cache/instagram", { at: Date.now(), handle, posts });
+    return json({ handle, posts }, 200, headers);
+  } catch (err) {
+    console.error("instagram", err);
+    return json({ handle: cached?.handle || "", posts: cached?.posts || [] }, 200, headers);
+  }
 }
 
 async function sponsorReport(token: string) {

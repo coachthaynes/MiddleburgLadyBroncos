@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Player Hub · Middleburg Lady Broncos</title>
+<meta name="description" content="Player recruiting sites, the Athlete Monitor, the MHS Secret Binder and player tools for the Middleburg Lady Broncos.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="/brand/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="/brand/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/home.css">
+</head>
+<body class="dark">
+<div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="nav wrap">
+  <div class="glass">
+    <a class="brand" href="/"><img src="/brand/logo.png" alt=""><span>Lady Broncos</span></a>
+    <nav class="nav-links" aria-label="Main">
+      <a class="hide-sm" href="/">Home</a>
+      <a class="hide-sm" href="/#schedule">Schedule</a>
+      <a class="hide-sm" href="/sponsor">Sponsor</a>
+      <a class="btn btn-primary btn-small" href="/donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hub-hero fade-in">
+    <span class="kicker">Players, families and staff</span>
+    <h1 class="print-title">Player<br><span>Hub</span></h1>
+    <p class="lead muted" style="font-size:1.1rem">Recruiting sites built for our Lady Broncos, plus the tools our players use every week to train, learn the playbook and grow.</p>
+  </section>
+
+  <section class="block">
+    <div class="print-head"><div><span class="kicker">For college coaches</span><h2>Player recruiting sites</h2></div></div>
+    <div class="hub-grid" id="siteGrid"></div>
+  </section>
+
+  <section class="block">
+    <div class="print-head"><div><span class="kicker">For the team</span><h2>Player tools</h2></div></div>
+    <div class="hub-grid">
+      <a class="glass tool" href="/athletemonitor/">
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></span>
+        <h3>Athlete Monitor</h3>
+        <p>Testing results, training sessions, game stats and weekly reports for every player, guardian and coach.</p>
+        <span class="addr">mhsladybroncos.com/athletemonitor</span>
+        <span class="go">Sign in →</span>
+      </a>
+      <a class="glass tool" href="/secretbinder/">
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 8h8M8 12h6"/></svg></span>
+        <h3>MHS Secret Binder</h3>
+        <p>Every offense and defense the Lady Broncos run, animated on the court with film for every play.</p>
+        <span class="addr">mhsladybroncos.com/secretbinder</span>
+        <span class="go">Open the binder →</span>
+      </a>
+      <a class="glass tool" href="https://broncolifeskills.netlify.app" target="_blank" rel="noopener">
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l10 5-10 5L2 8z"/><path d="M6 10.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-5.5"/></svg></span>
+        <h3>Bronco Life Skills</h3>
+        <p>The mentorship series: money, leadership, college readiness and the skills that last after basketball.</p>
+        <span class="go">See the lessons →</span>
+      </a>
+      <a class="glass tool" href="/portal">
+        <span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+        <h3>Fundraiser player login</h3>
+        <p>Update your photo and message, see who supported you and share your donation page.</p>
+        <span class="go">Player login →</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-dark">
+  <div class="wrap foot-base" style="margin-top:0;border-top:0;padding-top:0"><span>Lady Broncos · Middleburg High School</span><span><a href="/" style="color:inherit">mhsladybroncos.com</a></span></div>
+</footer>
+
+<script src="/js/common.js"></script>
+<script src="/js/home-data.js"></script>
+<script>
+  // Recruiting site cards come from the spotlights in home-data.js.
+  $("#siteGrid").innerHTML = (window.HOME.spotlights || []).filter((s) => s.site).map((s) => `
+    <a class="glass tool" href="${esc(s.site)}" target="_blank" rel="noopener">
+      <span class="ico" style="font:700 1.3rem var(--print);color:#fff">#${esc(s.number)}</span>
+      <h3>${esc(s.name)}</h3>
+      <p>${esc([s.position, s.height, s.classYear && "Class of " + s.classYear].filter(Boolean).join(" · "))}. ${esc(s.headline || "")}</p>
+      <span class="go">View recruiting site →</span>
+    </a>`).join("") || '<div class="glass card"><p class="muted" style="margin:0">Player recruiting sites are on the way.</p></div>';
+</script>
+</body>
+</html>
