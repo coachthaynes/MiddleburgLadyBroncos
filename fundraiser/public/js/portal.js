@@ -177,10 +177,10 @@
 
   function renderDash() {
     const { player: p, settings } = me;
-    const url = `${location.origin}/p/${p.slug}`;
+    const url = `${location.origin}/donate/${p.slug}`;
     $("#hiName").textContent = p.first;
     $("#myLink").textContent = url;
-    $("#viewPage").href = `/p/${p.slug}`;
+    $("#viewPage").href = `/donate/${p.slug}`;
     $("#mViews").textContent = fmtNum(p.stats.view);
     $("#mShares").textContent = fmtNum(p.stats.share);
     $("#mDonate").textContent = fmtNum(p.stats.donate);

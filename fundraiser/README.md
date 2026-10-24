@@ -6,10 +6,13 @@ A donation site for the Middleburg High School Lady Broncos. Every Donate button
 
 | Address | Who uses it | What it does |
 | --- | --- | --- |
-| `/` | Everyone | Team page with goal progress, countdown, roster, leaderboard and share buttons |
-| `/p/name` | Everyone | A player's personal page with her photo, message, Donate button, share buttons and QR code |
+| `/` | Everyone | Main mhsladybroncos.com home page (see HOMEPAGE.md) |
+| `/donate` | Everyone | Team donation page with goal progress, countdown, roster, leaderboard and share buttons |
+| `/donate/name` | Everyone | A player's personal page with her photo, message, Donate button, share buttons and QR code |
 | `/portal` | Players | Log in with a 6 character code, give permission, upload a photo, edit her message, see her numbers |
 | `/coach` | Coach | Add players and get codes, approve photos, paste the MySchoolBucks link, update totals, upload the logo, download stats |
+
+Old addresses still work: `/p/name` forwards to `/donate/name` and `/sponsors` forwards to `/sponsor`.
 
 ## How tracking works
 
@@ -46,8 +49,8 @@ npx netlify dev
 
 ## Sponsors
 
-* `/sponsors` is the public sponsor page: four levels (Bronco Backer $750, Stallion Partner $1,500, Herd Champion $2,500, Horsepower Title $5,000), the Business Day video, how to pay (MySchoolBucks or check to Middleburg High School), the sponsor wall and an interest form. Edit levels and benefits in `public/js/sponsors.js`.
-* `/sponsor-packet.pdf` is the one page handout. Its source is `sponsor-packet/packet.html`; the QR code points to the sponsor page.
+* `/sponsor` is the public sponsor page: four levels (Bronco Backer $750, Stallion Partner $1,500, Herd Champion $2,500, Horsepower Title $5,000), the Business Day video, how to pay (MySchoolBucks or check to Middleburg High School), the sponsor wall and an interest form. Edit levels and benefits in `public/js/sponsors.js`.
+* `/sponsor-packet.pdf` is the three page handout. Its source is `sponsor-packet/packet.html`; the QR code points to the sponsor page.
 * On the coach dashboard, interest forms land under **Sponsors**. Marking a sponsor Committed or Paid creates that level's to do list (including ordering the plain jersey for Title sponsors and sending the proof report). Each item can hold a date, a proof link and a proof photo.
 * Each sponsor has a private report link (`/sponsor-report/...`) that shows what was delivered, for sending to the business.
 * `sponsor-packet/email-drip.md` holds the seven sponsor emails, which are also saved as Gmail drafts.

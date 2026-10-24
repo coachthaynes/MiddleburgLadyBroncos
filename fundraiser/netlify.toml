@@ -7,9 +7,25 @@
   node_bundler = "esbuild"
 
 [[redirects]]
-  from = "/p/:slug"
+  from = "/donate"
+  to = "/donate.html"
+  status = 200
+
+[[redirects]]
+  from = "/donate/:slug"
   to = "/player.html"
   status = 200
+
+[[redirects]]
+  from = "/sponsor"
+  to = "/sponsor.html"
+  status = 200
+
+# Old addresses from before the home page moved to mhsladybroncos.com
+[[redirects]]
+  from = "/p/:slug"
+  to = "/donate/:slug"
+  status = 301
 
 [[redirects]]
   from = "/portal"
@@ -18,8 +34,8 @@
 
 [[redirects]]
   from = "/sponsors"
-  to = "/sponsors.html"
-  status = 200
+  to = "/sponsor"
+  status = 301
 
 [[redirects]]
   from = "/sponsor-report/*"

@@ -169,7 +169,7 @@ export function mergeVars(s: Settings, p: Player, c: Pick<Contact, "name">, orig
     percent: pct + "%",
     days: String(daysLeft),
     endDate: new Date(`${s.endDate}T12:00:00`).toLocaleDateString("en-US", { month: "long", day: "numeric" }),
-    link: `${origin}/p/${p.slug}`,
+    link: `${origin}/donate/${p.slug}`,
   } as Record<string, string>;
 }
 

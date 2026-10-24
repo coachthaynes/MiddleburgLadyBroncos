@@ -77,7 +77,7 @@
     $("#rows").innerHTML = players.length
       ? players.map((p) => `
         <tr>
-          <td><div class="who">${avatarHtml(p.photo, p.name)}<div><b>${esc(p.first)} ${esc(p.last)}</b><div class="muted" style="font-size:.8rem">${p.number ? "#" + esc(p.number) + " · " : ""}/p/${esc(p.slug)}</div>${p.consent?.accepted ? `<div class="muted" style="font-size:.75rem">Permission: ${esc(p.consent.guardianName)}, ${new Date(p.consent.at).toLocaleDateString()}</div>` : ""}</div></div></td>
+          <td><div class="who">${avatarHtml(p.photo, p.name)}<div><b>${esc(p.first)} ${esc(p.last)}</b><div class="muted" style="font-size:.8rem">${p.number ? "#" + esc(p.number) + " · " : ""}/donate/${esc(p.slug)}</div>${p.consent?.accepted ? `<div class="muted" style="font-size:.75rem">Permission: ${esc(p.consent.guardianName)}, ${new Date(p.consent.at).toLocaleDateString()}</div>` : ""}</div></div></td>
           <td>${statusPill(p)}</td>
           <td>${fmtNum(p.stats.view)}</td>
           <td>${fmtNum(p.stats.share)}</td>
@@ -85,7 +85,7 @@
           <td><b>${fmtMoney(p.confirmed || 0)}</b></td>
           <td><input type="number" min="0" step="0.01" value="${p.raised || ""}" placeholder="0" data-raised="${p.id}" aria-label="Other money raised by ${esc(p.name)}"></td>
           <td><div class="actions">
-            <a class="btn btn-glass btn-small" href="/p/${esc(p.slug)}" target="_blank" rel="noopener">View</a>
+            <a class="btn btn-glass btn-small" href="/donate/${esc(p.slug)}" target="_blank" rel="noopener">View</a>
             <button class="btn btn-glass btn-small" data-act="code" data-id="${p.id}">New code</button>
             <button class="btn btn-glass btn-small" data-act="toggle" data-id="${p.id}">${p.active ? "Hide" : "Show"}</button>
             ${p.photo ? `<button class="btn btn-glass btn-small" data-act="rmphoto" data-id="${p.id}">Remove photo</button>` : ""}

@@ -8,7 +8,7 @@ export default async (req: Request) => {
   const settings = await getSettings();
 
   if (!settings.donateUrl) {
-    return Response.redirect(new URL(slug === "team" ? "/?soon=1" : `/p/${slug}?soon=1`, url), 302);
+    return Response.redirect(new URL(slug === "team" ? "/donate?soon=1" : `/donate/${slug}?soon=1`, url), 302);
   }
 
   // Count each browser once per player per 12 hours so refreshes do not pad the numbers.

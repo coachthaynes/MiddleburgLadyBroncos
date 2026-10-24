@@ -36,7 +36,7 @@
   $("#teamLine").textContent = `Team: ${fmtMoney(settings.raised)} of ${fmtMoney(settings.goal)}${p.raised ? ` · ${p.first}: ${fmtMoney(p.raised)}` : ""}`;
   $("#ends").textContent = daysLeft(settings.endDate) > 0 ? `Ends ${endLabel(settings.endDate)}` : "Fundraiser has ended";
 
-  const url = `${location.origin}/p/${p.slug}`;
+  const url = `${location.origin}/donate/${p.slug}`;
   renderShare($("#shareBox"), {
     url,
     slug: p.slug,

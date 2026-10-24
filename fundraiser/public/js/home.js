@@ -32,7 +32,7 @@
         const body = `<div class="wall-logo">${s.logo ? `<img src="${esc(s.logo)}" alt="${esc(s.business)}">` : `<span class="wall-name">${esc(s.business)}</span>`}</div><b>${esc(s.business)}</b><small>${s.level === "title" ? "Presenting sponsor" : esc(s.levelName)}</small>`;
         return s.website ? `<a class="wall-item lvl-${s.level}" href="${esc(s.website)}" target="_blank" rel="noopener sponsored">${body}</a>` : `<div class="wall-item lvl-${s.level}">${body}</div>`;
       }).join("")
-      : '<p class="muted" style="margin:0">Local businesses can partner with the Lady Broncos this season. <a href="/sponsors">See sponsor levels</a>.</p>';
+      : '<p class="muted" style="margin:0">Local businesses can partner with the Lady Broncos this season. <a href="/sponsor">See sponsor levels</a>.</p>';
   }).catch(() => { $("#sponsorStrip").classList.add("hidden"); });
   setupDonate({ options: data.options || [], slug: "team", settings });
   document.addEventListener("click", (e) => {
@@ -47,7 +47,7 @@
   // Roster
   $("#roster").innerHTML = players.length
     ? players.map((p) => `
-      <a class="glass player-card" href="/p/${esc(p.slug)}">
+      <a class="glass player-card" href="/donate/${esc(p.slug)}">
         ${photoHtml(p.photo, p.name, p.number)}
         <h3>${esc(p.name)}</h3>
         <div class="meta">${esc(p.position || "Lady Bronco")}</div>
@@ -66,13 +66,13 @@
       <li>
         <span class="rank">${i + 1}</span>
         ${avatarHtml(p.photo, p.name)}
-        <a href="/p/${esc(p.slug)}">${esc(p.name)}</a>
+        <a href="/donate/${esc(p.slug)}">${esc(p.name)}</a>
         <span class="score">${useDollars ? fmtMoney(p.raised) : fmtNum(p.stats.donate)}<small>${useDollars ? "raised" : "supporters"}</small></span>
       </li>`).join("")
     : `<li style="grid-template-columns:1fr"><span class="muted">The leaderboard fills in as players share their pages.</span></li>`;
 
   // Share
-  const url = location.origin + "/";
+  const url = location.origin + "/donate";
   renderShare($("#shareBox"), {
     url,
     slug: "team",

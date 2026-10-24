@@ -26,8 +26,8 @@ My name is [Your Name], and I coach the Middleburg High School Lady Broncos bask
 
 We put together sponsor levels from $750 to $5,000, and every level comes with real recognition: PA announcements at home games, our game day entry banner, social media posts and a spot on our website sponsor wall. Our top sponsors also get something special. Our players visit your business, learn how it works, and we turn that visit into a short video ad you can use anywhere.
 
-See our sponsor levels here: https://ladybroncosfundraiser.netlify.app/sponsors#levels
-Or download our full sponsor packet: https://ladybroncosfundraiser.netlify.app/sponsor-packet.pdf
+See our sponsor levels here: https://mhsladybroncos.com/sponsor#levels
+Or download our full sponsor packet: https://mhsladybroncos.com/sponsor-packet.pdf
 
 Could I stop by for ten minutes this week to share more? I would love to have [Business Name] in the Lady Broncos family.
 
@@ -46,8 +46,8 @@ Our players visit [Business Name] for about an hour. You show them how your busi
 
 Your customers see a local business investing in local kids, and our girls get a real look at careers right here in Middleburg.
 
-Business Day comes with our Horsepower Title Sponsorship ($5,000), and we only have two spots this season. See how Business Day works here: https://ladybroncosfundraiser.netlify.app/sponsors#businessday
-The full details are on page 3 of our sponsor packet: https://ladybroncosfundraiser.netlify.app/sponsor-packet.pdf
+Business Day comes with our Horsepower Title Sponsorship ($5,000), and we only have two spots this season. See how Business Day works here: https://mhsladybroncos.com/sponsor#businessday
+The full details are on page 3 of our sponsor packet: https://mhsladybroncos.com/sponsor-packet.pdf
 
 Would you like me to hold one of the spots while we talk it over?
 
@@ -70,8 +70,8 @@ Herd Champion, $2,500: a large logo on the entry banner, your logo on our warmup
 
 Horsepower Title, $5,000: a Business Day video ad made with our players, the top logo spot, a year round banner on the football field fence (seen at football, track and soccer games plus middle and elementary school events), Senior Night or a holiday tournament named for you, a homepage feature and a framed jersey signed by the team.
 
-You can pay online through our school's MySchoolBucks page or by check made out to Middleburg High School. Sign up or ask a question here: https://ladybroncosfundraiser.netlify.app/sponsors#join
-Pages 2 and 3 of our sponsor packet explain the Herd Champion and Horsepower Title levels in detail: https://ladybroncosfundraiser.netlify.app/sponsor-packet.pdf
+You can pay online through our school's MySchoolBucks page or by check made out to Middleburg High School. Sign up or ask a question here: https://mhsladybroncos.com/sponsor#join
+Pages 2 and 3 of our sponsor packet explain the Herd Champion and Horsepower Title levels in detail: https://mhsladybroncos.com/sponsor-packet.pdf
 
 I am happy to put together something that fits your budget too. Just reply to this email.
 
@@ -88,7 +88,7 @@ I wanted to share where sponsorship dollars go. Every gift helps cover tournamen
 
 Local businesses are joining our sponsor wall this season, and families in our program make a point of supporting the businesses that support their daughters. That kind of loyalty is hard to buy with a regular ad.
 
-If [Business Name] would like to be part of it, everything is in one place here: https://ladybroncosfundraiser.netlify.app/sponsors
+If [Business Name] would like to be part of it, everything is in one place here: https://mhsladybroncos.com/sponsor
 
 Even our $750 Bronco Backer level makes a real difference.
 
@@ -103,7 +103,7 @@ Hi [Owner Name],
 
 Our season is getting close, and we are finalizing our game day entry banner, shooting shirts and PA announcements. To make sure [Business Name] is included, we need to hear from you by [Deadline Date].
 
-If now is not the right time, I completely understand, and thank you for reading. If you would like to join us, you can sign up in two minutes here: https://ladybroncosfundraiser.netlify.app/sponsors#join or just reply and I will take care of the rest.
+If now is not the right time, I completely understand, and thank you for reading. If you would like to join us, you can sign up in two minutes here: https://mhsladybroncos.com/sponsor#join or just reply and I will take care of the rest.
 
 Go Broncos!
 [Your Name]
@@ -118,13 +118,13 @@ Thank you so much for sponsoring the Lady Broncos at the [Level Name] level! You
 
 Here are the next steps:
 
-1. Payment: pay online here https://ladybroncosfundraiser.netlify.app/sponsors#pay using the MySchoolBucks button, and add "Lady Broncos sponsorship" and your business name in the note, or make a check payable to Middleburg High School with "Lady Broncos Basketball sponsorship" in the memo.
+1. Payment: pay online here https://mhsladybroncos.com/sponsor#pay using the MySchoolBucks button, and add "Lady Broncos sponsorship" and your business name in the note, or make a check payable to Middleburg High School with "Lady Broncos Basketball sponsorship" in the memo.
 2. Logo: please reply with your logo. A PNG with a see through background, or a high quality file from your designer, works best.
 3. Link: send the website or social page you would like us to link to on our sponsor wall.
 
 We keep a record of every benefit we deliver, and we will send you a full report with dates, photos and links during the season. If you are a Horsepower Title sponsor, I will reach out soon to schedule your Business Day.
 
-You will see your business on our sponsor wall here once we have your logo: https://ladybroncosfundraiser.netlify.app/sponsors#wallSection
+You will see your business on our sponsor wall here once we have your logo: https://mhsladybroncos.com/sponsor#wallSection
 
 Thank you for believing in our girls!
 [Your Name]
@@ -139,7 +139,7 @@ Thank you again for supporting the Lady Broncos as our [Level Name] sponsor. We 
 
 [Paste the report link from the coach dashboard]
 
-More benefits will be added to the same link as the season goes on. We would love to have you back next season. Next year's sponsor levels will be posted here: https://ladybroncosfundraiser.netlify.app/sponsors
+More benefits will be added to the same link as the season goes on. We would love to have you back next season. Next year's sponsor levels will be posted here: https://mhsladybroncos.com/sponsor
 
 With gratitude,
 [Your Name]
