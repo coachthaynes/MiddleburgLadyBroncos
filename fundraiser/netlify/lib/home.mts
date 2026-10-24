@@ -132,3 +132,53 @@ export async function youtubeFeed(ref: string) {
     return { videos: cached?.videos || [] };
   }
 }
+
+// ---------- Elevate Her player profiles ----------
+// Reads each player's public page on elevateherhoopsreport.com/players/<slug> (vitals, newest season stats,
+// film links and accolades) so the home page cards match what is on her profile. Cached for 6 hours.
+const ent = (s: string) => s.replace(/&#8599;/g, "").replace(/&#9733;/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"')
+  .replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").trim();
+
+export function parseElevate(html: string) {
+  const vitals: Record<string, string> = {};
+  for (const [, k, v] of html.matchAll(/<div class="info-row"><span>([^<]+)<\/span><span>([^<]*)<\/span><\/div>/g)) vitals[ent(k)] = ent(v);
+  const statsBlock = /<h4>Season Stats<\/h4>([\s\S]*?)<\/table>/.exec(html)?.[1] || "";
+  const seasons = [...statsBlock.matchAll(/<tr><td>(Freshman|Sophomore|Junior|Senior)<\/td>((?:<td>[^<]*<\/td>){6})<\/tr>/g)].map(([, season, cells]) => {
+    const [ppg, reb, stl, blk, ast, pts] = [...cells.matchAll(/<td>([^<]*)<\/td>/g)].map((m) => ent(m[1]));
+    return { season, ppg, reb, stl, blk, ast, pts };
+  });
+  const links = [...html.matchAll(/<a class="film-link" href="([^"]+)"[^>]*><span class="dot"><\/span>([^<]+)<\/a>/g)]
+    .map(([, href, label]) => ({ label: ent(label).replace(/^X, Twitter$/, "X"), url: ent(href) }))
+    .filter((l, i, all) => /^https?:\/\//.test(l.url) && all.findIndex((x) => x.url === l.url) === i);
+  const accolades = [...html.matchAll(/<li><span class="star">&#9733;<\/span>([^<]+)<\/li>/g)].map(([, t]) => ent(t)).filter(Boolean);
+  return {
+    number: vitals["Jersey Number"] || "",
+    position: vitals["Position"] || "",
+    classYear: vitals["Class Of"] || "",
+    height: vitals["Height"] || "",
+    season: seasons[seasons.length - 1] || null,
+    links,
+    accolades: accolades.slice(0, 4),
+  };
+}
+
+export async function elevateProfiles(slugs: string[]) {
+  const list = [...new Set(slugs.map((s) => s.toLowerCase()).filter((s) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s) && s.length <= 60))].slice(0, 30);
+  const store = db();
+  const out: Record<string, ReturnType<typeof parseElevate>> = {};
+  await Promise.all(list.map(async (slug) => {
+    const key = `cache/elevate/${slug}`;
+    const cached = (await store.get(key, { type: "json" }).catch(() => null)) as { at: number; data: ReturnType<typeof parseElevate> | null } | null;
+    if (cached && Date.now() - cached.at < 6 * 60 * 60 * 1000) { if (cached.data) out[slug] = cached.data; return; }
+    try {
+      const r = await fetch(`https://elevateherhoopsreport.com/players/${slug}`, { headers: { "user-agent": "mhsladybroncos.com" } });
+      const data = r.ok ? parseElevate(await r.text()) : null;
+      await store.setJSON(key, { at: Date.now(), data });
+      if (data) out[slug] = data;
+    } catch (err) {
+      console.error("elevate", slug, err);
+      if (cached?.data) out[slug] = cached.data;
+    }
+  }));
+  return { players: out };
+}

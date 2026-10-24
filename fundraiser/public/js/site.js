@@ -235,8 +235,65 @@
     return [...byShort.values()].sort((a, b) => (num(a) >= 0 ? num(a) : 999) - (num(b) >= 0 ? num(b) : 999) || a.name.localeCompare(b.name));
   }
 
+  // Elevate Her profiles (stats, position, film links, accolades) fill whatever the dashboard leaves empty.
+  const elevateSlug = (url) => (/elevateherhoopsreport\.com\/players\/([a-z0-9-]+)/.exec(url || "") || [])[1] || "";
+  let elevate = {};
+  const STAT_KEYS = [["ppg", "PPG"], ["reb", "RPG"], ["stl", "SPG"], ["ast", "APG"], ["blk", "BPG"], ["pts", "Total pts"]];
+  const num0 = (v) => parseFloat(v) || 0;
+  function role(pos) {
+    const p = (pos || "").toLowerCase();
+    if (/point/.test(p)) return ["point guard", "runs the offense and sets up her teammates"];
+    if (/guard/.test(p) && /forward/.test(p)) return ["wing", "can score inside and out"];
+    if (/guard/.test(p)) return ["guard", "pushes the pace and makes plays"];
+    if (/wing|small forward/.test(p)) return ["wing", "scores from all three levels"];
+    if (/forward/.test(p)) return ["forward", "works the paint and the glass"];
+    if (/center|post/.test(p)) return ["post", "protects the rim and owns the paint"];
+    return pos ? [pos.toLowerCase(), ""] : ["", ""];
+  }
+  function writeUp(p, e) {
+    const first = p.name.split(/\s+/)[0];
+    const [noun, does] = role(p.position);
+    const cls = p.classYear ? `Class of ${p.classYear} ` : "";
+    const parts = [];
+    if (noun) parts.push(`${first} is a ${cls}${noun}${does ? ` who ${does}` : ""}.`);
+    else if (cls) parts.push(`${first} is a ${cls}Lady Bronco.`);
+    const st = e && e.season;
+    if (st) {
+      const bits = [[st.ppg, "points"], [st.reb, "rebounds"], [st.stl, "steals"], [st.ast, "assists"]].filter(([v]) => num0(v) > 0).map(([v, l]) => `${v} ${l}`);
+      if (bits.length) parts.push(`As a ${st.season.toLowerCase()} she averaged ${bits.length > 1 ? bits.slice(0, -1).join(", ") + " and " + bits[bits.length - 1] : bits[0]} per game.`);
+    }
+    const acc = (e && e.accolades) || [];
+    if (acc.length) parts.push(`Honors include ${acc.slice(0, 2).join(" and ")}.`);
+    return parts.join(" ");
+  }
+  function headlineFor(p, e) {
+    const acc = (e && e.accolades) || [];
+    if (acc[0] && acc[0].length <= 60) return acc[0];
+    const st = (e && e.season) || {};
+    if (num0(st.ppg) >= 10) return "Double digit scorer";
+    if (num0(st.reb) >= 6) return "Dominant on the boards";
+    if (num0(st.stl) >= 2.5) return "Ball hawk on defense";
+    if (num0(st.ast) >= 3) return "Floor general";
+    return "";
+  }
+  function withElevate(p) {
+    const e = elevate[elevateSlug(p.site)];
+    if (!e) return p;
+    const x = { ...p };
+    ["number", "position", "classYear", "height"].forEach((f) => { if (!x[f] && e[f]) x[f] = e[f]; });
+    if (!(x.stats || []).length && e.season) {
+      x.stats = STAT_KEYS.filter(([k]) => num0(e.season[k]) > 0).slice(0, 4).map(([k, l]) => ({ v: e.season[k], l }));
+    }
+    if (!x.bio) x.bio = writeUp(x, e);
+    if (!x.headline) x.headline = headlineFor(x, e);
+    const have = new Set([...(x.links || []).map((l) => l.url), x.maxpreps].filter(Boolean));
+    x.links = [...(x.links || []), ...e.links.filter((l) => !have.has(l.url) && !(x.maxpreps && /maxpreps/i.test(l.label)))].slice(0, 5);
+    return x;
+  }
+
   function renderPlayers(fund) {
-    const list = playerList(fund);
+    lastFund = fund;
+    const list = playerList(fund).map(withElevate);
     $("#gPlayers").textContent = list.length;
     $("#spotlightList").innerHTML = list.length ? list.map((s) => {
       const f = s.fund;
@@ -261,9 +318,16 @@
     }).join("") : '<div class="glass card"><p class="muted" style="margin:0">Our players post here once tryouts wrap up.</p></div>';
   }
 
+  let lastFund = [];
   api("/api/public")
     .then((d) => renderPlayers(d.players || []))
     .catch(() => renderPlayers([]));
+  const slugs = playerList([]).map((p) => elevateSlug(p.site)).filter(Boolean);
+  if (slugs.length) {
+    api(`/api/elevate?slugs=${encodeURIComponent(slugs.join(","))}`)
+      .then((d) => { elevate = d.players || {}; renderPlayers(lastFund); })
+      .catch(() => {});
+  }
 
   // ----- sponsors: top levels near the top, the rest near the bottom -----
   const logoBox = (s) => s.logo ? `<img src="${esc(s.logo)}" alt="${esc(s.business)}" loading="lazy">` : `<span class="wall-name">${esc(s.business)}</span>`;
