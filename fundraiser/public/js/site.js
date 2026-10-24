@@ -146,7 +146,7 @@
   const rec = H.recruiting || {};
   const mail = (subject) => rec.email ? `mailto:${rec.email}?subject=${encodeURIComponent(subject)}` : "/sponsor";
   $("#recruitEmail").href = mail("College recruiting: Middleburg Lady Broncos");
-  $("#futureEmail").href = mail("Future Bronco: interested in Lady Broncos basketball");
+  $("#futureEmail").href = mail("Zoned for Middleburg: Lady Broncos basketball question");
   if (rec.maxpreps) $("#maxprepsLink").href = rec.maxpreps; else $("#maxprepsLink").classList.add("hidden");
 
   // ----- players: spotlight and roster -----
