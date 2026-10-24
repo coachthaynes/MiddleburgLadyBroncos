@@ -380,3 +380,45 @@ section[id] { scroll-margin-top: 96px; }
 .sp-details div b { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 input[type=email] { width: 100%; font: 500 1rem var(--body); color: var(--ink); padding: 13px 16px; border-radius: 14px; border: 1px solid rgba(200, 16, 46, 0.18); background: rgba(255, 255, 255, 0.78); outline: none; }
 #spGameWrap .form-sec, #spBizWrap .form-sec { border-top: 1px solid rgba(200,16,46,.15); padding-top: 12px; margin: 10px 0 10px; }
+
+/* Player supporters list */
+.sup-how { text-align: left; margin: 0 0 16px; padding-left: 20px; font-size: .95rem; line-height: 1.5; }
+.sup-how li { margin: 4px 0; }
+.sup-count { text-align: left; font-weight: 700; display: grid; gap: 8px; }
+.sup-count .bar { height: 12px; }
+.sup-count .bar > i { transition: width .3s ease; }
+.sup-rows { display: grid; gap: 8px; }
+.sup-row { display: grid; grid-template-columns: 26px minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 1fr) 36px; gap: 8px; align-items: center; }
+.sup-row > b { font-size: .85rem; color: var(--muted); text-align: right; }
+.sup-row input { width: 100%; min-width: 0; font: 500 .95rem var(--body); color: var(--ink); padding: 11px 12px; border-radius: 12px; border: 1px solid rgba(200, 16, 46, 0.18); background: rgba(255, 255, 255, 0.8); }
+.sup-row input.bad { border-color: var(--red); background: var(--red-soft); }
+.sup-row .rm { width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(255,255,255,.8); color: var(--muted); font-size: 1.2rem; cursor: pointer; }
+.sup-row.done > b { color: var(--good); }
+@media (max-width: 640px) {
+  .sup-row { grid-template-columns: 22px minmax(0, 1fr) 36px; padding: 10px; border-radius: 14px; background: rgba(255,255,255,.45); }
+  .sup-row > b { grid-row: span 3; align-self: start; padding-top: 12px; }
+  .sup-row .rm { grid-column: 3; grid-row: 1; }
+  .sup-row input[data-k="email"], .sup-row input[data-k="phone"] { grid-column: 2 / 4; }
+}
+#supErr ul { margin: 6px 0 0; padding-left: 18px; text-align: left; }
+.text-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.text-list li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,.6); }
+.text-list li > span { flex: 1; min-width: 0; }
+.text-list li small { display: block; color: var(--muted); }
+.text-list li.done { opacity: .7; }
+.text-list .texted { font-style: normal; font-weight: 700; color: var(--good); }
+
+/* Coach outreach */
+.or-h { margin: 18px 0 8px; font-size: 1rem; }
+.or-item { padding: 14px; border-radius: 16px; background: rgba(255,255,255,.55); margin-bottom: 10px; }
+.or-top { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.or-top > div:first-child { min-width: 0; }
+.or-top small { display: block; color: var(--muted); }
+.or-contacts { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: .88rem; }
+.or-contacts li { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 6px 10px; border-radius: 10px; background: rgba(255,255,255,.6); }
+.or-contacts li span { color: var(--muted); overflow-wrap: anywhere; }
+.or-edit { margin-top: 12px; }
+.or-edit textarea { min-height: 150px; }
+.pv-sheet { max-width: 640px !important; }
+#pvFrame { width: 100%; height: 60vh; border: 0; border-radius: 14px; background: #fbe9ec; }
+.pv-sms { padding: 12px 14px; border-radius: 18px 18px 18px 4px; background: #e9e9ef; font-size: .95rem; line-height: 1.45; overflow-wrap: anywhere; }

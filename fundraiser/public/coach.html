@@ -129,6 +129,29 @@
         </div>
       </div>
 
+      <div class="glass card span" id="outreachCard">
+        <div class="section-head" style="margin-bottom:10px">
+          <div><h3 style="margin:0">Supporter outreach</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Each player adds at least <b id="orMinShow">20</b> supporters when she logs in. You check her list, then approve each message. Emails go out from the team automatically (9 AM to 8 PM Eastern). Players text their own supporters from their phones with the approved text.</p></div>
+          <span id="orProvider"></span>
+        </div>
+
+        <h4 class="or-h">Lists to review</h4>
+        <div id="orLists"></div>
+
+        <h4 class="or-h">Messages</h4>
+        <p class="muted" style="font-size:.88rem;margin:0 0 10px">Nothing goes out until you approve it. Editing a message sends it back for approval. Each supporter only gets the newest message that is due, never a pile of old ones.</p>
+        <div id="orWaves"></div>
+
+        <h4 class="or-h">Settings</h4>
+        <form class="form" id="orForm" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));align-items:end">
+          <label class="field">Minimum supporters<input type="number" id="orMin" min="1" max="100" step="1"></label>
+          <label class="field">Test email <small>Your own email for test sends</small><input type="email" id="orTest" maxlength="120"></label>
+          <label class="field">Mailing address <small>Optional, shown at the bottom of emails</small><input type="text" id="orAddr" maxlength="200"></label>
+          <label class="switch"><input type="checkbox" id="orPause"> Pause all emails</label>
+          <div class="btn-row"><button class="btn btn-primary" type="submit">Save</button><button type="button" class="btn btn-glass" id="orSendNow">Send due emails now</button></div>
+        </form>
+      </div>
+
       <div class="glass card">
         <h3>Donations and goal</h3>
         <form class="form" id="moneyForm" style="margin-top:12px">
@@ -185,9 +208,22 @@
 
 <input type="file" id="spFile" accept="image/*" class="hidden">
 
+<div class="modal" id="pvModal" role="dialog" aria-modal="true" aria-labelledby="pvTitle">
+  <div class="glass donate-sheet pv-sheet">
+    <button class="close-x" data-pv-close aria-label="Close">×</button>
+    <span class="eyebrow">Preview</span>
+    <h3 id="pvTitle" style="margin:8px 0 4px"></h3>
+    <p class="muted" style="margin:0 0 10px;font-size:.9rem">Subject: <b id="pvSubject"></b></p>
+    <iframe id="pvFrame" title="Email preview" sandbox=""></iframe>
+    <p style="margin:14px 0 6px;font-weight:700">Text the player sends</p>
+    <div class="pv-sms" id="pvSms"></div>
+  </div>
+</div>
+
 <footer class="site wrap"><div class="glass"><span>Lady Broncos Coach Dashboard</span><span><a href="/">Team page</a></span></div></footer>
 
 <script src="/js/common.js"></script>
+<script src="/js/outreach.js"></script>
 <script src="/js/coach.js"></script>
 </body>
 </html>

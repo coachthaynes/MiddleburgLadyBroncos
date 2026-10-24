@@ -8,6 +8,11 @@ import {
   tooManyAttempts, listGifts, saveGift, confirmedTotals, recentSupporters, Gift,
   listSponsors, getSponsor, saveSponsor, syncSponsorTasks, isSponsorLevel, cleanUrl, cleanSponsorDetails, HOME_GAMES, takenGames, Sponsor, SponsorLevel, SPONSOR_LEVELS, REPORT_LABELS, INTERNAL_TASKS,
 } from "../lib/core.mts";
+import {
+  cleanContacts, currentWave, DEFAULT_WAVES, getContacts, getLog, getWaves, inSendWindow, kickSender, liveSettings, mergeVars,
+  normalizeEmail, providerStatus, renderEmail, renderSms, saveContacts, saveWaves,
+  sendEmail, SendLog, siteOrigin, unsubUrl, Wave,
+} from "../lib/messaging.mts";
 
 export default async (req: Request, context: Context) => {
   const url = new URL(req.url);
@@ -267,8 +272,11 @@ async function playerRoutes(req: Request, parts: string[], player: Player) {
         live: isLive(player),
         consent: player.consent,
         pendingPhoto: photoUrl(player.pendingPhotoKey),
+        contactsDone: !!player.contactsDone,
+        contactCount: (await getContacts(player.id)).length,
+        outreach: player.outreach || null,
       },
-      settings: { ...publicSettings(settings), requirePhotoApproval: settings.requirePhotoApproval },
+      settings: { ...publicSettings(settings), requirePhotoApproval: settings.requirePhotoApproval, minContacts: settings.minContacts },
     });
   }
 
@@ -290,6 +298,67 @@ async function playerRoutes(req: Request, parts: string[], player: Player) {
     }
     player.consent = { accepted: true, guardianName, at: new Date().toISOString() };
     await savePlayer(player);
+    return json({ ok: true });
+  }
+
+  if (parts[0] === "contacts" && method === "GET") {
+    const [contacts, log] = await Promise.all([getContacts(player.id), getLog(player.id)]);
+    return json({ contacts, status: contactStatus(log), min: settings.minContacts, done: !!player.contactsDone });
+  }
+
+  if (parts[0] === "contacts" && method === "PUT") {
+    if (!player.consent?.accepted) return json({ error: "Please finish the permission step first." }, 400);
+    const body = await req.json().catch(() => ({}));
+    if (!body.promise) return json({ error: "Please check the box to confirm these are people you know." }, 400);
+    const { contacts, problems } = cleanContacts(body.contacts);
+    if (problems.length) return json({ error: "A few contacts need fixing.", problems }, 400);
+    if (contacts.length < settings.minContacts) {
+      return json({ error: `Please add at least ${settings.minContacts} supporters. You have ${contacts.length} so far.` }, 400);
+    }
+    await saveContacts(player.id, contacts);
+    // A fixed list goes back to the coach for another look.
+    if (!player.contactsDone || !player.outreach || player.outreach.status === "changes") {
+      player.contactsDone = true;
+      player.outreach = { status: "pending", note: "", at: new Date().toISOString() };
+      await savePlayer(player);
+    }
+    return json({ ok: true, count: contacts.length });
+  }
+
+  if (parts[0] === "preview" && method === "GET") {
+    const waves = await getWaves();
+    const wave = waves.find((w) => w.id === new URL(req.url).searchParams.get("wave")) || waves[0];
+    const first = (await getContacts(player.id))[0];
+    return json(await preview(wave, player, await liveSettings(), siteOrigin(new URL(req.url).origin), first?.name || "Grandma"));
+  }
+
+  // Texts the player sends from her own phone: the newest approved message, written out for each supporter.
+  if (parts[0] === "texts" && method === "GET") {
+    if (player.outreach?.status !== "approved") return json({ ready: false, reason: "review" });
+    const live = await liveSettings();
+    const wave = currentWave(await getWaves(), player, live);
+    if (!wave || !wave.sms) return json({ ready: false, reason: "none" });
+    const [contacts, log] = await Promise.all([getContacts(player.id), getLog(player.id)]);
+    const origin = siteOrigin(new URL(req.url).origin);
+    return json({
+      ready: true,
+      wave: { id: wave.id, name: wave.name },
+      texts: contacts.filter((c) => c.phone).map((c) => ({
+        id: c.id, name: c.name, phone: c.phone,
+        body: renderSms(wave, mergeVars(live, player, c, origin)),
+        texted: log[c.id]?.[wave.id]?.sms === "sent",
+      })),
+    });
+  }
+
+  if (parts[0] === "texted" && method === "POST") {
+    const body = await req.json().catch(() => ({}));
+    const [contacts, log, waves] = await Promise.all([getContacts(player.id), getLog(player.id), getWaves()]);
+    if (!contacts.some((c) => c.id === body.contact) || !waves.some((w) => w.id === body.wave)) return json({ error: "Not found" }, 404);
+    const entry = ((log[body.contact] ||= {})[body.wave] ||= { at: "" });
+    if (body.texted === false) delete entry.sms;
+    else { entry.sms = "sent"; entry.at = new Date().toISOString(); }
+    await db().setJSON(`sendlog/${player.id}`, log);
     return json({ ok: true });
   }
 
@@ -330,6 +399,10 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
   if (parts[0] === "overview" && method === "GET") {
     const [settings, players, stats, gifts] = await Promise.all([getSettings(), listPlayers(), allStats(), listGifts()]);
     const t = confirmedTotals(gifts);
+    const counts = await Promise.all(players.map(async (p) => {
+      const [contacts, log] = await Promise.all([getContacts(p.id), getLog(p.id)]);
+      return { contacts: contacts.length, emails: contacts.filter((c) => c.email).length, phones: contacts.filter((c) => c.phone).length, sent: countSent(log) };
+    }));
     return json({
       settings: { ...settings, logo: photoUrl(settings.logoKey) },
       players: players.map((p) => ({
@@ -348,6 +421,10 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
         photo: photoUrl(p.photoKey),
         pendingPhoto: photoUrl(p.pendingPhotoKey),
         stats: stats[p.slug] || emptyStats(),
+        message: p.message,
+        contactsDone: !!p.contactsDone,
+        outreach: p.outreach || null,
+        ...counts[players.indexOf(p)],
       })),
       teamStats: stats.team || emptyStats(),
       totals: sumStats(stats),
@@ -429,9 +506,105 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       sponsorPrep: body.sponsorPrep && typeof body.sponsorPrep === "object"
         ? Object.fromEntries(Object.entries({ ...(cur.sponsorPrep || {}), ...body.sponsorPrep }).filter(([k]) => /^[a-z]{2,20}$/.test(k)).map(([k, v]) => [k, !!v]))
         : cur.sponsorPrep || {},
+      minContacts: body.minContacts === undefined ? cur.minContacts : Math.max(1, Math.min(100, Math.round(Number(body.minContacts)) || cur.minContacts)),
+      sendingPaused: body.sendingPaused === undefined ? cur.sendingPaused : !!body.sendingPaused,
+      mailingAddress: clean(body.mailingAddress ?? cur.mailingAddress, 200),
+      testEmail: body.testEmail === undefined ? cur.testEmail : normalizeEmail(body.testEmail),
       updatedAt: new Date().toISOString(),
     };
     await db().setJSON("settings", next);
+    if (cur.sendingPaused && !next.sendingPaused) await kickSender(siteOrigin(new URL(req.url).origin));
+    return json({ ok: true });
+  }
+
+  if (parts[0] === "outreach" && method === "GET") {
+    const [waves, players, settings] = await Promise.all([getWaves(), listPlayers(), getSettings()]);
+    const perWave: Record<string, Record<string, number>> = {};
+    for (const p of players) {
+      const log = await getLog(p.id);
+      for (const byWave of Object.values(log)) {
+        for (const [wid, e] of Object.entries(byWave)) {
+          const t = (perWave[wid] ||= { emails: 0, texts: 0, failed: 0, optout: 0 });
+          if (e.email === "sent") t.emails++;
+          if (e.email === "failed") t.failed++;
+          if (e.email === "optout") t.optout++;
+          if (e.sms === "sent") t.texts++;
+        }
+      }
+    }
+    return json({
+      waves,
+      perWave,
+      providers: providerStatus(),
+      paused: settings.sendingPaused,
+      inWindow: inSendWindow(),
+      approvedPlayers: players.filter((p) => p.outreach?.status === "approved").length,
+    });
+  }
+
+  if (parts[0] === "waves" && parts[1] === "reset" && method === "POST") {
+    await saveWaves(DEFAULT_WAVES);
+    return json({ ok: true });
+  }
+
+  if (parts[0] === "waves" && parts[1]) {
+    const waves = await getWaves();
+    const wave = waves.find((w) => w.id === parts[1]);
+    if (!wave) return json({ error: "Message not found." }, 404);
+    const body = await req.json().catch(() => ({}));
+    if (parts[2] === "approve" && method === "POST") {
+      wave.approved = !!body.approved;
+      await saveWaves(waves);
+      if (wave.approved) await kickSender(siteOrigin(new URL(req.url).origin));
+      return json({ ok: true });
+    }
+    if (parts.length === 2 && method === "PUT") {
+      wave.name = clean(body.name ?? wave.name, 40) || wave.name;
+      wave.subject = clean(body.subject ?? wave.subject, 150);
+      wave.email = clean(body.email ?? wave.email, 3000);
+      wave.sms = clean(body.sms ?? wave.sms, 480);
+      wave.enabled = body.enabled === undefined ? wave.enabled : !!body.enabled;
+      wave.donateButton = body.donateButton === undefined ? wave.donateButton : !!body.donateButton;
+      if (body.trigger && ["after", "beforeEnd"].includes(body.trigger.type)) {
+        wave.trigger = { type: body.trigger.type, days: Math.max(-30, Math.min(120, Math.round(Number(body.trigger.days) || 0))) };
+      }
+      // Any edit needs a fresh approval before it can go out.
+      wave.approved = false;
+      await saveWaves(waves);
+      return json({ ok: true });
+    }
+  }
+
+  if (parts[0] === "preview" && method === "GET") {
+    const q = new URL(req.url).searchParams;
+    const waves = await getWaves();
+    const wave = waves.find((w) => w.id === q.get("wave")) || waves[0];
+    const player = (q.get("player") && (await getPlayer(q.get("player")!))) || (await listPlayers())[0];
+    if (!player) return json({ error: "Add a player first to see a preview." }, 400);
+    return json(await preview(wave, player, await liveSettings(), siteOrigin(new URL(req.url).origin), "Grandma"));
+  }
+
+  if (parts[0] === "test" && method === "POST") {
+    const body = await req.json().catch(() => ({}));
+    const settings = await liveSettings();
+    const waves = await getWaves();
+    const wave = waves.find((w) => w.id === body.wave) || waves[0];
+    const player = (body.player && (await getPlayer(body.player))) || (await listPlayers())[0];
+    if (!player) return json({ error: "Add a player first." }, 400);
+    if (!settings.testEmail) return json({ error: "Add your own email under Test email first." }, 400);
+    if (!providerStatus().email) return json({ error: "Email is not set up yet. Add the Resend key in Netlify first." }, 400);
+    const origin = siteOrigin(new URL(req.url).origin);
+    const u = await unsubUrl(origin, settings.testEmail);
+    try {
+      await sendEmail(settings.testEmail, renderEmail(wave, settings, player, mergeVars(settings, player, { name: "Coach" }, origin), origin, u), u);
+    } catch (e: any) {
+      return json({ error: e.message }, 502);
+    }
+    return json({ ok: true, results: [`Test email sent to ${settings.testEmail}.`] });
+  }
+
+  if (parts[0] === "send-now" && method === "POST") {
+    await kickSender(siteOrigin(new URL(req.url).origin));
     return json({ ok: true });
   }
 
@@ -498,6 +671,28 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       return json({ ok: true });
     }
 
+    if (parts[2] === "contacts" && method === "GET") {
+      const [contacts, log] = await Promise.all([getContacts(player.id), getLog(player.id)]);
+      return json({ contacts, status: contactStatus(log) });
+    }
+
+    if (parts[2] === "outreach" && method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      if (!player.contactsDone) return json({ error: "This player has not added her supporters yet." }, 400);
+      if (body.action === "approve") {
+        player.outreach = { status: "approved", note: "", at: new Date().toISOString() };
+      } else if (body.action === "changes") {
+        player.outreach = { status: "changes", note: clean(body.note, 300), at: new Date().toISOString() };
+      } else if (body.action === "stop") {
+        player.outreach = { status: "pending", note: "Paused by coach", at: new Date().toISOString() };
+      } else {
+        return json({ error: "Unknown action" }, 400);
+      }
+      await savePlayer(player);
+      if (body.action === "approve") await kickSender(siteOrigin(new URL(req.url).origin));
+      return json({ ok: true });
+    }
+
     if (parts[2] === "code" && method === "POST") {
       return json({ ok: true, code: await assignCode(player) });
     }
@@ -526,6 +721,8 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       const { blobs } = await store.list({ prefix: "codes/" });
       for (const b of blobs) if ((await store.get(b.key, { type: "text" })) === player.id) await store.delete(b.key);
       await store.delete(`players/${player.id}`);
+      await store.delete(`contacts/${player.id}`);
+      await store.delete(`sendlog/${player.id}`);
       return json({ ok: true });
     }
   }
@@ -665,4 +862,31 @@ async function coachSponsors(req: Request, parts: string[]) {
   }
 
   return json({ error: "Not found" }, 404);
+}
+
+// ================= outreach helpers =================
+
+async function preview(wave: Wave, player: Player, settings: Settings, origin: string, contactName: string) {
+  const vars = mergeVars(settings, player, { name: contactName }, origin);
+  const email = renderEmail(wave, settings, player, vars, origin, `${origin}/u/preview`);
+  return { wave: wave.id, subject: email.subject, html: email.html, sms: renderSms(wave, vars) };
+}
+
+// Latest thing each contact received, for the player's and coach's lists.
+function contactStatus(log: SendLog) {
+  const out: Record<string, { last: string; email?: string; sms?: string; at: string }> = {};
+  for (const [cid, byWave] of Object.entries(log)) {
+    let best: { last: string; email?: string; sms?: string; at: string } | null = null;
+    for (const [wid, e] of Object.entries(byWave)) {
+      if (e.at && (!best || e.at > best.at)) best = { last: wid, email: e.email, sms: e.sms, at: e.at };
+    }
+    if (best) out[cid] = best;
+  }
+  return out;
+}
+
+function countSent(log: SendLog) {
+  let n = 0;
+  for (const byWave of Object.values(log)) for (const e of Object.values(byWave)) n += (e.email === "sent" ? 1 : 0) + (e.sms === "sent" ? 1 : 0);
+  return n;
 }

@@ -56,7 +56,32 @@
     </form>
   </section>
 
-  <!-- Step 3: dashboard -->
+  <!-- Step 3: supporters -->
+  <section id="supporters" class="glass center-card wide hidden fade-in">
+    <span class="eyebrow">Your supporters</span>
+    <h2 style="margin-top:10px">Who should we ask?</h2>
+    <p class="muted">Add at least <b data-min>20</b> people who would love to cheer you on: family, friends, neighbors, coaches and family friends. Do this with your parent or guardian. Add an email, a phone number or both.</p>
+    <ul class="sup-how">
+      <li><b>Emails</b> go out from the team, with your name, photo and donate button, after your coach checks your list.</li>
+      <li><b>Phone numbers</b> are for you: you will text them from your own phone with a message we write for you.</li>
+    </ul>
+    <form class="form" id="supForm" novalidate>
+      <div class="sup-count"><span><b id="supCount">0</b> of <span data-min>20</span> added</span><div class="bar"><i id="supBar"></i></div></div>
+      <div id="supRows" class="sup-rows"></div>
+      <div class="btn-row">
+        <button type="button" class="btn btn-glass btn-small" id="supAdd">Add another person</button>
+        <button type="button" class="btn btn-glass btn-small hidden" id="supPick">Choose from my phone contacts</button>
+      </div>
+      <label class="check"><input type="checkbox" id="supPromise"><span>These are people I or my family know, and my parent or guardian helped me make this list.</span></label>
+      <div class="error" id="supErr"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-big" type="submit" id="supSave">Save my supporters</button>
+        <button type="button" class="btn btn-glass btn-big hidden" id="supCancel">Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Step 4: dashboard -->
   <section id="dash" class="hidden">
     <div class="glass card fade-in" style="margin-top:28px">
       <div class="section-head" style="margin:0">
@@ -109,6 +134,19 @@
           </div>
           <div><button class="btn btn-primary" type="submit">Save my page</button></div>
         </form>
+      </div>
+
+      <div class="glass card span" id="supCard">
+        <div class="section-head" style="margin:0">
+          <div><h3 style="margin:0">My supporters</h3><p class="muted" style="margin:4px 0 0;font-size:.92rem" id="supSummary"></p></div>
+          <button class="btn btn-glass btn-small" id="supEdit">Edit my list</button>
+        </div>
+        <div id="supStatus" style="margin-top:12px"></div>
+        <div id="textBox" class="hidden" style="margin-top:16px">
+          <h3 style="margin:0">Text my supporters</h3>
+          <p class="muted" style="margin:4px 0 10px;font-size:.92rem">Tap Text next to each name. Your messages app opens with the note already written, so just press send. <b id="textProgress"></b></p>
+          <ul class="text-list" id="textList"></ul>
+        </div>
       </div>
 
       <div class="glass card span">

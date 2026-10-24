@@ -29,6 +29,7 @@ async function api(path, opts = {}) {
   if (!res.ok) {
     const err = new Error(data.error || "Something went wrong. Please try again.");
     err.status = res.status;
+    err.data = data;
     throw err;
   }
   return data;

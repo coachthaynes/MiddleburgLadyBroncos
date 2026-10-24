@@ -20,6 +20,8 @@
   $("#supportList").innerHTML = supportersHtml(data.supporters || [], { showFor: false });
   setupDonate({ options: data.options || [], slug: p.slug, settings });
   $("#donateBtn").addEventListener("click", (e) => { e.preventDefault(); openDonate(p.slug); });
+  // Email Donate buttons link here with ?donate so the gift form opens right away.
+  if (new URLSearchParams(location.search).has("donate") && settings.donateReady) openDonate(p.slug);
   $("#photo").innerHTML = photoHtml(p.photo, p.name, p.number);
   $("#name").textContent = p.name;
   $("#meta").textContent = [p.number ? `#${p.number}` : "", p.position, `${settings.schoolName} ${settings.teamName}`].filter(Boolean).join(" · ");

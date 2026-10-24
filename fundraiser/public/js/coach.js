@@ -2,6 +2,7 @@
   const show = (id) => ["login", "dash"].forEach((s) => $("#" + s).classList.toggle("hidden", s !== id));
   let data = null;
 
+  window.coachReload = () => load();
   async function load() {
     try {
       data = await api("/api/coach/overview");
@@ -36,6 +37,7 @@
     $("#oSponsors").textContent = fmtMoney(st.paid);
     $("#oTodo").textContent = fmtNum(st.openTasks);
     loadSponsors();
+    window.renderOutreach?.(data);
     $("#gaFor").innerHTML = `<option value="team">Whole team</option>` + players.map((p) => `<option value="${esc(p.slug)}">${esc(p.name)}</option>`).join("");
     loadGifts();
     $("#oDonate").textContent = fmtNum(totals.donate);

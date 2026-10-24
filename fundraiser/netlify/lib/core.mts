@@ -24,6 +24,10 @@ export interface Settings {
   logoKey: string;
   requirePhotoApproval: boolean;
   sponsorPrep: Record<string, boolean>; // "Before you sell sponsorships" checklist
+  minContacts: number;
+  sendingPaused: boolean;
+  mailingAddress: string;
+  testEmail: string;
   updatedAt: string;
 }
 
@@ -41,6 +45,10 @@ export const DEFAULT_SETTINGS: Settings = {
   logoKey: "",
   requirePhotoApproval: true,
   sponsorPrep: {},
+  minContacts: 20,
+  sendingPaused: false,
+  mailingAddress: "",
+  testEmail: "",
   updatedAt: "",
 };
 
@@ -67,6 +75,9 @@ export interface Player {
   consent: { accepted: boolean; guardianName: string; at: string } | null;
   active: boolean;
   createdAt: string;
+  contactsDone?: boolean;
+  // Coach review of the player's personalized outreach before anything is sent.
+  outreach?: { status: "pending" | "approved" | "changes"; note: string; at: string };
 }
 
 export async function listPlayers(): Promise<Player[]> {

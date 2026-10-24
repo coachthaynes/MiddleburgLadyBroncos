@@ -52,3 +52,21 @@ npx netlify dev
 * Each sponsor has a private report link (`/sponsor-report/...`) that shows what was delivered, for sending to the business.
 * `sponsor-packet/email-drip.md` holds the seven sponsor emails, which are also saved as Gmail drafts.
 * Game nights: Herd Champion and Title sponsors pick from the 2026/27 home games listed in `HOME_GAMES` in `netlify/lib/core.mts` (Senior Night only for Title). Once a sponsor is Committed or Paid, their game is no longer offered to others. Update that list if the schedule changes.
+
+## Supporter outreach
+
+* After the permission step, each player adds at least 20 supporters (name plus an email, a phone number or both). The coach can change the minimum under **Supporter outreach**.
+* The coach checks each list (approve or ask for changes) and approves each of the five messages. Nothing goes out without both approvals. Editing a message sends it back for approval.
+* **Emails** go out automatically through Resend, checked every hour between 9 AM and 8 PM Eastern. Each supporter only gets the newest message that is due. Every email has an unsubscribe link (`/u/...`).
+* **Texts** are not automated. In the portal, each player sees her supporters with phone numbers and taps Text to open her own messages app with the approved text filled in. Taps are counted on the coach dashboard.
+* Email Donate buttons open the player's page with the gift form already showing.
+
+To turn on email, verify your domain in Resend, then add these in Netlify under Environment variables:
+
+| Name | Example |
+| --- | --- |
+| `RESEND_API_KEY` | The key from Resend |
+| `EMAIL_FROM` | `Lady Broncos <team@yourdomain.com>` |
+| `EMAIL_REPLY_TO` | Optional, where replies go |
+
+Then add your own email under Test email on the coach dashboard and use Send me a test.
