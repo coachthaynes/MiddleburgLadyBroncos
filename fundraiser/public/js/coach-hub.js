@@ -26,6 +26,7 @@
       ["Donate page", "/donate", "Team fundraiser"],
       ["Sponsor page", "/sponsor", "Sponsor levels and interest form"],
       ["Sponsor packet", "/sponsor-packet.pdf", "PDF to send to businesses"],
+      ["Sponsorship Guide", "/sponsorshipguide.pdf", "PDF playbook for players and parents"],
       ["Team Store", "/store/", "Fan gear for families"],
       ["Privacy Policy", "/privacy", "How the site handles information"],
       ["Terms of Use", "/terms", "Rules for using the site"],
