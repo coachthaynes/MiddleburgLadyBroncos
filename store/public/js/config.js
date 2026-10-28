@@ -19,6 +19,13 @@ window.STORE = {
     { key: "fearherd", img: "fearherd.jpg", back: "fearherd_back.jpg", extra: ["fearherd_sleeve.jpg"], prints: "Chest, sleeve and back prints", cat: "hoodies", name: "Fear the Herd Hoodie", price: 50, blurb: "Black hoodie with a chest horseshoe, Bronco Built down the sleeve and Fear the Herd across the back." },
     { key: "warmupls", img: "warmupls.jpg", prints: "Front print", sleeveName: true, cat: "warmups", name: "Long Sleeve Warmup", price: 32, blurb: "Black shooting shirt with red and white sleeve stripes. Champions in the making." },
     { key: "warmupjacket", img: "warmupjacket.jpg", prints: "Left chest mark", sleeveName: true, cat: "warmups", name: "Warmup Jacket", price: 60, blurb: "Black full zip with Bronco red panels and the horseshoe on the chest." },
+    { key: "tracksuit", img: "tracksuit_red.jpg", prints: "Three colors, name on the back", nameOn: "back", cat: "warmups", name: "Warmup Suit", price: 75,
+      blurb: "Full zip jacket and matching joggers with the horseshoe on the chest and leg, Broncos down both sleeves and your player's name across the back.",
+      colors: [
+        { name: "Bronco Red", hex: "#d7142f", img: "tracksuit_red.jpg", extra: ["tracksuit_red_detail.jpg"] },
+        { name: "Black", hex: "#121212", img: "tracksuit_black.jpg", extra: ["tracksuit_black_detail.jpg"] },
+        { name: "White", hex: "#ffffff", img: "tracksuit_white.jpg", extra: ["tracksuit_white_detail.jpg"] },
+      ] },
     { key: "shorts", img: "shorts.jpg", prints: "Horseshoe and 26/27 leg prints", cat: "bottoms", name: "Basketball Shorts", price: 30, blurb: "Black mesh shorts with red and white side stripes, the horseshoe and 26/27." },
     { key: "sweatpants", img: "sweatpants.jpg", prints: "Leg print", cat: "bottoms", name: "Sweatpants", price: 40, blurb: "Heather gray joggers with Bronco Built down the leg." },
     { key: "hat", img: "hat.jpg", prints: "Front and side embroidery", cat: "hats", name: "Hat", price: 25, sizes: ["One size"], blurb: "Black cap with the red horseshoe up front and 26/27 on the side." },

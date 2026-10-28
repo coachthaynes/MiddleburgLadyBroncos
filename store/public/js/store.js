@@ -98,25 +98,37 @@
   });
 
   // ---------- product sheet ----------
-  const pm = { p: null, size: "", qty: 1, flipped: false, spin: 0 };
+  const pm = { p: null, size: "", qty: 1, flipped: false, spin: 0, color: 0 };
+  // Products with colors swap in the chosen color's photos.
+  const shown = () => {
+    const c = pm.p.colors && pm.p.colors[pm.color];
+    return c ? { ...pm.p, img: c.img, back: c.back, extra: c.extra } : pm.p;
+  };
+  const nameNote = (p) => (p.nameOn === "back" ? "printed across the back" : "printed down the sleeve");
   const cleanName = (v) => String(v || "").replace(/[^A-Za-z .\'-]/g, "").slice(0, 14).trim();
   function drawSheet() {
-    const p = pm.p;
+    const p = shown();
+    $("#pmColorWrap").classList.toggle("hidden", !pm.p.colors);
+    if (pm.p.colors) {
+      $("#pmColors").innerHTML = pm.p.colors.map((c, i) => `<button data-c="${i}" class="${i === pm.color ? "on" : ""}" style="background:${esc(c.hex)}" aria-label="${esc(c.name)}" title="${esc(c.name)}"></button>`).join("");
+      $("#pmColorName").textContent = pm.p.colors[pm.color].name;
+    }
     $("#pmFront").innerHTML = photo(pm.view || p.img, p.name);
     $("#pmBack").innerHTML = p.back ? photo(p.back, `${p.name} back`) : "";
     const shots = [p.img, p.back, ...(p.extra || [])].filter(Boolean);
     $("#pmThumbs").innerHTML = shots.length > 1 ? shots.map((f) => `<button data-v="${f}" class="${(pm.flipped ? f === p.back : f === (pm.view || p.img)) ? "on" : ""}">${photo(f)}</button>`).join("") : "";
     $("#pmFlip").classList.toggle("hidden", !p.back);
-    $("#pmNameWrap").classList.toggle("hidden", !p.sleeveName);
+    $("#pmNameWrap").classList.toggle("hidden", !(p.sleeveName || p.nameOn));
     $("#pmSizes").innerHTML = sizesFor(p).map((s) => `<button data-s="${s}" class="${s === pm.size ? "on" : ""}">${s}</button>`).join("");
     $("#pmQty").textContent = pm.qty;
     $("#pmPrice").textContent = money(p.price);
     $("#pmCard").style.transform = `rotateY(${pm.spin + (pm.flipped ? 180 : 0)}deg)`;
   }
   function openProduct(p) {
-    Object.assign(pm, { p, size: p.sizes ? p.sizes[0] : "", qty: 1, flipped: false, spin: 0, view: "" });
+    Object.assign(pm, { p, size: p.sizes ? p.sizes[0] : "", qty: 1, flipped: false, spin: 0, view: "", color: 0 });
     $("#pmPlayer").value = "";
     $("#pmName").textContent = p.name;
+    $("#pmNameHint").textContent = `Optional, ${nameNote(p)}`;
     $("#pmBlurb").textContent = p.blurb;
     $("#pmPrints").textContent = p.prints;
     $("#pmFlip").textContent = "See the back";
@@ -131,10 +143,11 @@
   }
   $("#productModal").addEventListener("click", (e) => {
     if (e.target.id === "productModal" || e.target.closest("[data-close]")) return closeProduct();
-    const s = e.target.closest("[data-s]"), v = e.target.closest("[data-v]");
+    const s = e.target.closest("[data-s]"), v = e.target.closest("[data-v]"), c = e.target.closest("[data-c]");
+    if (c) { pm.color = +c.dataset.c; pm.view = ""; pm.flipped = false; drawSheet(); }
     if (s) { pm.size = s.dataset.s; $("#pmErr").textContent = ""; drawSheet(); }
     if (v) {
-      if (v.dataset.v === pm.p.back) { pm.flipped = true; pm.view = ""; }
+      if (v.dataset.v === shown().back) { pm.flipped = true; pm.view = ""; }
       else { pm.flipped = false; pm.view = v.dataset.v; }
       drawSheet();
     }
@@ -161,11 +174,13 @@
 
   $("#pmAdd").addEventListener("click", () => {
     if (!pm.size) { $("#pmErr").textContent = "Please pick a size."; return; }
+    const c = pm.p.colors ? pm.p.colors[pm.color] : null;
     const item = {
       key: pm.p.key, title: pm.p.name, price: pm.p.price, size: pm.size, qty: pm.qty,
-      player: pm.p.sleeveName ? cleanName($("#pmPlayer").value) : "",
+      color: c ? c.name : "", img: c ? c.img : "",
+      player: pm.p.sleeveName || pm.p.nameOn ? cleanName($("#pmPlayer").value) : "",
     };
-    const same = cart.find((i) => i.key === item.key && i.size === item.size && i.player === item.player);
+    const same = cart.find((i) => i.key === item.key && i.size === item.size && i.player === item.player && i.color === item.color);
     if (same) same.qty = Math.min(20, same.qty + item.qty); else cart.push(item);
     saveCart();
     closeProduct();
@@ -181,7 +196,7 @@
     try { localStorage.setItem("lb_cart", JSON.stringify(cart)); } catch { /* private mode */ }
     renderCart();
   }
-  const describe = (i) => `size ${i.size}${i.player ? `, sleeve name ${i.player}` : ""}`;
+  const describe = (i) => `${i.color ? `${i.color}, ` : ""}size ${i.size}${i.player ? `, ${byKey(i.key).nameOn === "back" ? "back" : "sleeve"} name ${i.player}` : ""}`;
   function totals() {
     const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
     const ship = cart.length && $('#checkout [name="delivery"]:checked')?.value === "ship" ? S.shipping : 0;
@@ -197,7 +212,7 @@
     }
     $("#cartItems").innerHTML = cart.map((i, n) => `
       <div class="line">
-        <div class="pv">${photo(byKey(i.key).img)}</div>
+        <div class="pv">${photo(i.img || byKey(i.key).img)}</div>
         <div><b>${esc(i.title)}</b><small>${esc(describe(i))}</small><small>Qty ${i.qty} · ${money(i.price * i.qty)}</small></div>
         <button class="rm" data-rm="${n}">Remove</button>
       </div>`).join("");
