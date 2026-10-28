@@ -1,0 +1,52 @@
+/* Team contracts: reading, signing and the signed copy. */
+.ct-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 18px; }
+.ct-choice { padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: var(--ink); border-left: 3px solid var(--red); }
+.ct-choice b { font: 800 1.2rem var(--display); }
+.ct-choice span { color: var(--muted); font-size: 0.9rem; }
+.ct-choice small { color: var(--red); font-weight: 700; margin-top: 6px; }
+.ct-head { margin-top: 28px; padding: 22px 26px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
+.ct-text { margin-top: 18px; padding: clamp(20px, 4vw, 34px); }
+.ct-text h3, .sc-body h3 { margin: 26px 0 6px; font: 800 1.25rem var(--display); color: var(--red); text-transform: uppercase; letter-spacing: 0.04em; }
+.ct-text h3:first-child, .sc-body h3:first-child { margin-top: 0; }
+.ct-text h4, .sc-body h4 { margin: 16px 0 4px; font: 700 1.02rem var(--display); }
+.ct-text p, .ct-text li { line-height: 1.6; }
+.ct-text ul, .sc-body ul { margin: 6px 0; padding-left: 22px; }
+.ct-form { margin-top: 18px; padding: clamp(20px, 4vw, 34px); }
+.ct-set { border: 1px solid var(--glass-line); border-radius: 18px; padding: 16px 18px; display: grid; gap: 12px; margin: 0; }
+.ct-set legend { font: 800 0.85rem var(--display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); padding: 0 6px; }
+.ct-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.ct-grid select { font: 600 1rem var(--body); padding: 13px 12px; border-radius: 14px; border: 1px solid rgba(200, 16, 46, 0.18); background: rgba(255, 255, 255, 0.85); color: var(--ink); }
+.ct-team { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-weight: 700; font-size: 0.9rem; }
+.ct-team .check { padding: 10px 14px; display: inline-flex; gap: 8px; align-items: center; }
+.sig { display: grid; gap: 8px; }
+.sig-label { font-weight: 700; font-size: 0.9rem; }
+.sig-label small { font-weight: 500; color: var(--muted); margin-left: 6px; }
+.sig canvas { width: 100%; max-width: 600px; aspect-ratio: 600 / 170; background: #fff; border: 2px dashed rgba(200, 16, 46, 0.35); border-radius: 14px; touch-action: none; cursor: crosshair; }
+.sig.signed canvas { border-style: solid; border-color: var(--good, #15803d); }
+.sig .btn { justify-self: start; }
+.ct-agree { align-items: center; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.ct-copy { margin-top: 18px; padding: clamp(20px, 4vw, 34px); }
+
+/* Signed copy, on screen and printed */
+.signed-copy header { display: flex; gap: 14px; align-items: center; border-bottom: 3px solid var(--red, #c8102e); padding-bottom: 12px; margin-bottom: 16px; }
+.signed-copy header img { width: 54px; height: 54px; }
+.signed-copy header span { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted, #666); }
+.signed-copy header h2 { margin: 2px 0; }
+.signed-copy header p { margin: 0; color: var(--muted, #666); }
+.signed-copy > h3 { margin: 26px 0 8px; font: 800 1.2rem var(--display); color: var(--red, #c8102e); text-transform: uppercase; }
+.sc-body p, .sc-body li { font-size: 0.95rem; line-height: 1.55; }
+.sc-table { border-collapse: collapse; width: 100%; max-width: 560px; }
+.sc-table th, .sc-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #e5e5e5; font-size: 0.92rem; }
+.sc-table th { width: 170px; color: var(--muted, #666); font-weight: 700; }
+.sc-sig { display: flex; gap: 16px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+.sc-sig img { width: 260px; max-width: 100%; border-bottom: 2px solid #222; background: #fff; }
+.sc-sig div { display: flex; flex-direction: column; }
+.sc-sig span { font-size: 0.85rem; color: var(--muted, #666); }
+.sc-foot { margin-top: 20px; font-size: 0.8rem; color: var(--muted, #666); }
+@media print {
+  body > *:not(main), .backdrop, #chooser, #signer, #done > .center-card { display: none !important; }
+  body { background: #fff !important; }
+  main, .ct-copy, .print-area { margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: 0 !important; background: #fff !important; backdrop-filter: none !important; }
+  .sc-body h3 { break-after: avoid; }
+}

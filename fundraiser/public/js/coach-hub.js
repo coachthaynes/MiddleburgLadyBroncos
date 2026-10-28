@@ -1,7 +1,7 @@
-// Coaches dashboard: Hub (every login and admin page), Home page editor, the Fundraiser tab and the Store orders tab (coach-orders.js).
+// Coaches dashboard: Hub (every login and admin page), Home page editor, the Fundraiser tab, plus Contracts (coach-contracts.js) and Store orders (coach-orders.js).
 (function () {
   // ----- tabs -----
-  const TABS = { hub: "tabHub", home: "tabHome", fundraiser: "tabFund", orders: "tabOrders" };
+  const TABS = { hub: "tabHub", home: "tabHome", fundraiser: "tabFund", contracts: "tabContracts", orders: "tabOrders" };
   function showTab(name) {
     if (!TABS[name]) name = "hub";
     Object.entries(TABS).forEach(([k, id]) => {
@@ -29,6 +29,7 @@
       ["Sponsorship Guide", "/sponsorshipguide.pdf", "PDF playbook for players and parents"],
       ["Team Store", "/store/", "Fan gear for families"],
       ["Store orders", "#orders", "Track payment and fulfillment for every store order"],
+      ["Contracts", "#contracts", "Who has signed the Player Contract and Parent Agreement"],
       ["Privacy Policy", "/privacy", "How the site handles information"],
       ["Terms of Use", "/terms", "Rules for using the site"],
     ] },

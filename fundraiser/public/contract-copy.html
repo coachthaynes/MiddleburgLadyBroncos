@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Signed Contract · Coaches Dashboard</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/brand/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/contracts.css">
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+<header class="nav wrap">
+  <div class="glass">
+    <a class="brand" href="/coach#contracts"><img src="/brand/logo.png" alt=""><span>Coaches Dashboard</span></a>
+    <nav class="nav-links"><a href="/coach#contracts">Back to contracts</a><button class="btn btn-primary btn-small" id="print">Print or save</button></nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="glass ct-copy print-area" id="copy"><p class="muted">Loading...</p></div>
+</main>
+<script src="/js/common.js"></script>
+<script src="/js/contracts.js"></script>
+<script>
+  // Coaches only: the API checks the coach login.
+  const id = new URLSearchParams(location.search).get("id") || "";
+  api(`/api/coach/contracts/${encodeURIComponent(id)}`)
+    .then((r) => { $("#copy").innerHTML = window.signedCopyHtml(r.record); document.title = `${r.record.fields.playerName} · ${window.CONTRACTS[r.record.doc].title}`; })
+    .catch((e) => { $("#copy").innerHTML = `<p>${e.status === 401 ? 'Please <a href="/coach">log in to the coaches dashboard</a> first.' : esc(e.message)}</p>`; });
+  $("#print").addEventListener("click", () => window.print());
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Team Contracts · Middleburg Lady Broncos</title>
+<meta name="description" content="Read and sign the Lady Broncos Player Contract and Parent Agreement online.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#c8102e">
+<link rel="icon" href="/brand/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="/brand/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/contracts.css">
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="nav wrap">
+  <div class="glass">
+    <a class="brand" href="/"><img src="/brand/logo.png" alt=""><span>Lady Broncos<span class="hide-sm"> Contracts</span></span></a>
+    <nav class="nav-links">
+      <a class="hide-sm" href="/players">Player Hub</a>
+      <a href="/contracts/player">Player Contract</a>
+      <a href="/contracts/parent">Parent Agreement</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Choose a contract -->
+  <section id="chooser" class="hidden">
+    <div class="glass center-card wide fade-in">
+      <span class="eyebrow">2026 to 2027 season</span>
+      <h1 style="margin:10px 0 8px">Team contracts</h1>
+      <p class="muted">Every player needs a signed Player Contract, and every family needs a signed Parent Agreement, before she can play. Read each one and sign it right here.</p>
+      <div class="ct-choices">
+        <a class="glass ct-choice" href="/contracts/player"><b>Player Contract</b><span>Signed by the player and a parent or guardian</span><small>Sign online →</small></a>
+        <a class="glass ct-choice" href="/contracts/parent"><b>Parent Agreement</b><span>Signed by a parent or guardian</span><small>Sign online →</small></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Read and sign -->
+  <section id="signer" class="hidden">
+    <div class="glass ct-head fade-in">
+      <div>
+        <span class="eyebrow">Middleburg Lady Broncos · 2026 to 2027</span>
+        <h1 id="ctTitle" style="margin:10px 0 4px"></h1>
+        <p class="muted" id="ctSub" style="margin:0"></p>
+      </div>
+      <a class="btn btn-glass btn-small" id="ctPdf" target="_blank" rel="noopener">Open the PDF</a>
+    </div>
+
+    <div class="glass ct-text" id="ctBody"></div>
+
+    <form class="glass ct-form form" id="ctForm" novalidate>
+      <h2 style="margin:0">Sign online</h2>
+      <p class="muted" style="margin:0" id="ctWho"></p>
+
+      <fieldset class="ct-set" data-for="player">
+        <legend>Player</legend>
+        <div class="ct-grid">
+          <label class="field">Player full name<input type="text" name="playerName" maxlength="60" autocomplete="off"></label>
+          <label class="field">Grade<select name="grade"><option value="">Choose</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label>
+        </div>
+        <div class="ct-team"><span>Team</span><label class="check"><input type="radio" name="team" value="varsity"> Varsity</label><label class="check"><input type="radio" name="team" value="jv"> JV</label></div>
+        <div class="sig" data-sig="player">
+          <span class="sig-label">Player signature <small>Sign with your finger or mouse</small></span>
+          <canvas width="600" height="170" aria-label="Player signature pad"></canvas>
+          <button type="button" class="btn btn-glass btn-small" data-clear>Clear</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="ct-set">
+        <legend>Parent or guardian</legend>
+        <div class="ct-grid">
+          <label class="field">Parent or guardian full name<input type="text" name="parentName" maxlength="60" autocomplete="name"></label>
+          <label class="field">Phone<input type="tel" name="parentPhone" maxlength="30" autocomplete="tel"></label>
+          <label class="field">Email<input type="email" name="parentEmail" maxlength="120" autocomplete="email"></label>
+        </div>
+        <div data-for="parent">
+          <div class="ct-grid">
+            <label class="field">Your daughter's full name<input type="text" name="daughterName" maxlength="60" autocomplete="off"></label>
+            <label class="field">Volunteer role you will claim<select name="role" id="ctRoles"><option value="">Choose a role</option></select></label>
+          </div>
+          <div class="ct-team"><span>Her team</span><label class="check"><input type="radio" name="team2" value="varsity"> Varsity</label><label class="check"><input type="radio" name="team2" value="jv"> JV</label></div>
+        </div>
+        <div class="sig" data-sig="parent">
+          <span class="sig-label">Parent or guardian signature <small>Sign with your finger or mouse</small></span>
+          <canvas width="600" height="170" aria-label="Parent signature pad"></canvas>
+          <button type="button" class="btn btn-glass btn-small" data-clear>Clear</button>
+        </div>
+      </fieldset>
+
+      <label class="check ct-agree"><input type="checkbox" name="agree"> <span id="ctAgreeText"></span></label>
+      <label class="check ct-agree"><input type="checkbox" name="esign"> <span>I agree to sign electronically. My drawn signature is my legal signature, the same as signing on paper.</span></label>
+      <input type="text" name="company" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="error" id="ctErr"></p>
+      <button class="btn btn-primary btn-big" type="submit" id="ctSubmit">Sign and submit</button>
+      <p class="muted" style="font-size:.85rem;margin:0">Only the coaching staff can see signed contracts. See our <a href="/privacy">privacy policy</a>.</p>
+    </form>
+  </section>
+
+  <!-- Done -->
+  <section id="done" class="hidden">
+    <div class="glass center-card wide fade-in" style="text-align:center">
+      <span class="eyebrow">Signed</span>
+      <h1 style="margin:10px 0 8px">Thank you!</h1>
+      <p class="muted" id="doneMsg">Your contract is on file with the coaching staff.</p>
+      <div class="btn-row" style="justify-content:center">
+        <button class="btn btn-primary" id="printCopy">Print or save a copy</button>
+        <a class="btn btn-glass" id="otherDoc"></a>
+      </div>
+    </div>
+    <div class="glass ct-copy" id="copy"></div>
+  </section>
+</main>
+
+<footer class="site wrap">
+  <div class="glass">
+    <span>Lady Bronco Basketball · Middleburg High School</span>
+    <span><a href="/players">Player Hub</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></span>
+  </div>
+</footer>
+
+<script src="/js/common.js"></script>
+<script src="/js/contracts.js"></script>
+<script src="/js/sign.js"></script>
+</body>
+</html>

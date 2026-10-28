@@ -39,3 +39,9 @@ Athlete Monitor loads its files and calls its API with page relative paths (`api
 * **Routes** are in `fundraiser/netlify.toml`. Add new rewrites there, above nothing that catches `/donate` or `/sponsor`.
 * **Deploy:** pushes do not deploy on their own. Upload a folder that contains a `fundraiser/` folder (the site's base directory is `fundraiser`) with the Netlify `deploy-site` tool. Copy `netlify.toml package.json package-lock.json public netlify README.md .gitignore` into `<tmp>/fundraiser/` and run the deploy command from `<tmp>`. Never include `fundraiser/.env`.
 * **Text style:** no hyphens or dashes in any visible text.
+
+## Team contracts
+
+* PDFs live in `public/docs/` (`playercontract.pdf`, `parentagreement.pdf`) and show in the Contracts section of the Player Hub.
+* Families sign online at `/contracts/player` and `/contracts/parent` (`sign.html`, `js/sign.js`). The contract text shown on screen lives in `js/contracts.js`. When a PDF changes, update the matching text there and bump its `version`.
+* Signed records go to `/api/contracts/sign` and are stored by `netlify/lib/contracts.mts`. Coaches see them on the dashboard Contracts tab, matched to the varsity and JV rosters, and open a printable signed copy at `/contract-copy?id=`.

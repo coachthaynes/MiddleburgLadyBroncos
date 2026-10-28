@@ -15,6 +15,7 @@ import {
 } from "../lib/messaging.mts";
 import { elevateProfiles, getHome, getLinks, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
 import { createOrder, deleteOrder, listOrders, updateOrder } from "../lib/orders.mts";
+import { deleteContract, getContract, listContracts, signContract } from "../lib/contracts.mts";
 
 // The team store lives on its own Netlify site and is also served at mhsladybroncos.com/store/.
 const STORE_ORIGINS = new Set(["https://ladybroncosstore.netlify.app", "https://www.mhsladybroncos.com", "https://mhsladybroncos.com"]);
@@ -44,6 +45,12 @@ export default async (req: Request, context: Context) => {
     if (parts[0] === "youtube" && method === "GET") return json(await youtubeFeed(url.searchParams.get("channel") || ""), 200, { "cache-control": "public, max-age=600" });
     if (parts[0] === "home" && method === "GET") return json({ content: (await getHome())?.content || null }, 200, { "cache-control": "public, max-age=60" });
     if (parts[0] === "sponsor-report" && parts[1] && method === "GET") return sponsorReport(parts[1]);
+    if (parts[0] === "contracts" && parts[1] === "sign" && method === "POST") {
+      const r = await signContract(await req.json().catch(() => ({})), context.ip || req.headers.get("x-nf-client-connection-ip") || "local", req.headers.get("user-agent") || "");
+      if ("error" in r) return json({ error: r.error }, r.status);
+      const { signer, ...record } = r.record;
+      return json({ ok: true, record });
+    }
     if (parts[0] === "store" && parts[1] === "order" && method === "OPTIONS") return new Response(null, { status: 204, headers: storeCors(req) });
     if (parts[0] === "store" && parts[1] === "order" && method === "POST") {
       const r = await createOrder(await req.json().catch(() => ({})), context.ip || req.headers.get("x-nf-client-connection-ip") || "local");
@@ -521,6 +528,14 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
   }
 
   if (parts[0] === "sponsors") return coachSponsors(req, parts.slice(1));
+
+  // Signed team contracts
+  if (parts[0] === "contracts" && !parts[1] && method === "GET") return json({ contracts: await listContracts() });
+  if (parts[0] === "contracts" && parts[1] && method === "GET") {
+    const c = await getContract(parts[1]);
+    return c ? json({ record: c }) : json({ error: "Contract not found." }, 404);
+  }
+  if (parts[0] === "contracts" && parts[1] && method === "DELETE") { await deleteContract(parts[1]); return json({ ok: true }); }
 
   // Team store orders
   if (parts[0] === "orders" && !parts[1] && method === "GET") return json({ orders: await listOrders() });

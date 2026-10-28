@@ -57,6 +57,22 @@
   to = "/terms.html"
   status = 200
 
+# Team contracts: /contracts shows both, /contracts/player and /contracts/parent open the signing page.
+[[redirects]]
+  from = "/contracts"
+  to = "/sign.html"
+  status = 200
+
+[[redirects]]
+  from = "/contracts/*"
+  to = "/sign.html"
+  status = 200
+
+[[redirects]]
+  from = "/contract-copy"
+  to = "/contract-copy.html"
+  status = 200
+
 [[redirects]]
   from = "/players"
   to = "/players.html"
@@ -187,6 +203,11 @@
 # Private areas stay out of search results.
 [[headers]]
   for = "/coach*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/contract*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
 
