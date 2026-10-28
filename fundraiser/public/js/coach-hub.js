@@ -27,6 +27,7 @@
       ["Sponsor page", "/sponsor", "Sponsor levels and interest form"],
       ["Sponsor packet", "/sponsor-packet.pdf", "PDF to send to businesses"],
       ["Sponsorship Guide", "/sponsorshipguide.pdf", "PDF playbook for players and parents"],
+      ["Family Guide", "/docs/familyguide.pdf", "PDF guide to the whole website for players and parents"],
       ["Team Store", "/store/", "Fan gear for families"],
       ["Store orders", "#orders", "Track payment and fulfillment for every store order"],
       ["Contracts", "#contracts", "Who has signed the Player Contract and Parent Agreement"],
