@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Player Hub · Middleburg Lady Broncos</title>
-<meta name="description" content="Player recruiting sites, the Athlete Monitor, the MHS Secret Binder and player tools for the Middleburg Lady Broncos.">
+<meta name="description" content="The Athlete Monitor, the MHS Secret Binder, team contracts and player tools for the Middleburg Lady Broncos.">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="icon" href="/brand/logo.png" type="image/png">
 <link rel="apple-touch-icon" href="/brand/logo.png">
@@ -34,12 +34,7 @@
     <span class="kicker">Players, families and staff</span>
     <h1 class="print-title">Player<br><span>Hub</span></h1>
     <div class="slogans" data-slogans><span>Bronco Built</span><span>Fear the Herd</span></div>
-    <p class="lead muted" style="font-size:1.1rem">Recruiting sites built for our Lady Broncos, plus the tools our players use every week to train, learn the playbook and grow.</p>
-  </section>
-
-  <section class="block">
-    <div class="print-head"><div><span class="kicker">For college coaches</span><h2>Player recruiting sites</h2></div></div>
-    <div class="hub-grid" id="siteGrid"></div>
+    <p class="lead muted" style="font-size:1.1rem">The tools our players use every week to train, learn the playbook and grow, plus team contracts and fundraising resources. Player recruiting profiles are on each player&rsquo;s card on the <a href="/#roster">home page</a>.</p>
   </section>
 
   <section class="block">
@@ -137,43 +132,8 @@
 <script src="/js/common.js"></script>
 <script src="/js/home-data.js"></script>
 <script>
-  // Recruiting site cards come from the home page spotlights and roster.
   window.loadHome().then((H) => {
     $$("[data-slogans]").forEach((el) => { el.innerHTML = (H.slogans || []).map((t) => `<span>${esc(t)}</span>`).join(""); });
-    const byName = new Map();
-    (H.spotlights || []).forEach((s) => byName.set(s.name, { ...s }));
-    Object.entries(H.rosterExtras || {}).forEach(([name, x]) => {
-      const p = byName.get(name) || { name };
-      Object.entries(x).forEach(([k, v]) => { if (v && !p[k]) p[k] = v; });
-      byName.set(name, p);
-    });
-    const all = [...byName.values()].filter((p) => p.site);
-    const render = (elevate = {}) => {
-      const players = all.map((p) => {
-        // Fill blanks from her Elevate Her profile, the same way the home page does.
-        const path = (/^https:\/\/(?:www\.)?elevateherhoopsreport\.com(\/(?:players\/)?[a-z0-9-]+)\/?$/i.exec(p.site) || [])[1];
-        const e = path && elevate[path.toLowerCase()];
-        const x = { ...p };
-        if (e) ["number", "position", "classYear", "height"].forEach((f) => { if (!x[f] && e[f]) x[f] = e[f]; });
-        return x;
-      })
-        // Graduation year (seniors first), then jersey number. Players without a class year go last.
-        .sort((a, b) => (parseInt(a.classYear, 10) || 9999) - (parseInt(b.classYear, 10) || 9999)
-          || (parseInt(a.number, 10) >= 0 ? parseInt(a.number, 10) : 999) - (parseInt(b.number, 10) >= 0 ? parseInt(b.number, 10) : 999)
-          || a.name.localeCompare(b.name));
-      $("#siteGrid").innerHTML = players.map((s) => {
-        const meta = [s.position, s.height, s.classYear && "Class of " + s.classYear].filter(Boolean).join(" · ");
-        return `<a class="glass tool" href="${esc((H.shortLinks || {})[s.name] || s.site)}" target="_blank" rel="noopener">
-          <span class="ico" style="font:700 1.3rem var(--print);color:#fff">${s.number ? "#" + esc(s.number) : esc(initials(s.name))}</span>
-          <h3>${esc(s.name)}</h3>
-          <p>${esc([meta, s.headline].filter(Boolean).join(". ") || "Middleburg Lady Bronco")}</p>
-          <span class="go">View recruiting site →</span>
-        </a>`;
-      }).join("") || '<div class="glass card"><p class="muted" style="margin:0">Player recruiting sites are on the way.</p></div>';
-    };
-    render();
-    const paths = all.map((p) => (/^https:\/\/(?:www\.)?elevateherhoopsreport\.com(\/(?:players\/)?[a-z0-9-]+)\/?$/i.exec(p.site) || [])[1]).filter(Boolean);
-    if (paths.length) api(`/api/elevate?paths=${encodeURIComponent(paths.join(","))}`).then((d) => render(d.players || {})).catch(() => {});
   });
 </script>
 </body>

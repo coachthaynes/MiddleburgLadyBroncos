@@ -22,7 +22,7 @@
   const LINKS = [
     { group: "Team websites", items: [
       ["Home page", "/", "mhsladybroncos.com"],
-      ["Player Hub", "/players", "Recruiting sites and player tools"],
+      ["Player Hub", "/players", "Player tools, contracts and resources"],
       ["Donate page", "/donate", "Team fundraiser"],
       ["Sponsor page", "/sponsor", "Sponsor levels and interest form"],
       ["Sponsor packet", "/sponsor-packet.pdf", "PDF to send to businesses"],
@@ -131,7 +131,7 @@
         F("height", "Height", { ph: "5'8\"", max: 10 }), F("headline", "Headline", { max: 80, wide: true }), F("bio", "Bio", { type: "area", max: 600, wide: true }),
         F("site", "Recruiting site", { type: "url", wide: true }), F("stats", "Stat line", { type: "stats", wide: true }),
         F("links", "Other links", { type: "links", wide: true, ph: "One per line: Hudl https://www.hudl.com/..." })] },
-    roster: { title: "Varsity roster", help: "Everyone here gets a Meet the playmakers card on the home page and a card on the Player Hub, sorted by jersey number. Players with a fundraiser page are matched by first and last name and get their photo.", add: "Add a player", max: 30,
+    roster: { title: "Varsity roster", help: "Everyone here gets a Meet the playmakers card on the home page, sorted by class year. Players with a fundraiser page are matched by first and last name and get their photo.", add: "Add a player", max: 30,
       blank: { name: "", number: "", position: "", classYear: "", height: "", site: "", maxpreps: "" },
       fields: [F("name", "Full name", { max: 60 }), F("number", "Jersey", { max: 3 }), F("position", "Position", { max: 30 }), F("classYear", "Class of", { max: 4 }),
         F("height", "Height", { max: 10 }), F("site", "Recruiting site", { type: "url", wide: true }), F("maxpreps", "MaxPreps", { type: "url", wide: true })] },

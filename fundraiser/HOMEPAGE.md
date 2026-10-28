@@ -8,12 +8,12 @@ The main team home page lives in this folder, on the same Netlify site as the fu
   * `schedule`: games, times, notes and results (`"W 54 41"`). Add away games with `home: false` and an optional `location`.
   * `highlights`: six slots. Paste a YouTube link into `url`; empty slots show Coming soon. Set `youtube.channel` to the team channel.
   * `jv`: the junior varsity list, shown in a drop down under the varsity cards (name, jersey, class year). JV players with a fundraiser page get a Support link there instead of a varsity card.
-  * `spotlights`, `rosterExtras`, `coaches`, `recruiting`: player spotlight cards, the roster (every player listed shows on the home page and Player Hub with her Elevate Her site and MaxPreps, and fundraiser players add their photo), staff and the recruiting email.
+  * `spotlights`, `rosterExtras`, `coaches`, `recruiting`: player spotlight cards, the roster (every player listed shows on the home page with her Elevate Her site and MaxPreps, and fundraiser players add their photo), staff and the recruiting email.
   * `slogans`: Bronco Built and Fear the Herd, shown in the hero, the slogan band, the ticker, the footer and the Player Hub.
   * `instagram.handle`: the team account, no @.
 * **Roster and sponsors are live:** player cards come from the coach dashboard (`/api/public`, active players with consent). Sponsors come from `/api/sponsors` (committed or paid, Show on wall checked): Horsepower Title and Herd Champion show near the top, Stallion Partners and Bronco Backers near the bottom.
 * **Instagram feed:** set `INSTAGRAM_TOKEN` on the Netlify site to an Instagram API with Instagram Login access token for the team professional account. `/api/instagram` then shows the latest posts, cached 30 minutes, and refreshes the token weekly. Without a token the page shows any post links in `instagram.posts` as Instagram embeds.
-* **Player Hub:** `/players` (`public/players.html`) links the player recruiting sites (from `spotlights`), Athlete Monitor, the Secret Binder, Bronco Life Skills and the player login.
+* **Player Hub:** `/players` (`public/players.html`) links Athlete Monitor, the Secret Binder, Bronco Life Skills, the Family Guide, the player login, team contracts and sponsor and donation resources. Player recruiting links live on the home page player cards.
 * **Do not move or rename** these, they are live:
 
 | Address | File |
