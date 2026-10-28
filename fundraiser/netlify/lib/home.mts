@@ -100,6 +100,15 @@ const MIGRATIONS: { id: string; run: (c: HomeRecord["content"]) => boolean }[] =
       return true;
     },
   },
+  {
+    id: "2026-10-andrea-brady-3",
+    run: (c) => {
+      const key = Object.keys(c.rosterExtras || {}).find((n) => /^andrea brady$/i.test(n.trim()));
+      if (!key) return false;
+      c.rosterExtras[key] = { ...c.rosterExtras[key], number: "3", classYear: c.rosterExtras[key].classYear || "2028", site: "https://elevateherhoopsreport.com/players/andra-brady" };
+      return true;
+    },
+  },
 ];
 
 export async function getHome() {
