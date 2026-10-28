@@ -91,6 +91,15 @@ const MIGRATIONS: { id: string; run: (c: HomeRecord["content"]) => boolean }[] =
       return true;
     },
   },
+  {
+    id: "2026-10-jv-journey-huntsman",
+    run: (c) => {
+      const p = (c.jv || []).find((x) => x.name.trim().toLowerCase() === "journey");
+      if (!p) return false;
+      p.name = "Journey Huntsman";
+      return true;
+    },
+  },
 ];
 
 export async function getHome() {
