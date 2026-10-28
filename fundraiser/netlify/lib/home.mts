@@ -119,6 +119,15 @@ const MIGRATIONS: { id: string; run: (c: HomeRecord["content"]) => boolean }[] =
       return changed;
     },
   },
+  {
+    id: "2026-10-nyla-parsons-no-number",
+    run: (c) => {
+      const key = Object.keys(c.rosterExtras || {}).find((n) => /^nyla parsons$/i.test(n.trim()));
+      if (!key || !c.rosterExtras[key].number) return false;
+      c.rosterExtras[key].number = "";
+      return true;
+    },
+  },
 ];
 
 export async function getHome() {

@@ -227,7 +227,8 @@
       if (jvKeys.has(k) && !byShort.has(k)) return;
       const p = byShort.get(k) || { name: f.name };
       p.fund = f;
-      if (!p.number && f.number) p.number = f.number;
+      // Players on the dashboard roster keep the number set there, even when it is blank.
+      if (!p.number && f.number && !byShort.has(k)) p.number = f.number;
       if (!p.position && f.position) p.position = f.position;
       byShort.set(k, p);
     });
@@ -281,7 +282,8 @@
     const e = elevate[elevatePath(p.site).toLowerCase()];
     if (!e) return p;
     const x = { ...p };
-    ["number", "position", "classYear", "height"].forEach((f) => { if (!x[f] && e[f]) x[f] = e[f]; });
+    // Jersey numbers come only from the dashboard roster, since Elevate Her can list an old school number.
+    ["position", "classYear", "height"].forEach((f) => { if (!x[f] && e[f]) x[f] = e[f]; });
     if (!(x.stats || []).length && e.season) {
       x.stats = STAT_KEYS.filter(([k]) => num0(e.season[k]) > 0).slice(0, 4).map(([k, l]) => ({ v: e.season[k], l }));
     }
