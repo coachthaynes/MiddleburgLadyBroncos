@@ -105,8 +105,18 @@ const MIGRATIONS: { id: string; run: (c: HomeRecord["content"]) => boolean }[] =
     run: (c) => {
       const key = Object.keys(c.rosterExtras || {}).find((n) => /^andrea brady$/i.test(n.trim()));
       if (!key) return false;
-      c.rosterExtras[key] = { ...c.rosterExtras[key], number: "3", classYear: c.rosterExtras[key].classYear || "2028", site: "https://elevateherhoopsreport.com/players/andra-brady" };
+      c.rosterExtras[key] = { ...c.rosterExtras[key], number: "3", classYear: c.rosterExtras[key].classYear || "2028", site: "https://elevateherhoopsreport.com/players/andrea-brady" };
       return true;
+    },
+  },
+  {
+    id: "2026-10-andrea-brady-site-fix",
+    run: (c) => {
+      let changed = false;
+      Object.values(c.rosterExtras || {}).forEach((x) => {
+        if (/\/players\/andra-brady\/?$/i.test(x.site)) { x.site = "https://elevateherhoopsreport.com/players/andrea-brady"; changed = true; }
+      });
+      return changed;
     },
   },
 ];
