@@ -7,6 +7,7 @@ The main team home page lives in this folder, on the same Netlify site as the fu
 * **Content:** the starting content lives in `public/js/home-data.js`. Once a coach saves on the dashboard, the saved version replaces it, so edit on the dashboard from then on:
   * `schedule`: games, times, notes and results (`"W 54 41"`). Add away games with `home: false` and an optional `location`.
   * `highlights`: six slots. Paste a YouTube link into `url`; empty slots show Coming soon. Set `youtube.channel` to the team channel.
+  * `jv`: the junior varsity list, shown in a drop down under the varsity cards (name, jersey, class year). JV players with a fundraiser page get a Support link there instead of a varsity card.
   * `spotlights`, `rosterExtras`, `coaches`, `recruiting`: player spotlight cards, the roster (every player listed shows on the home page and Player Hub with her Elevate Her site and MaxPreps, and fundraiser players add their photo), staff and the recruiting email.
   * `slogans`: Bronco Built and Fear the Herd, shown in the hero, the slogan band, the ticker, the footer and the Player Hub.
   * `instagram.handle`: the team account, no @.

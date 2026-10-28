@@ -224,6 +224,7 @@
     Object.entries(H.rosterExtras || {}).forEach(([n, x]) => add(n, x));
     fund.forEach((f) => {
       const k = f.name;
+      if (jvKeys.has(k) && !byShort.has(k)) return;
       const p = byShort.get(k) || { name: f.name };
       p.fund = f;
       if (!p.number && f.number) p.number = f.number;
@@ -300,6 +301,7 @@
   };
   function renderPlayers(fund) {
     lastFund = fund;
+    renderJV(fund);
     const list = playerList(fund).map(withElevate).sort(byClass);
     $("#gPlayers").textContent = list.length;
     $("#spotlightList").innerHTML = list.length ? list.map((s) => {
@@ -323,6 +325,22 @@
           ${links ? `<div class="btn-row">${links}</div>` : ""}
         </div></article>`;
     }).join("") : '<div class="glass card"><p class="muted" style="margin:0">Our players post here once tryouts wrap up.</p></div>';
+  }
+
+  // Junior varsity drop down under the varsity cards. JV players with a fundraiser page get a Support link here.
+  const jvKeys = new Set((H.jv || []).map((p) => shortName(p.name)));
+  function renderJV(fund) {
+    const jv = (H.jv || []).filter((p) => p.name).sort(byClass);
+    if (!jv.length) return;
+    const funds = new Map(fund.map((f) => [f.name, f]));
+    $("#jvCount").textContent = `${jv.length} players`;
+    $("#jvList").innerHTML = jv.map((p) => {
+      const f = funds.get(shortName(p.name)) || funds.get(p.name);
+      return `<li>${p.number ? `<span class="jv-num">#${esc(p.number)}</span>` : ""}<b>${esc(p.name)}</b>
+        ${p.classYear ? `<span class="muted">Class of ${esc(p.classYear)}</span>` : ""}
+        ${f ? `<a class="btn btn-glass btn-small" href="/donate/${esc(f.slug)}">Support ${esc(f.first)}</a>` : ""}</li>`;
+    }).join("");
+    $("#jvRoster").classList.remove("hidden");
   }
 
   let lastFund = [];

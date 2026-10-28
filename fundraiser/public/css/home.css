@@ -155,6 +155,21 @@ a.sp-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
 @media (max-width: 900px) { .highlights { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .highlights { grid-template-columns: 1fr; } }
 
+/* Junior varsity drop down */
+.jv { margin-top: 18px; padding: 0; overflow: hidden; }
+.jv summary { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 18px 22px; cursor: pointer; list-style: none; }
+.jv summary::-webkit-details-marker { display: none; }
+.jv summary b { font: 700 clamp(1.3rem, 2.4vw, 1.7rem) var(--print); text-transform: uppercase; color: #fff; }
+.jv summary small { color: var(--muted); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.jv-caret { margin-left: auto; width: 12px; height: 12px; border-right: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(45deg); transition: transform 0.2s; }
+.jv[open] .jv-caret { transform: rotate(225deg); }
+.jv-list { list-style: none; margin: 0; padding: 0 22px 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
+.jv-list li { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--glass-line); min-height: 52px; }
+.jv-list .jv-num { font: 700 1.1rem var(--print); color: var(--red); min-width: 2.2em; }
+.jv-list b { font: 600 1.05rem var(--print); text-transform: uppercase; letter-spacing: 0.03em; }
+.jv-list .btn { margin-left: auto; }
+@media (max-width: 640px) { .jv-list { grid-template-columns: 1fr; } }
+
 /* Spotlights */
 .spotlights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
 @media (max-width: 980px) { .spotlights { grid-template-columns: minmax(0, 1fr); } }

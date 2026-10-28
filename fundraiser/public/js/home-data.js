@@ -130,6 +130,18 @@ window.HOME = {
     "Savanna Padgett": { number: "30", site: "https://elevateherhoopsreport.com/players/savanna-padgett", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/savanna-padgett/?careerid=gmf4ef3javdcc" },
   },
 
+  // Junior varsity, shown in a drop down under the varsity cards. Add a jersey number or class year when known.
+  jv: [
+    { name: "Makalyn Sparks", number: "", classYear: "" },
+    { name: "Caitlin Wilson", number: "", classYear: "" },
+    { name: "Brooklyn Wilson", number: "", classYear: "" },
+    { name: "London Hahn", number: "", classYear: "" },
+    { name: "Emma Barlow", number: "", classYear: "" },
+    { name: "Gracie Bodway", number: "", classYear: "" },
+    { name: "Journey", number: "", classYear: "" },
+    { name: "Heather Towne", number: "", classYear: "" },
+  ],
+
   coaches: [
     { name: "Tenise Haynes", role: "Head Coach", email: "tenise.haynes@myoneclay.net" },
     { name: "Renardo Lassiter", role: "Assistant Varsity Coach" },

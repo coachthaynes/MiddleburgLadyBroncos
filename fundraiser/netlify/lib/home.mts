@@ -58,6 +58,10 @@ export function cleanHome(body: unknown) {
         height: str(x.height, 10), site: url(x.site), maxpreps: url(x.maxpreps),
       }];
     }).filter(([n]) => n)),
+    jv: list(b.jv, 30).map((r) => {
+      const x = obj(r);
+      return { name: str(x.name, 60), number: str(x.number, 3), classYear: str(x.classYear, 4) };
+    }).filter((r) => r.name),
     coaches: list(b.coaches, 10).map((c) => {
       const x = obj(c);
       const email = str(x.email, 120);
