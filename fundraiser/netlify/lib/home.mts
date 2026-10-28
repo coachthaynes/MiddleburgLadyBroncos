@@ -71,8 +71,39 @@ export function cleanHome(body: unknown) {
   };
 }
 
+type HomeRecord = { content: ReturnType<typeof cleanHome>; updatedAt: string };
+
+// One time fixes to saved content. Each runs once, so a coach can still change or remove the result later.
+const MIGRATIONS_KEY = "home/migrations";
+const MIGRATIONS: { id: string; run: (c: HomeRecord["content"]) => boolean }[] = [
+  {
+    id: "2026-10-varsity-janiyla-owens",
+    run: (c) => {
+      if (Object.keys(c.rosterExtras || {}).some((n) => /janiyla/i.test(n))) return false;
+      c.rosterExtras = {
+        ...c.rosterExtras,
+        "Janiyla Owens": {
+          number: "4", position: "", classYear: "2028", height: "",
+          site: "https://elevateherhoopsreport.com/players/janiyla-owens",
+          maxpreps: "https://www.maxpreps.com/fl/orange-park/oakleaf-knights/athletes/janiyla-owens/?careerid=7r7uliehmedue",
+        },
+      };
+      return true;
+    },
+  },
+];
+
 export async function getHome() {
-  return (await db().get(HOME_KEY, { type: "json" })) as { content: ReturnType<typeof cleanHome>; updatedAt: string } | null;
+  const store = db();
+  const rec = (await store.get(HOME_KEY, { type: "json" })) as HomeRecord | null;
+  if (!rec) return rec;
+  const done = ((await store.get(MIGRATIONS_KEY, { type: "json" })) as string[] | null) || [];
+  const todo = MIGRATIONS.filter((m) => !done.includes(m.id));
+  if (!todo.length) return rec;
+  const changed = todo.map((m) => m.run(rec.content)).some(Boolean);
+  if (changed) await store.setJSON(HOME_KEY, rec);
+  await store.setJSON(MIGRATIONS_KEY, [...done, ...todo.map((m) => m.id)]);
+  return rec;
 }
 
 export async function saveHome(body: unknown) {
