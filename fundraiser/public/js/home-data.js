@@ -138,7 +138,7 @@ window.HOME = {
     { name: "London Hahn", number: "", classYear: "" },
     { name: "Emma Barlow", number: "", classYear: "" },
     { name: "Gracie Bodway", number: "", classYear: "" },
-    { name: "Journey", number: "", classYear: "" },
+    { name: "Journey Huntsman", number: "", classYear: "" },
     { name: "Heather Towne", number: "", classYear: "" },
   ],
 
