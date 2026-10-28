@@ -253,20 +253,33 @@
       items: cart.map((i) => `${i.qty} x ${i.title} (${describe(i)}) ${money(i.price * i.qty)}`).join("\n"),
       subtotal: money(t.subtotal), shipping: money(t.ship), total: money(t.total), giveback: money(t.give),
     });
+    const order = {
+      name: f.name.value, email: f.email.value, phone: f.phone.value, player: f.player.value,
+      delivery: f.delivery.value, address: f.address.value, shipping: t.ship, givebackPercent: S.giveBackPercent,
+      items: cart.map((i) => ({ key: i.key, title: i.title, color: i.color || "", size: i.size, name: i.player || "", qty: i.qty, price: i.price })),
+    };
     const btn = $("#placeOrder");
     btn.disabled = true;
     btn.textContent = "Sending...";
+    $("#coErr").textContent = "";
     try {
-      const res = await fetch("./", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: data.toString() });
-      if (!res.ok) throw new Error();
+      // The order goes to the coaches dashboard. Netlify Forms keeps a backup copy and sends the order email.
+      // If the dashboard cannot be reached, the backup copy alone still gets the order to the coaches.
+      const res = await fetch(S.ordersApi, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(order) }).catch(() => null);
+      const out = res ? await res.json().catch(() => ({})) : {};
+      if (res && res.status < 500 && !res.ok) throw new Error(out.error || "");
+      data.set("order", out.number ? String(out.number) : "");
+      const backup = fetch("./", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: data.toString() });
+      if (!res || !res.ok) { if (!(await backup).ok) throw new Error(""); } else backup.catch(() => {});
+      const num = out.number ? ` Your order number is <b>${out.number}</b>.` : "";
       cart = [];
       saveCart();
       f.reset();
-      $("#cartItems").innerHTML = `<div class="notice good">Thank you! Your order is in. ${money(t.give)} of it goes to the Lady Broncos.</div>
+      $("#cartItems").innerHTML = `<div class="notice good">Thank you! Your order is in.${num} ${money(t.give)} of it goes to the Lady Broncos.</div>
         ${S.paymentUrl ? `<p style="margin-top:14px">Please finish by paying <b>${money(t.total)}</b>:</p><a class="btn btn-primary btn-big" style="width:100%" href="${esc(S.paymentUrl)}" target="_blank" rel="noopener">Pay now</a>`
           : `<p class="muted" style="margin-top:14px">A coach will reach out with payment details and a pickup or shipping date.</p>`}`;
-    } catch {
-      $("#coErr").textContent = "We could not send your order. Please try again.";
+    } catch (err) {
+      $("#coErr").textContent = err.message || "We could not send your order. Please try again.";
     } finally {
       btn.disabled = false;
       btn.textContent = "Place order";

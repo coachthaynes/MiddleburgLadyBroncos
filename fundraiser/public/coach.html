@@ -43,6 +43,7 @@
       <button role="tab" id="tb-hub" aria-controls="tabHub" data-tab="hub">Hub</button>
       <button role="tab" id="tb-home" aria-controls="tabHome" data-tab="home">Home page</button>
       <button role="tab" id="tb-fundraiser" aria-controls="tabFund" data-tab="fundraiser">Fundraiser</button>
+      <button role="tab" id="tb-orders" aria-controls="tabOrders" data-tab="orders">Store orders <span class="tab-count hidden" id="ordBadge"></span></button>
     </nav>
 
     <div class="tab-panel" id="tabHub" role="tabpanel" aria-labelledby="tb-hub" hidden>
@@ -55,6 +56,7 @@
           <div class="btn-row">
             <button class="btn btn-primary" data-go="home">Edit the home page</button>
             <button class="btn btn-glass" data-go="fundraiser">Fundraiser and sponsors</button>
+            <button class="btn btn-glass" data-go="orders">Store orders</button>
             <a class="btn btn-glass" href="/" target="_blank" rel="noopener">View the home page</a>
           </div>
         </div>
@@ -85,6 +87,61 @@
       </div>
       <div class="notice warn hidden" id="dashWarn" style="margin-top:12px"></div>
       <div id="homeEditor"></div>
+    </div>
+
+    <div class="tab-panel" id="tabOrders" role="tabpanel" aria-labelledby="tb-orders" hidden>
+      <div class="glass card fade-in">
+        <div class="section-head" style="margin:0 0 14px">
+          <div><span class="eyebrow">Team store</span><h2 style="margin-top:10px">Store orders</h2>
+            <p class="muted" style="font-size:.9rem;margin:4px 0 0">Every order from <a href="/store/" target="_blank" rel="noopener">mhsladybroncos.com/store</a> lands here. Mark it paid when the money comes in, then move it along as you order from the vendor and hand it out.</p></div>
+          <div class="btn-row"><button class="btn btn-glass btn-small" id="ordRefresh">Refresh</button><button class="btn btn-glass btn-small" id="ordCsv">Download orders</button></div>
+        </div>
+        <div class="stat-row" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
+          <div class="stat"><b id="osOpen">0</b><span>Open orders</span></div>
+          <div class="stat"><b id="osOwed">$0</b><span>Waiting on payment</span></div>
+          <div class="stat"><b id="osPaid">$0</b><span>Collected</span></div>
+          <div class="stat"><b id="osGive">$0</b><span>Team give back</span></div>
+          <div class="stat"><b id="osReady">0</b><span>Ready to hand out</span></div>
+        </div>
+      </div>
+
+      <details class="glass card ord-vendor" id="ordVendor" style="margin-top:18px">
+        <summary><h3 style="margin:0">Vendor order sheet</h3><span class="muted" id="ovSummary"></span></summary>
+        <p class="muted" style="font-size:.9rem;margin:10px 0">Everything still marked New, added up by item, color and size, with the names to print. Send this to the vendor, then mark those orders as ordered.</p>
+        <label class="switch" style="margin-bottom:10px"><input type="checkbox" id="ovPaidOnly" checked> Only paid orders</label>
+        <div class="table-wrap"><table class="players"><thead><tr><th>Item</th><th>Color</th><th>Size</th><th>Qty</th><th>Names to print</th></tr></thead><tbody id="ovRows"></tbody></table></div>
+        <div class="btn-row" style="margin-top:12px"><button class="btn btn-glass btn-small" id="ovCopy">Copy the sheet</button><button class="btn btn-primary btn-small" id="ovMark">Mark these orders as ordered</button></div>
+      </details>
+
+      <div class="glass card" style="margin-top:18px">
+        <div class="ord-tools">
+          <div class="chips" id="ordTabs">
+            <button data-of="open" class="on">Open</button><button data-of="unpaid">Needs payment</button><button data-of="new">To order</button><button data-of="ordered">Ordered</button><button data-of="ready">Ready</button><button data-of="complete">Complete</button><button data-of="canceled">Canceled</button><button data-of="all">All</button>
+          </div>
+          <input type="search" id="ordSearch" class="gselect" placeholder="Search name, email, player or order number" style="max-width:320px">
+        </div>
+        <div id="ordList" style="margin-top:14px"></div>
+      </div>
+
+      <details class="glass card" style="margin-top:18px" id="ordAddWrap">
+        <summary style="cursor:pointer;font-weight:700">Add an order by hand (sold in person)</summary>
+        <form class="form" id="ordAdd" style="margin-top:12px">
+          <div class="ed-row single" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+            <label class="field">Buyer name<input type="text" name="name" maxlength="60" required></label>
+            <label class="field">Phone<input type="tel" name="phone" maxlength="30"></label>
+            <label class="field">Email<input type="email" name="email" maxlength="120"></label>
+            <label class="field">Supporting player<input type="text" name="player" maxlength="60"></label>
+          </div>
+          <div id="oaItems"></div>
+          <div class="btn-row"><button type="button" class="btn btn-glass btn-small" id="oaAddItem">Add another item</button></div>
+          <div class="ed-row single" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));align-items:end">
+            <label class="switch"><input type="checkbox" name="paid"> Already paid</label>
+            <label class="field">Paid by<select name="method" class="gselect big"><option value="cash">Cash</option><option value="check">Check</option><option value="card">Card</option><option value="venmo">Venmo</option><option value="cashapp">Cash App</option><option value="zelle">Zelle</option><option value="other">Other</option></select></label>
+            <label class="field">Note<input type="text" name="note" maxlength="500"></label>
+            <button class="btn btn-primary" type="submit">Save order</button>
+          </div>
+        </form>
+      </details>
     </div>
 
     <div class="tab-panel" id="tabFund" role="tabpanel" aria-labelledby="tb-fundraiser" hidden>
@@ -278,5 +335,6 @@
 <script src="/js/coach.js"></script>
 <script src="/js/home-data.js"></script>
 <script src="/js/coach-hub.js"></script>
+<script src="/js/coach-orders.js"></script>
 </body>
 </html>

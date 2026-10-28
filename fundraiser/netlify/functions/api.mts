@@ -14,6 +14,16 @@ import {
   sendEmail, SendLog, siteOrigin, unsubUrl, Wave,
 } from "../lib/messaging.mts";
 import { elevateProfiles, getHome, getLinks, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
+import { createOrder, deleteOrder, listOrders, updateOrder } from "../lib/orders.mts";
+
+// The team store lives on its own Netlify site and is also served at mhsladybroncos.com/store/.
+const STORE_ORIGINS = new Set(["https://ladybroncosstore.netlify.app", "https://www.mhsladybroncos.com", "https://mhsladybroncos.com"]);
+function storeCors(req: Request): Record<string, string> {
+  const origin = req.headers.get("origin") || "";
+  return STORE_ORIGINS.has(origin)
+    ? { "access-control-allow-origin": origin, "access-control-allow-methods": "POST, OPTIONS", "access-control-allow-headers": "content-type", "access-control-max-age": "86400", vary: "origin" }
+    : {};
+}
 
 export default async (req: Request, context: Context) => {
   const url = new URL(req.url);
@@ -34,6 +44,11 @@ export default async (req: Request, context: Context) => {
     if (parts[0] === "youtube" && method === "GET") return json(await youtubeFeed(url.searchParams.get("channel") || ""), 200, { "cache-control": "public, max-age=600" });
     if (parts[0] === "home" && method === "GET") return json({ content: (await getHome())?.content || null }, 200, { "cache-control": "public, max-age=60" });
     if (parts[0] === "sponsor-report" && parts[1] && method === "GET") return sponsorReport(parts[1]);
+    if (parts[0] === "store" && parts[1] === "order" && method === "OPTIONS") return new Response(null, { status: 204, headers: storeCors(req) });
+    if (parts[0] === "store" && parts[1] === "order" && method === "POST") {
+      const r = await createOrder(await req.json().catch(() => ({})), context.ip || req.headers.get("x-nf-client-connection-ip") || "local");
+      return "error" in r ? json({ error: r.error }, r.status, storeCors(req)) : json({ ok: true, number: r.number }, 200, storeCors(req));
+    }
 
     // ----- sessions -----
     if (parts[0] === "login" && method === "POST") return playerLogin(req, context);
@@ -506,6 +521,18 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
   }
 
   if (parts[0] === "sponsors") return coachSponsors(req, parts.slice(1));
+
+  // Team store orders
+  if (parts[0] === "orders" && !parts[1] && method === "GET") return json({ orders: await listOrders() });
+  if (parts[0] === "orders" && !parts[1] && method === "POST") {
+    const r = await createOrder(await req.json().catch(() => ({})), "", "coach");
+    return "error" in r ? json({ error: r.error }, r.status) : json({ ok: true, order: r.order });
+  }
+  if (parts[0] === "orders" && parts[1] && method === "PATCH") {
+    const o = await updateOrder(parts[1], await req.json().catch(() => ({})));
+    return o ? json({ ok: true, order: o }) : json({ error: "Order not found." }, 404);
+  }
+  if (parts[0] === "orders" && parts[1] && method === "DELETE") { await deleteOrder(parts[1]); return json({ ok: true }); }
 
   if (parts[0] === "gifts" && parts.length === 1 && method === "GET") {
     const [gifts, players] = await Promise.all([listGifts(), listPlayers()]);

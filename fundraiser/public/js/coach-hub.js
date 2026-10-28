@@ -1,7 +1,7 @@
-// Coaches dashboard: Hub (every login and admin page), Home page editor and the Fundraiser tab.
+// Coaches dashboard: Hub (every login and admin page), Home page editor, the Fundraiser tab and the Store orders tab (coach-orders.js).
 (function () {
   // ----- tabs -----
-  const TABS = { hub: "tabHub", home: "tabHome", fundraiser: "tabFund" };
+  const TABS = { hub: "tabHub", home: "tabHome", fundraiser: "tabFund", orders: "tabOrders" };
   function showTab(name) {
     if (!TABS[name]) name = "hub";
     Object.entries(TABS).forEach(([k, id]) => {
@@ -28,6 +28,7 @@
       ["Sponsor packet", "/sponsor-packet.pdf", "PDF to send to businesses"],
       ["Sponsorship Guide", "/sponsorshipguide.pdf", "PDF playbook for players and parents"],
       ["Team Store", "/store/", "Fan gear for families"],
+      ["Store orders", "#orders", "Track payment and fulfillment for every store order"],
       ["Privacy Policy", "/privacy", "How the site handles information"],
       ["Terms of Use", "/terms", "Rules for using the site"],
     ] },
@@ -57,7 +58,7 @@
     ] },
     { group: "Accounts and admin", items: [
       ["Netlify", "https://app.netlify.com/", "Every site, deploys and settings"],
-      ["Store orders", "https://app.netlify.com/projects/ladybroncosstore/forms", "Team Store orders in Netlify Forms"],
+      ["Store order backups", "https://app.netlify.com/projects/ladybroncosstore/forms", "Backup copy of every store order in Netlify Forms"],
       ["Site settings and keys", "https://app.netlify.com/projects/ladybroncosfundraiser/configuration/env", "INSTAGRAM_TOKEN and email settings"],
       ["MySchoolBucks", "https://www.myschoolbucks.com", "Donation reports from the school"],
       ["YouTube Studio", "https://studio.youtube.com", "Upload highlights"],

@@ -4,6 +4,8 @@ window.STORE = {
   season: "26/27",
   sayings: ["No Mercy. All Heart.", "United as One.", "Battle Tested."],
   fundraiserUrl: "https://mhsladybroncos.com/donate",
+  // Orders are saved here and show up on the coaches dashboard under Store orders.
+  ordersApi: "https://mhsladybroncos.com/api/store/order",
   // Where buyers pay after ordering (Square, Venmo, Cash App or a Stripe payment link). Leave blank to have coaches follow up.
   paymentUrl: "",
   shipping: 6,
