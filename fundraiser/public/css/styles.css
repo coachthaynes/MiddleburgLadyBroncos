@@ -422,3 +422,11 @@ input[type=email] { width: 100%; font: 500 1rem var(--body); color: var(--ink); 
 .pv-sheet { max-width: 640px !important; }
 #pvFrame { width: 100%; height: 60vh; border: 0; border-radius: 14px; background: #fbe9ec; }
 .pv-sms { padding: 12px 14px; border-radius: 18px 18px 18px 4px; background: #e9e9ef; font-size: .95rem; line-height: 1.45; overflow-wrap: anywhere; }
+
+/* Coach: add many players */
+.bulk { margin-top: 14px; padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,.5); }
+.bulk summary { cursor: pointer; font-weight: 700; }
+.bulk textarea { width: 100%; font: 500 .95rem var(--body); padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(200, 16, 46, 0.18); background: rgba(255,255,255,.85); }
+.bulk-code { font: 700 1.05rem ui-monospace, monospace; letter-spacing: 1px; color: var(--red-deep); }
+.bulk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.bulk-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 14px; align-items: center; padding: 8px 12px; border-radius: 12px; background: rgba(255,255,255,.7); }

@@ -158,6 +158,64 @@
     }
   });
 
+  // ---------- add many players ----------
+  let made = [];
+  const codeText = (m) => `Hi ${m.first}! Log in at ${location.host}/portal with code ${m.code} to set up your Lady Broncos fundraising page. Do it with a parent or guardian: you will give permission, add a photo and add at least ${data?.settings?.minContacts || 20} supporters. Go Broncos!`;
+  function renderMade() {
+    $("#bulkOut").classList.toggle("hidden", !made.length && !$("#bulkSkipped").textContent);
+    $("#bulkRows").innerHTML = made.map((m, i) => `<li><b>${esc(m.name)}</b><code class="bulk-code">${esc(m.code)}</code><button class="btn btn-glass btn-small" data-bulkcopy="${i}">Copy</button></li>`).join("");
+  }
+  $("#bulkGo").addEventListener("click", async () => {
+    const lines = $("#bulkNames").value.split("\n").map((l) => l.replace(/\s+/g, " ").trim()).filter(Boolean);
+    if (!lines.length) { toast("Add at least one name."); return; }
+    const have = new Set(data.players.map((p) => `${p.first} ${p.last}`.trim().toLowerCase()));
+    const skipped = [];
+    const btn = $("#bulkGo");
+    btn.disabled = true;
+    try {
+      for (const [i, line] of lines.entries()) {
+        btn.textContent = `Adding ${i + 1} of ${lines.length}...`;
+        const [first, ...rest] = line.split(" ");
+        const last = rest.join(" ");
+        const name = `${first} ${last}`.trim();
+        if (have.has(name.toLowerCase())) { skipped.push(name); continue; }
+        const res = await api("/api/coach/players", { method: "POST", body: { first, last } });
+        have.add(name.toLowerCase());
+        made.push({ name, first, code: res.code });
+        renderMade();
+      }
+      $("#bulkSkipped").textContent = skipped.length ? `Already on your list, so skipped: ${skipped.join(", ")}.` : "";
+      renderMade();
+      toast(`${made.length} players ready`);
+    } catch (err) {
+      toast(err.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Add players and make codes";
+      await load();
+    }
+  });
+  $("#bulkRows").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-bulkcopy]");
+    if (b) copyText(codeText(made[b.dataset.bulkcopy]));
+  });
+  $("#bulkCopyAll").addEventListener("click", () => copyText(
+    `Lady Broncos player logins: ${location.host}/portal\n\n` + made.map((m) => `${m.name}: ${m.code}`).join("\n")));
+  $("#bulkPrint").addEventListener("click", () => {
+    const w = window.open("", "_blank");
+    if (!w) { toast("Allow pop ups to print the cards."); return; }
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Lady Broncos login codes</title><style>
+      body{font-family:Helvetica,Arial,sans-serif;margin:24px;color:#2a1418}
+      .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+      .c{border:2px dashed #c8102e;border-radius:14px;padding:16px;break-inside:avoid}
+      .c h2{margin:0 0 6px;font-size:20px}.c .k{font:700 30px monospace;letter-spacing:4px;color:#c8102e;margin:8px 0}
+      .c p{margin:4px 0;font-size:13px;line-height:1.4}
+    </style></head><body><div class="grid">${made.map((m) => `<div class="c"><h2>${esc(m.name)}</h2><p>Go to <b>${esc(location.host)}/portal</b> and type your code:</p><div class="k">${esc(m.code)}</div><p>Do this with a parent or guardian. You will give permission, add a photo and add your supporters. Go Broncos!</p></div>`).join("")}</div></body></html>`);
+    w.document.close();
+    w.focus();
+    w.print();
+  });
+
   document.addEventListener("click", async (e) => {
     const b = e.target.closest("[data-act],[data-photo]");
     if (!b) return;

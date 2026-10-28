@@ -171,6 +171,35 @@
           <label class="field">Position<input type="text" id="aPos" maxlength="30"></label>
           <button class="btn btn-primary" type="submit">Add player</button>
         </form>
+        <details class="bulk" id="bulkBox" open>
+          <summary>Add many players at once</summary>
+          <p class="muted" style="font-size:.9rem;margin:8px 0">One player per line, first name then last name. It is filled in with the 2026/27 roster. Anyone already on your player list is skipped.</p>
+          <textarea id="bulkNames" rows="8" spellcheck="false">Aiyana Haynes
+Janiyla Owens
+Nyla Parsons
+Sophia Butler
+Andrea Brady
+Catherine Bodway
+Kennedy Jeffress
+Maliya Lassiter
+Savanna Padgett
+Aliyna McCobb
+Makalyn Sparks
+Caitlin Wilson
+Brooklyn Wilson
+London Hahn
+Emma Barlow
+Gracie Bodway
+Journey
+Heather Towne</textarea>
+          <div class="btn-row" style="margin-top:10px"><button class="btn btn-primary" id="bulkGo">Add players and make codes</button></div>
+          <div id="bulkOut" class="hidden">
+            <div class="notice warn" style="margin-top:14px"><span><b>Copy or print these codes now.</b> For safety they are shown only once. If one gets lost, tap New code next to her name below.</span></div>
+            <div class="btn-row" style="margin:12px 0"><button class="btn btn-glass btn-small" id="bulkCopyAll">Copy all</button><button class="btn btn-glass btn-small" id="bulkPrint">Print code cards</button></div>
+            <ul class="bulk-list" id="bulkRows"></ul>
+            <p class="muted" id="bulkSkipped" style="font-size:.88rem;margin:10px 0 0"></p>
+          </div>
+        </details>
         <div class="table-wrap" style="margin-top:16px">
           <table class="players">
             <thead><tr><th>Player</th><th>Status</th><th>Visits</th><th>Shares</th><th>Donation clicks</th><th>Confirmed</th><th>Other $</th><th>Actions</th></tr></thead>
