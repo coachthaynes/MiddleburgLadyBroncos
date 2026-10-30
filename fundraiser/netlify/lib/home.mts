@@ -128,6 +128,15 @@ const MIGRATIONS: { id: string; run: (c: HomeRecord["content"]) => boolean }[] =
       return true;
     },
   },
+  {
+    id: "2026-10-nyla-parsons-elite",
+    run: (c) => {
+      const key = Object.keys(c.rosterExtras || {}).find((n) => /^nyla parsons$/i.test(n.trim()));
+      if (!key || /\/elite\/nyla-parsons/.test(c.rosterExtras[key].site)) return false;
+      c.rosterExtras[key].site = "https://elevateherhoopsreport.com/elite/nyla-parsons";
+      return true;
+    },
+  },
 ];
 
 export async function getHome() {
@@ -253,18 +262,34 @@ const ent = (s: string) => s.replace(/&#8599;/g, "").replace(/&#9733;/g, "").rep
 export function parseElevate(html: string, base = "") {
   const vitals: Record<string, string> = {};
   for (const [, k, v] of html.matchAll(/<div class="info-row"><span>([^<]+)<\/span><span>([^<]*)<\/span><\/div>/g)) vitals[ent(k)] = ent(v);
+  // Elite pages list vitals as vitals-row and put position and class in the profile badge.
+  for (const [, k, v] of html.matchAll(/<div class="vitals-row"><span>([^<]+)<\/span><span>([^<]*)<\/span><\/div>/g)) vitals[ent(k)] = vitals[ent(k)] || ent(v);
+  const badge = (/<div class="hpb-sub">([^<]*)<\/div>/.exec(html)?.[1] || "").split(/&middot;|·/).map((t) => ent(t)).filter(Boolean);
+  if (!vitals["Position"] && badge[0] && !/^Class of/i.test(badge[0])) vitals["Position"] = badge[0];
+  if (!vitals["Class Of"]) vitals["Class Of"] = vitals["Graduation Year"] || (/Class of (\d{4})/.exec(badge.join(" ")) || [])[1] || "";
   const statsBlock = /<h4>Season Stats<\/h4>([\s\S]*?)<\/table>/.exec(html)?.[1] || "";
   const seasons = [...statsBlock.matchAll(/<tr><td>(Freshman|Sophomore|Junior|Senior)<\/td>((?:<td>[^<]*<\/td>){6})<\/tr>/g)].map(([, season, cells]) => {
     const [ppg, reb, stl, blk, ast, pts] = [...cells.matchAll(/<td>([^<]*)<\/td>/g)].map((m) => ent(m[1]));
     return { season, ppg, reb, stl, blk, ast, pts };
   });
-  const links = [...html.matchAll(/<a class="film-link" href="([^"]+)"[^>]*><span class="dot"><\/span>([^<]+)<\/a>/g)]
-    .map(([, href, label]) => ({ label: ent(label).replace(/^X, Twitter$/, "X"), url: ent(href) }))
+  // Elite pages: PPG, Rebounds, Steals, Blocks, Assists, with no total points column.
+  const eliteBlock = /<table class="stats">([\s\S]*?)<\/table>/.exec(html)?.[1] || "";
+  for (const [, season, cells] of eliteBlock.matchAll(/<tr><td>(Freshman|Sophomore|Junior|Senior)<\/td>((?:<td>[^<]*<\/td>){5})<\/tr>/g)) {
+    const [ppg, reb, stl, blk, ast] = [...cells.matchAll(/<td>([^<]*)<\/td>/g)].map((m) => ent(m[1]));
+    if (!seasons.some((x) => x.season === season)) seasons.push({ season, ppg, reb, stl, blk, ast, pts: "" });
+  }
+  const links = [
+    ...[...html.matchAll(/<a class="film-link" href="([^"]+)"[^>]*><span class="dot"><\/span>([^<]+)<\/a>/g)].map(([, href, label]) => [href, label]),
+    // Elite pages: only her profile links, not marketing kit downloads.
+    ...[...html.matchAll(/<a class="link-pill" href="([^"]+)"[^>]*>([^<&]+)/g)].map(([, href, label]) => [href, label])
+      .filter(([, label]) => /^(Instagram|X \/ Twitter|YouTube|Hudl|Field Level|MaxPreps|Prep Girls Hoops)$/.test(label.trim())),
+  ]
+    .map(([href, label]) => ({ label: ent(label).trim().replace(/^X(, | \/ )Twitter$/, "X"), url: ent(href) }))
     .filter((l, i, all) => /^https?:\/\//.test(l.url) && all.findIndex((x) => x.url === l.url) === i);
   const accolades = [...html.matchAll(/<li><span class="star">&#9733;<\/span>([^<]+)<\/li>/g)].map(([, t]) => ent(t)).filter(Boolean);
   // Profile photo: the portrait on custom sites (unless it is the template's placeholder), otherwise the
   // link preview image, skipping the generic Elevate Her card.
-  const portrait = ent(/<img id="portraitImg" src="([^"]+)"/.exec(html)?.[1] || "");
+  const portrait = ent(/<img id="portraitImg" src="([^"]+)"/.exec(html)?.[1] || /<div class="hero-profile-badge"><img src="([^"]+)"/.exec(html)?.[1] || "");
   const og = ent(/<meta property="og:image" content="([^"]+)"/.exec(html)?.[1] || "");
   const pick = [portrait && portrait !== "media/photos/portrait.jpg" ? portrait : "", og]
     .find((src) => src && !/elevate-her-og|\/assets\//.test(src)) || "";
@@ -286,7 +311,7 @@ export function parseElevate(html: string, base = "") {
 // paths are page paths on elevateherhoopsreport.com: /players/<slug> or a custom site like /aiyana-haynes/.
 export async function elevateProfiles(paths: string[]) {
   const list = [...new Set(paths.map((p) => p.trim().toLowerCase().replace(/\/+$/, ""))
-    .filter((p) => /^\/(players\/)?[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p) && p.length <= 80))].slice(0, 30);
+    .filter((p) => /^\/((?:players|elite)\/)?[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p) && p.length <= 80))].slice(0, 30);
   const store = db();
   const out: Record<string, ReturnType<typeof parseElevate>> = {};
   await Promise.all(list.map(async (path) => {
@@ -294,7 +319,7 @@ export async function elevateProfiles(paths: string[]) {
     const cached = (await store.get(key, { type: "json" }).catch(() => null)) as { at: number; data: ReturnType<typeof parseElevate> | null } | null;
     if (cached && Date.now() - cached.at < 60 * 60 * 1000) { if (cached.data) out[path] = cached.data; return; }
     try {
-      const pageUrl = `https://elevateherhoopsreport.com${path}${path.startsWith("/players/") ? "" : "/"}`;
+      const pageUrl = `https://elevateherhoopsreport.com${path}${/^\/(players|elite)\//.test(path) ? "" : "/"}`;
       const r = await fetch(pageUrl, { headers: { "user-agent": "mhsladybroncos.com" } });
       const data = r.ok ? parseElevate(await r.text(), r.url || pageUrl) : null;
       await store.setJSON(key, { at: Date.now(), data });

@@ -238,7 +238,7 @@
 
   // Elevate Her profiles (stats, position, film links, accolades) fill whatever the dashboard leaves empty.
   // Key for a player's Elevate Her page: /players/<slug>, or a custom site like /aiyana-haynes.
-  const elevatePath = (url) => (/^https:\/\/(?:www\.)?elevateherhoopsreport\.com(\/(?:players\/)?[a-z0-9-]+)\/?$/i.exec(url || "") || [])[1] || "";
+  const elevatePath = (url) => (/^https:\/\/(?:www\.)?elevateherhoopsreport\.com(\/(?:(?:players|elite)\/)?[a-z0-9-]+)\/?$/i.exec(url || "") || [])[1] || "";
   let elevate = {};
   const STAT_KEYS = [["ppg", "PPG"], ["reb", "RPG"], ["stl", "SPG"], ["ast", "APG"], ["blk", "BPG"], ["pts", "Total pts"]];
   const num0 = (v) => parseFloat(v) || 0;

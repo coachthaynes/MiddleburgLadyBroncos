@@ -185,7 +185,7 @@
   async function load() {
     try {
       const [H, d] = await Promise.all([window.loadHome(), api("/api/coach/depth").catch(() => ({ depth: null }))]);
-      const elevatePath = (url) => (/^https:\/\/(?:www\.)?elevateherhoopsreport\.com(\/(?:players\/)?[a-z0-9-]+)\/?$/i.exec(url || "") || [])[1] || "";
+      const elevatePath = (url) => (/^https:\/\/(?:www\.)?elevateherhoopsreport\.com(\/(?:(?:players|elite)\/)?[a-z0-9-]+)\/?$/i.exec(url || "") || [])[1] || "";
       const varsity = new Map();
       (H.spotlights || []).forEach((s) => varsity.set(s.name, { ...s }));
       Object.entries(H.rosterExtras || {}).forEach(([n, x]) => {
