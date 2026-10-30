@@ -166,6 +166,39 @@ export async function saveLinks(body: unknown) {
   return links;
 }
 
+// ---------- depth chart (coaches only) ----------
+const DEPTH_KEY = "coach/depthchart";
+const SLOTS = ["1", "2", "3", "4", "5"];
+
+export function cleanDepth(body: unknown) {
+  const b = obj(body);
+  const players = obj(b.players);
+  const chart = obj(b.chart);
+  return {
+    // Per player: primary and secondary spots (1 to 5) and the coach's rating from 1 to 5.
+    players: Object.fromEntries(Object.entries(players).slice(0, 40).map(([name, v]) => {
+      const x = obj(v);
+      const spot = (s: unknown) => (SLOTS.includes(String(s)) ? String(s) : "");
+      const rating = Math.round(Number(x.rating));
+      return [str(name, 60), { primary: spot(x.primary), secondary: spot(x.secondary), rating: rating >= 1 && rating <= 5 ? rating : 0 }];
+    }).filter(([n]) => n)),
+    // A saved chart: for each spot, up to three names in order (starter, second, third).
+    chart: Object.fromEntries(SLOTS.map((slot) => [slot, list(chart[slot], 3).map((n) => str(n, 60))])),
+    includeJv: !!b.includeJv,
+    notes: str(b.notes, 1000),
+  };
+}
+
+export async function getDepth() {
+  return (await db().get(DEPTH_KEY, { type: "json" })) as (ReturnType<typeof cleanDepth> & { updatedAt: string }) | null;
+}
+
+export async function saveDepth(body: unknown) {
+  const rec = { ...cleanDepth(body), updatedAt: new Date().toISOString() };
+  await db().setJSON(DEPTH_KEY, rec);
+  return rec;
+}
+
 // ---------- YouTube highlights ----------
 // Latest uploads from the team channel through YouTube's public feed (no API key). Cached for an hour.
 const clip = (s: string) => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">")

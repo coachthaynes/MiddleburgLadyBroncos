@@ -74,3 +74,36 @@
 .ord-vendor summary::after { content: "+"; margin-left: auto; font: 700 1.4rem var(--display); color: var(--red); }
 .ord-vendor[open] summary::after { content: "\2212"; }
 @media (max-width: 760px) { .ord-body { grid-template-columns: 1fr; } }
+
+/* Depth chart */
+.dc-chart { width: 100%; border-collapse: separate; border-spacing: 6px; table-layout: fixed; min-width: 760px; }
+.dc-chart thead th { font: 800 0.8rem var(--display); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink); text-align: left; padding: 6px 8px; }
+.dc-spot { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--red); color: #fff; margin-right: 6px; font-size: 0.8rem; }
+.dc-chart th.dc-tier { width: 78px; font: 800 0.78rem var(--display); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); text-align: left; }
+.dc-chart td { vertical-align: top; background: rgba(255, 255, 255, 0.6); border: 1px solid var(--glass-line); border-radius: 14px; padding: 10px; position: relative; }
+.dc-chart td.dc-start { background: #111; color: #fff; border-color: #111; }
+.dc-chart td.dc-start .dc-meta { color: #c9c9cf; }
+.dc-name { display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; padding-right: 30px; }
+.dc-name b { font-size: 0.95rem; }
+.dc-num { font: 800 0.85rem var(--display); color: var(--red); }
+.dc-start .dc-num { color: #ff6b81; }
+.dc-meta { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+.dc-score { position: absolute; top: 8px; right: 8px; font: 800 0.75rem var(--display); background: var(--red); color: #fff; border-radius: 999px; padding: 2px 7px; }
+.dc-pick { margin-top: 8px; font-size: 0.78rem; padding: 6px 8px; min-width: 0; }
+.dc-rotation { margin-top: 16px; }
+.dc-rotation h3 { margin: 0 0 8px; }
+.dc-rotation ol { margin: 0; padding-left: 22px; columns: 2; column-gap: 28px; }
+.dc-rotation li { padding: 3px 0; break-inside: avoid; }
+.dc-players td { vertical-align: middle; }
+.dc-players .gselect { min-width: 110px; }
+.dc-how { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 0.92rem; }
+.dc-print-title { display: none; }
+@media print {
+  body.print-depth > *:not(main), body.print-depth .backdrop, body.print-depth .coach-tabs, body.print-depth .tab-panel:not(#tabDepth), body.print-depth #tabDepth > *:not(.dc-chart-card), body.print-depth #login { display: none !important; }
+  body.print-depth { background: #fff !important; }
+  body.print-depth .dc-chart-card { box-shadow: none !important; border: 0 !important; background: #fff !important; backdrop-filter: none !important; }
+  body.print-depth .dc-pick { display: none; }
+  body.print-depth .dc-print-title { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 1rem; }
+  body.print-depth .dc-chart { min-width: 0; }
+  @page { size: landscape; margin: 0.4in; }
+}

@@ -43,6 +43,7 @@
       <button role="tab" id="tb-hub" aria-controls="tabHub" data-tab="hub">Hub</button>
       <button role="tab" id="tb-home" aria-controls="tabHome" data-tab="home">Home page</button>
       <button role="tab" id="tb-fundraiser" aria-controls="tabFund" data-tab="fundraiser">Fundraiser</button>
+      <button role="tab" id="tb-depth" aria-controls="tabDepth" data-tab="depth">Depth chart</button>
       <button role="tab" id="tb-contracts" aria-controls="tabContracts" data-tab="contracts">Contracts</button>
       <button role="tab" id="tb-orders" aria-controls="tabOrders" data-tab="orders">Store orders <span class="tab-count hidden" id="ordBadge"></span></button>
     </nav>
@@ -88,6 +89,45 @@
       </div>
       <div class="notice warn hidden" id="dashWarn" style="margin-top:12px"></div>
       <div id="homeEditor"></div>
+    </div>
+
+    <div class="tab-panel" id="tabDepth" role="tabpanel" aria-labelledby="tb-depth" hidden>
+      <div class="glass card fade-in dc-head">
+        <div class="section-head" style="margin:0">
+          <div><span class="eyebrow">Coaches only</span><h2 style="margin-top:10px">Varsity depth chart</h2>
+            <p class="muted" style="font-size:.9rem;margin:4px 0 0">Built the way basketball depth charts are: a starter and backups at each of the five spots, ranked by production at that spot, position fit and your evaluation. Stats come from each player's Elevate Her profile. Your ratings and changes always win.</p></div>
+          <div class="btn-row"><button class="btn btn-glass btn-small" id="dcRebuild">Rebuild from stats</button><button class="btn btn-glass btn-small" id="dcPrint">Print</button><button class="btn btn-primary btn-small" id="dcSave" disabled>Save depth chart</button></div>
+        </div>
+        <p class="muted" id="dcStatus" style="font-size:.85rem;margin:10px 0 0">Loading stats...</p>
+      </div>
+
+      <div class="glass card dc-chart-card" style="margin-top:18px">
+        <div class="dc-print-title"><b>Middleburg Lady Broncos · Varsity depth chart</b><span id="dcPrintDate"></span></div>
+        <div class="table-wrap"><table class="dc-chart" id="dcChart"></table></div>
+        <div class="dc-rotation" id="dcRotation"></div>
+      </div>
+
+      <div class="glass card" style="margin-top:18px">
+        <div class="section-head" style="margin-bottom:10px">
+          <div><h3 style="margin:0">Players, stats and your ratings</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Set each player's main and backup spot and your 1 to 5 rating (practice, defense, effort and the Core Principles). Then tap Rebuild from stats. Players without stats yet are ranked on position and your rating.</p></div>
+          <label class="switch"><input type="checkbox" id="dcJv"> Include JV players</label>
+        </div>
+        <div class="table-wrap"><table class="players dc-players"><thead><tr><th>Player</th><th>Listed</th><th>Main spot</th><th>Backup spot</th><th>PPG</th><th>RPG</th><th>APG</th><th>SPG</th><th>BPG</th><th>Your rating</th><th>Overall</th></tr></thead><tbody id="dcRows"></tbody></table></div>
+        <label class="field" style="margin-top:14px">Notes <small>Matchups, minutes plan, who is working back from injury</small><textarea id="dcNotes" rows="3" maxlength="1000"></textarea></label>
+      </div>
+
+      <details class="glass card" style="margin-top:18px">
+        <summary style="cursor:pointer;font-weight:700">How the depth chart is built</summary>
+        <ul class="dc-how">
+          <li><b>Five spots.</b> 1 point guard, 2 shooting guard, 3 small forward, 4 power forward, 5 center or post. Each spot lists a starter, a second string and a third string.</li>
+          <li><b>Production for the spot.</b> Each spot weighs the stats that matter there: assists and steals for the 1, scoring and steals for the 2, scoring and rebounding for the 3, rebounding and blocks for the 4 and 5. Each stat is compared with the best on the team.</li>
+          <li><b>Position fit.</b> A player ranks highest at her main spot, close behind at her backup spot, lower one spot away and lowest out of position. Listed positions come from Elevate Her, or from height when none is listed.</li>
+          <li><b>Your evaluation.</b> Your 1 to 5 rating counts for about a third of each score, because practice, defense, effort and coachability never show up in a box score.</li>
+          <li><b>Experience</b> breaks close calls.</li>
+          <li><b>Rotation.</b> The five starters plus the three best players off the bench make the usual eight player rotation, with the first one off the bench as the sixth player.</li>
+          <li>Game stats from Athlete Monitor will be a stronger source once the season starts. Matchups can change the chart from game to game.</li>
+        </ul>
+      </details>
     </div>
 
     <div class="tab-panel" id="tabContracts" role="tabpanel" aria-labelledby="tb-contracts" hidden>
@@ -362,5 +402,6 @@
 <script src="/js/coach-hub.js"></script>
 <script src="/js/coach-orders.js"></script>
 <script src="/js/coach-contracts.js"></script>
+<script src="/js/coach-depth.js"></script>
 </body>
 </html>
