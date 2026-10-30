@@ -14,7 +14,7 @@
   };
   const STATS = ["ppg", "reb", "ast", "stl", "blk"];
 
-  let players = [];   // { name, number, classYear, height, listed, stats, statsFrom, jv }
+  let players = [];   // { name, number, classYear, height, listed, base, baseFrom, stats, statsFrom, jv }
   let prefs = {};     // name -> { primary, secondary, rating }
   let chart = {};     // spot -> [starter, second, third]
   let notes = "";
@@ -44,7 +44,20 @@
     if (h <= 71) return ["4", "3"];
     return ["5", "4"];
   }
-  const pref = (p) => prefs[p.name] || (prefs[p.name] = (() => { const [a, b] = guessSpots(p.listed, p.height); return { primary: a, secondary: b, rating: 0 }; })());
+  const pref = (p) => prefs[p.name] || (prefs[p.name] = (() => { const [a, b] = guessSpots(p.listed, p.height); return { primary: a, secondary: b, rating: 0, source: "", stats: {} }; })());
+
+  // Which stats count: Elevate Her (or the spotlight line), the coach's own numbers, or none at all.
+  function applyStats() {
+    players.forEach((p) => {
+      const pr = pref(p);
+      pr.stats = pr.stats || {};
+      if (pr.source === "none") { p.stats = null; p.statsFrom = "Stats ignored"; }
+      else if (pr.source === "mine") {
+        p.stats = Object.fromEntries(STATS.map((k) => [k, pr.stats[k] == null ? 0 : pr.stats[k]]));
+        p.statsFrom = "Your stats";
+      } else { p.stats = p.base; p.statsFrom = p.baseFrom; }
+    });
+  }
 
   function fit(p, spot) {
     const { primary, secondary } = pref(p);
@@ -142,13 +155,19 @@
     $("#dcRows").innerHTML = list.slice().sort((a, b) => overall(b, max) - overall(a, max)).map((p) => {
       const pr = pref(p);
       const st = p.stats || {};
-      const cell = (k) => (p.stats ? esc(num(st[k])) : '<span class="muted">none</span>');
+      const cell = (k) => pr.source === "mine"
+        ? `<input class="gselect dc-stat" type="number" min="0" max="99" step="0.1" inputmode="decimal" data-stat="${k}" value="${pr.stats[k] == null ? "" : esc(pr.stats[k])}" placeholder="${p.base ? esc(num(p.base[k])) : "0"}" aria-label="${esc(p.name)} ${k}">`
+        : p.stats ? esc(num(st[k])) : '<span class="muted">none</span>';
+      const srcSel = `<select class="gselect dc-src" data-pref="source" aria-label="Stats for ${esc(p.name)}">
+          <option value=""${!pr.source ? " selected" : ""}>${p.base ? "Elevate Her" : "Elevate Her (none)"}</option>
+          <option value="mine"${pr.source === "mine" ? " selected" : ""}>Enter my own</option>
+          <option value="none"${pr.source === "none" ? " selected" : ""}>Ignore stats</option></select>`;
       return `<tr data-name="${esc(p.name)}">
         <td><b>${p.number ? "#" + esc(p.number) + " " : ""}${esc(p.name)}</b><br><small class="muted">${esc([p.jv ? "JV" : "", p.classYear && "Class of " + p.classYear, p.height, p.statsFrom].filter(Boolean).join(" · "))}</small></td>
         <td>${esc(p.listed || "Not listed")}</td>
         <td><select class="gselect" data-pref="primary">${spotOpts(pr.primary)}</select></td>
         <td><select class="gselect" data-pref="secondary">${spotOpts(pr.secondary)}</select></td>
-        <td>${cell("ppg")}</td><td>${cell("reb")}</td><td>${cell("ast")}</td><td>${cell("stl")}</td><td>${cell("blk")}</td>
+        <td>${srcSel}</td><td>${cell("ppg")}</td><td>${cell("reb")}</td><td>${cell("ast")}</td><td>${cell("stl")}</td><td>${cell("blk")}</td>
         <td><select class="gselect" data-pref="rating"><option value="0">Not rated</option>${[5, 4, 3, 2, 1].map((n) => `<option value="${n}"${n === pr.rating ? " selected" : ""}>${n}</option>`).join("")}</select></td>
         <td><b>${overall(p, max)}</b></td>
       </tr>`;
@@ -159,7 +178,7 @@
 
   function status() {
     const withStats = pool().filter((p) => p.stats).length;
-    $("#dcStatus").textContent = `${pool().length} players, ${withStats} with Elevate Her stats. ${savedAt ? `Saved ${new Date(savedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}.` : "Not saved yet. This is the suggested chart."}${dirty ? " Unsaved changes." : ""}`;
+    $("#dcStatus").textContent = `${pool().length} players, ${withStats} with stats. ${savedAt ? `Saved ${new Date(savedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}.` : "Not saved yet. This is the suggested chart."}${dirty ? " Unsaved changes." : ""}`;
   }
   const touch = () => { dirty = true; render(); status(); };
 
@@ -186,13 +205,14 @@
           stats = { ppg: pick("PPG"), reb: pick("RPG"), ast: pick("APG"), stl: pick("SPG"), blk: pick("BPG") };
           statsFrom = "Spotlight stats";
         }
-        return { name: p.name, number: p.number || "", classYear: p.classYear || (e && e.classYear) || "", height: p.height || (e && e.height) || "", listed: p.position || (e && e.position) || "", stats, statsFrom, jv: false };
-      }).concat((H.jv || []).filter((p) => p.name && !varsity.has(p.name)).map((p) => ({ name: p.name, number: p.number || "", classYear: p.classYear || "", height: "", listed: "", stats: null, statsFrom: "", jv: true })));
+        return { name: p.name, number: p.number || "", classYear: p.classYear || (e && e.classYear) || "", height: p.height || (e && e.height) || "", listed: p.position || (e && e.position) || "", base: stats, baseFrom: statsFrom ? `${statsFrom} on Elevate Her`.replace("Spotlight stats on Elevate Her", "Spotlight stats") : "", stats, statsFrom, jv: false };
+      }).concat((H.jv || []).filter((p) => p.name && !varsity.has(p.name)).map((p) => ({ name: p.name, number: p.number || "", classYear: p.classYear || "", height: "", listed: "", base: null, baseFrom: "", stats: null, statsFrom: "", jv: true })));
       const saved = d.depth;
       prefs = saved ? { ...saved.players } : {};
       notes = saved ? saved.notes : "";
       savedAt = saved ? saved.updatedAt : "";
       $("#dcJv").checked = !!(saved && saved.includeJv);
+      applyStats();
       const hasChart = saved && Object.values(saved.chart || {}).some((a) => a.some(Boolean));
       chart = hasChart ? saved.chart : suggest();
       $("#dcNotes").value = notes;
@@ -220,8 +240,23 @@
     const p = players.find((x) => x.name === name);
     const pr = pref(p);
     pr[el.dataset.pref] = el.dataset.pref === "rating" ? Number(el.value) : el.value;
+    // Starting your own numbers copies in the Elevate Her line so you only fix what is wrong.
+    if (el.dataset.pref === "source" && el.value === "mine" && !STATS.some((k) => pr.stats && pr.stats[k] != null) && p.base) {
+      pr.stats = Object.fromEntries(STATS.map((k) => [k, num(p.base[k])]));
+    }
+    applyStats();
     touch();
   });
+  $("#dcRows").addEventListener("input", (e) => {
+    const el = e.target.closest("[data-stat]");
+    const name = el && el.closest("[data-name]")?.dataset.name;
+    if (!name) return;
+    const pr = pref(players.find((x) => x.name === name));
+    pr.stats[el.dataset.stat] = el.value === "" ? null : num(el.value);
+    applyStats();
+    dirty = true; $("#dcSave").disabled = false; status();
+  });
+  $("#dcRows").addEventListener("focusout", (e) => { if (e.target.closest("[data-stat]")) render(); });
   $("#dcJv").addEventListener("change", () => { chart = suggest(); touch(); });
   $("#dcNotes").addEventListener("input", () => { notes = $("#dcNotes").value; dirty = true; $("#dcSave").disabled = false; status(); });
   $("#dcRebuild").addEventListener("click", () => {

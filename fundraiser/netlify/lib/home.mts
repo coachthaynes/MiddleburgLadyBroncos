@@ -180,7 +180,12 @@ export function cleanDepth(body: unknown) {
       const x = obj(v);
       const spot = (s: unknown) => (SLOTS.includes(String(s)) ? String(s) : "");
       const rating = Math.round(Number(x.rating));
-      return [str(name, 60), { primary: spot(x.primary), secondary: spot(x.secondary), rating: rating >= 1 && rating <= 5 ? rating : 0 }];
+      // Stats: "" uses Elevate Her, "mine" uses the coach's numbers below, "none" ignores stats for this player.
+      const source = ["mine", "none"].includes(String(x.source)) ? String(x.source) : "";
+      const st = obj(x.stats);
+      const stat = (v: unknown) => { const n = Math.round(Number(v) * 10) / 10; return v !== "" && v != null && Number.isFinite(n) && n >= 0 && n <= 99 ? n : null; };
+      const stats = Object.fromEntries(["ppg", "reb", "ast", "stl", "blk"].map((k) => [k, stat(st[k])]));
+      return [str(name, 60), { primary: spot(x.primary), secondary: spot(x.secondary), rating: rating >= 1 && rating <= 5 ? rating : 0, source, stats }];
     }).filter(([n]) => n)),
     // A saved chart: for each spot, up to three names in order (starter, second, third).
     chart: Object.fromEntries(SLOTS.map((slot) => [slot, list(chart[slot], 3).map((n) => str(n, 60))])),

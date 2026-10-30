@@ -107,3 +107,5 @@
   body.print-depth .dc-chart { min-width: 0; }
   @page { size: landscape; margin: 0.4in; }
 }
+.dc-players .gselect.dc-stat { width: 64px; min-width: 0; padding: 6px 6px; }
+.dc-players .gselect.dc-src { min-width: 120px; }
