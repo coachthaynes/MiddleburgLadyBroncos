@@ -246,7 +246,7 @@ export async function youtubeFeed(ref: string) {
 
 // ---------- Elevate Her player profiles ----------
 // Reads each player's public page on elevateherhoopsreport.com/players/<slug> (vitals, newest season stats,
-// film links and accolades) so the home page cards match what is on her profile. Cached for 6 hours.
+// film links and accolades) so the home page cards match what is on her profile. Cached for an hour.
 const ent = (s: string) => s.replace(/&#8599;/g, "").replace(/&#9733;/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"')
   .replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").trim();
 
@@ -276,7 +276,8 @@ export function parseElevate(html: string, base = "") {
     position: vitals["Position"] || "",
     classYear: vitals["Class Of"] || "",
     height: vitals["Height"] || "",
-    season: seasons[seasons.length - 1] || null,
+    // The most recent season she has played, by name, whatever order the table lists them in.
+    season: ["Senior", "Junior", "Sophomore", "Freshman"].map((n) => seasons.find((x) => x.season === n && (x.ppg || x.reb || x.ast || x.pts))).find(Boolean) || null,
     links,
     accolades: accolades.slice(0, 4),
   };
@@ -291,7 +292,7 @@ export async function elevateProfiles(paths: string[]) {
   await Promise.all(list.map(async (path) => {
     const key = `cache/elevate${path}`;
     const cached = (await store.get(key, { type: "json" }).catch(() => null)) as { at: number; data: ReturnType<typeof parseElevate> | null } | null;
-    if (cached && Date.now() - cached.at < 6 * 60 * 60 * 1000) { if (cached.data) out[path] = cached.data; return; }
+    if (cached && Date.now() - cached.at < 60 * 60 * 1000) { if (cached.data) out[path] = cached.data; return; }
     try {
       const pageUrl = `https://elevateherhoopsreport.com${path}${path.startsWith("/players/") ? "" : "/"}`;
       const r = await fetch(pageUrl, { headers: { "user-agent": "mhsladybroncos.com" } });
