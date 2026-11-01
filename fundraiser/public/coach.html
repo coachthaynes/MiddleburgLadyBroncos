@@ -210,7 +210,7 @@ Heather Towne</textarea>
 
       <div class="glass card span" id="outreachCard">
         <div class="section-head" style="margin-bottom:10px">
-          <div><h3 style="margin:0">Supporter outreach</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Each player adds at least <b id="orMinShow">20</b> supporters when she logs in. You check her list, then approve each message. Emails go out from the team automatically (9 AM to 8 PM Eastern). Players text their own supporters from their phones with the approved text.</p></div>
+          <div><h3 style="margin:0">Supporter outreach</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Each player adds up to <b id="orMaxShow">20</b> supporters when she logs in. You check her list, then approve each message. Emails go out from the team automatically (9 AM to 8 PM Eastern). Players text their own supporters from their phones with the approved text.</p></div>
           <span id="orProvider"></span>
         </div>
 
@@ -223,7 +223,7 @@ Heather Towne</textarea>
 
         <h4 class="or-h">Settings</h4>
         <form class="form" id="orForm" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));align-items:end">
-          <label class="field">Minimum supporters<input type="number" id="orMin" min="1" max="100" step="1"></label>
+          <label class="field">Most supporters per player<input type="number" id="orMax" min="1" max="100" step="1"></label>
           <label class="field">Test email <small>Your own email for test sends</small><input type="email" id="orTest" maxlength="120"></label>
           <label class="field">Mailing address <small>Optional, shown at the bottom of emails</small><input type="text" id="orAddr" maxlength="200"></label>
           <label class="switch"><input type="checkbox" id="orPause"> Pause all emails</label>

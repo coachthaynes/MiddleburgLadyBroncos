@@ -160,7 +160,7 @@
 
   // ---------- add many players ----------
   let made = [];
-  const codeText = (m) => `Hi ${m.first}! Log in at ${location.host}/portal with code ${m.code} to set up your Lady Broncos fundraising page. Do it with a parent or guardian: you will give permission, add a photo and add at least ${data?.settings?.minContacts || 20} supporters. Go Broncos!`;
+  const codeText = (m) => `Hi ${m.first}! Log in at ${location.host}/portal with code ${m.code} to set up your Lady Broncos fundraising page. Do it with a parent or guardian: you will give permission, add a photo and add up to ${data?.settings?.maxContacts || 20} supporters. Go Broncos!`;
   function renderMade() {
     $("#bulkOut").classList.toggle("hidden", !made.length && !$("#bulkSkipped").textContent);
     $("#bulkRows").innerHTML = made.map((m, i) => `<li><b>${esc(m.name)}</b><code class="bulk-code">${esc(m.code)}</code><button class="btn btn-glass btn-small" data-bulkcopy="${i}">Copy</button></li>`).join("");

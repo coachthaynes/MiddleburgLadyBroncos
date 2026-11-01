@@ -15,8 +15,8 @@
   async function render(data) {
     overview = data;
     const s = data.settings;
-    $("#orMinShow").textContent = s.minContacts;
-    $("#orMin").value = s.minContacts;
+    $("#orMaxShow").textContent = s.maxContacts;
+    $("#orMax").value = s.maxContacts;
     $("#orTest").value = s.testEmail || "";
     $("#orAddr").value = s.mailingAddress || "";
     $("#orPause").checked = !!s.sendingPaused;
@@ -192,7 +192,7 @@
     e.preventDefault();
     try {
       await api("/api/coach/settings", { method: "PUT", body: {
-        minContacts: $("#orMin").value, testEmail: $("#orTest").value, mailingAddress: $("#orAddr").value, sendingPaused: $("#orPause").checked,
+        maxContacts: $("#orMax").value, testEmail: $("#orTest").value, mailingAddress: $("#orAddr").value, sendingPaused: $("#orPause").checked,
       } });
       toast("Saved!");
       await reload();
