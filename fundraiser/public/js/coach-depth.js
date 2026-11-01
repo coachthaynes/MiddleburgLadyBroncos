@@ -11,7 +11,7 @@
   // replace these whenever a player's profile has a season listed.
   const DEFAULTS = {
     "Aiyana Haynes": { primary: "SG", backups: ["PG", "SF"], stats: { ppg: 12.5, reb: 7.6, ast: 2.6, stl: 4.3, blk: 0.9 } },
-    "Kennedy Jeffress": { primary: "PG", backups: [], stats: { ppg: 17.3, reb: 4.1, ast: 2.3, stl: 3.2, blk: 0.2 } },
+    "Kennedy Jeffress": { primary: "PG", backups: ["SG"], stats: { ppg: 17.3, reb: 4.1, ast: 2.3, stl: 3.2, blk: 0.2 } },
     "Nyla Parsons": { primary: "PG", backups: ["SG"], stats: { ppg: 12.1, reb: 3.4, ast: 1.6, stl: 2.2, blk: 0 } },
     "Janiyla Owens": { primary: "SG", backups: [], stats: { ppg: 11.0, reb: 3.2, ast: 1.1, stl: 2.2, blk: 0 } },
     "Sophia Butler": { primary: "PF", backups: ["C"], stats: { ppg: 4.9, reb: 8.2, ast: 0.6, stl: 0.8, blk: 0.9 } },

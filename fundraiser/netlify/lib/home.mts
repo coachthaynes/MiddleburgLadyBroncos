@@ -193,12 +193,36 @@ export function cleanDepth(body: unknown) {
   };
 }
 
+// One time changes to saved designations, so a coach can still change them afterward.
+const DEPTH_MIGRATIONS: { id: string; run: (p: ReturnType<typeof cleanDepth>["players"]) => boolean }[] = [
+  {
+    id: "2026-11-kennedy-backup-sg",
+    run: (p) => {
+      const k = p["Kennedy Jeffress"];
+      if (!k || k.primary === "SG" || k.backups.includes("SG")) return false;
+      k.backups = POSITIONS.filter((x) => x === "SG" || k.backups.includes(x));
+      return true;
+    },
+  },
+];
+
 export async function getDepth() {
-  return (await db().get(DEPTH_KEY, { type: "json" })) as (ReturnType<typeof cleanDepth> & { updatedAt: string }) | null;
+  const store = db();
+  const rec = (await store.get(DEPTH_KEY, { type: "json" })) as (ReturnType<typeof cleanDepth> & { updatedAt: string; migrations?: string[] }) | null;
+  if (!rec) return rec;
+  const done = rec.migrations || [];
+  const todo = DEPTH_MIGRATIONS.filter((m) => !done.includes(m.id));
+  if (todo.length) {
+    todo.forEach((m) => m.run(rec.players));
+    rec.migrations = [...done, ...todo.map((m) => m.id)];
+    await store.setJSON(DEPTH_KEY, rec);
+  }
+  return rec;
 }
 
 export async function saveDepth(body: unknown) {
-  const rec = { ...cleanDepth(body), updatedAt: new Date().toISOString() };
+  // Saving keeps the record of one time changes already applied, so they never run again.
+  const rec = { ...cleanDepth(body), updatedAt: new Date().toISOString(), migrations: DEPTH_MIGRATIONS.map((m) => m.id) };
   await db().setJSON(DEPTH_KEY, rec);
   return rec;
 }
