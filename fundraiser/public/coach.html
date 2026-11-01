@@ -92,42 +92,57 @@
     </div>
 
     <div class="tab-panel" id="tabDepth" role="tabpanel" aria-labelledby="tb-depth" hidden>
-      <div class="glass card fade-in dc-head">
-        <div class="section-head" style="margin:0">
-          <div><span class="eyebrow">Coaches only</span><h2 style="margin-top:10px">Varsity depth chart</h2>
-            <p class="muted" style="font-size:.9rem;margin:4px 0 0">Built the way basketball depth charts are: a starter and backups at each of the five spots, ranked by production at that spot, position fit and your evaluation. Stats come from each player's Elevate Her profile. Your ratings and changes always win.</p></div>
-          <div class="btn-row"><button class="btn btn-glass btn-small" id="dcRebuild">Rebuild from stats</button><button class="btn btn-glass btn-small" id="dcPrint">Print</button><button class="btn btn-primary btn-small" id="dcSave" disabled>Save depth chart</button></div>
+      <div class="dc-report">
+        <div class="glass card fade-in dc-head">
+          <div class="section-head" style="margin:0">
+            <div><span class="eyebrow">Coaches only</span><h2 style="margin-top:10px">Statistical evaluation and positional depth chart</h2>
+              <p class="muted" style="font-size:.9rem;margin:4px 0 0">Calculated automatically from each player's season averages every time you open this tab. Nothing to enter or save.</p></div>
+            <div class="btn-row dc-noprint"><button class="btn btn-glass btn-small" id="dcRebuild">Refresh stats</button><button class="btn btn-primary btn-small" id="dcPrint">Print report</button></div>
+          </div>
+          <p class="muted" id="dcStatus" style="font-size:.85rem;margin:10px 0 0">Loading stats...</p>
         </div>
-        <p class="muted" id="dcStatus" style="font-size:.85rem;margin:10px 0 0">Loading stats...</p>
-      </div>
 
-      <div class="glass card dc-chart-card" style="margin-top:18px">
-        <div class="dc-print-title"><b>Middleburg Lady Broncos · Varsity depth chart</b><span id="dcPrintDate"></span></div>
-        <div class="table-wrap"><table class="dc-chart" id="dcChart"></table></div>
-        <div class="dc-rotation" id="dcRotation"></div>
-      </div>
+        <section class="glass card dc-sec">
+          <h3><span class="dc-n">1</span>Methodology and index calculation formula</h3>
+          <p class="muted">A weighted composite of per game averages. The index rewards high impact actions, with extra weight on steals, blocks and assists, which drive transition offense and defensive success in high school basketball.</p>
+          <div class="table-wrap"><table class="players dc-tbl">
+            <thead><tr><th>Stat category</th><th>Weight</th><th>Tactical impact</th></tr></thead>
+            <tbody>
+              <tr><td><b>Points per game (PPG)</b></td><td>× 1.0</td><td>Direct offensive output and scoring capability.</td></tr>
+              <tr><td><b>Rebounds per game (RPG)</b></td><td>× 1.2</td><td>Possession control, finishing defensive stops and second chance creation.</td></tr>
+              <tr><td><b>Assists per game (APG)</b></td><td>× 1.5</td><td>Pass first efficiency, court vision and creating shots for teammates.</td></tr>
+              <tr><td><b>Steals per game (SPG)</b></td><td>× 2.0</td><td>Defensive disruption, forcing turnovers and igniting fast breaks.</td></tr>
+              <tr><td><b>Blocks per game (BPG)</b></td><td>× 2.0</td><td>Rim protection, interior deterrence and shot contests.</td></tr>
+            </tbody>
+          </table></div>
+          <div class="dc-formula"><span>Composite index formula</span><b>Index = PPG + (RPG × 1.2) + (APG × 1.5) + (SPG × 2.0) + (BPG × 2.0)</b></div>
+        </section>
 
-      <div class="glass card" style="margin-top:18px">
-        <div class="section-head" style="margin-bottom:10px">
-          <div><h3 style="margin:0">Players, stats and your ratings</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Set each player's main and backup spot and your 1 to 5 rating (practice, defense, effort and the Core Principles). Then tap Rebuild from stats. If an Elevate Her stat line is wrong or from another school, set Stats from to Enter my own and type the right numbers, or Ignore stats. Players without stats are ranked on position and your rating.</p></div>
-          <label class="switch"><input type="checkbox" id="dcJv"> Include JV players</label>
-        </div>
-        <div class="table-wrap"><table class="players dc-players"><thead><tr><th>Player</th><th>Listed</th><th>Main spot</th><th>Backup spot</th><th>Stats from</th><th>PPG</th><th>RPG</th><th>APG</th><th>SPG</th><th>BPG</th><th>Your rating</th><th>Overall</th></tr></thead><tbody id="dcRows"></tbody></table></div>
-        <label class="field" style="margin-top:14px">Notes <small>Matchups, minutes plan, who is working back from injury</small><textarea id="dcNotes" rows="3" maxlength="1000"></textarea></label>
-      </div>
+        <section class="glass card dc-sec">
+          <h3><span class="dc-n">2</span>Overall statistical leaderboard</h3>
+          <div class="table-wrap"><table class="players dc-tbl dc-board">
+            <thead><tr><th>Rank</th><th>Player</th><th>Pos</th><th>PPG</th><th>RPG</th><th>APG</th><th>SPG</th><th>BPG</th><th>Index</th></tr></thead>
+            <tbody id="dcBoard"></tbody>
+          </table></div>
+        </section>
 
-      <details class="glass card" style="margin-top:18px">
-        <summary style="cursor:pointer;font-weight:700">How the depth chart is built</summary>
-        <ul class="dc-how">
-          <li><b>Five spots.</b> 1 point guard, 2 shooting guard, 3 small forward, 4 power forward, 5 center or post. Each spot lists a starter, a second string and a third string.</li>
-          <li><b>Production for the spot.</b> Each spot weighs the stats that matter there: assists and steals for the 1, scoring and steals for the 2, scoring and rebounding for the 3, rebounding and blocks for the 4 and 5. Each stat is compared with the best on the team.</li>
-          <li><b>Position fit.</b> A player ranks highest at her main spot, close behind at her backup spot, lower one spot away and lowest out of position. Listed positions come from Elevate Her, or from height when none is listed.</li>
-          <li><b>Your evaluation.</b> Your 1 to 5 rating counts for about a third of each score, because practice, defense, effort and coachability never show up in a box score.</li>
-          <li><b>Experience</b> breaks close calls.</li>
-          <li><b>Rotation.</b> The five starters plus the three best players off the bench make the usual eight player rotation, with the first one off the bench as the sixth player.</li>
-          <li>Game stats from Athlete Monitor will be a stronger source once the season starts. Matchups can change the chart from game to game.</li>
-        </ul>
-      </details>
+        <section class="glass card dc-sec">
+          <h3><span class="dc-n">3</span>Positional depth chart</h3>
+          <p class="muted">Eligible players are ordered within each position by their index, using each player's primary and backup positions. Positional depth is a statistical ranking and a framework for building lineups.</p>
+          <div class="dc-positions" id="dcPositions"></div>
+        </section>
+
+        <section class="glass card dc-sec">
+          <h3><span class="dc-n">4</span>Individual player breakdown and ranking analysis</h3>
+          <div class="dc-cards" id="dcCards"></div>
+        </section>
+
+        <details class="glass card dc-sec dc-noprint">
+          <summary style="cursor:pointer;font-weight:700">Position designations</summary>
+          <p class="muted" style="font-size:.9rem">The primary and backup positions used for the positional depth chart. Changes save on their own.</p>
+          <div class="table-wrap"><table class="players dc-tbl"><thead><tr><th>Player</th><th>Primary</th><th>Backup positions</th></tr></thead><tbody id="dcPosEdit"></tbody></table></div>
+        </details>
+      </div>
     </div>
 
     <div class="tab-panel" id="tabContracts" role="tabpanel" aria-labelledby="tb-contracts" hidden>

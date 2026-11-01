@@ -176,30 +176,20 @@ export async function saveLinks(body: unknown) {
 }
 
 // ---------- depth chart (coaches only) ----------
-const DEPTH_KEY = "coach/depthchart";
-const SLOTS = ["1", "2", "3", "4", "5"];
+// Only the position designations are stored. Stats and rankings are worked out on the page every time.
+const DEPTH_KEY = "coach/depthpositions";
+const POSITIONS = ["PG", "SG", "SF", "PF", "C"];
 
 export function cleanDepth(body: unknown) {
-  const b = obj(body);
-  const players = obj(b.players);
-  const chart = obj(b.chart);
+  const players = obj(obj(body).players);
   return {
-    // Per player: primary and secondary spots (1 to 5) and the coach's rating from 1 to 5.
+    // Per player: her primary position and any backup positions.
     players: Object.fromEntries(Object.entries(players).slice(0, 40).map(([name, v]) => {
       const x = obj(v);
-      const spot = (s: unknown) => (SLOTS.includes(String(s)) ? String(s) : "");
-      const rating = Math.round(Number(x.rating));
-      // Stats: "" uses Elevate Her, "mine" uses the coach's numbers below, "none" ignores stats for this player.
-      const source = ["mine", "none"].includes(String(x.source)) ? String(x.source) : "";
-      const st = obj(x.stats);
-      const stat = (v: unknown) => { const n = Math.round(Number(v) * 10) / 10; return v !== "" && v != null && Number.isFinite(n) && n >= 0 && n <= 99 ? n : null; };
-      const stats = Object.fromEntries(["ppg", "reb", "ast", "stl", "blk"].map((k) => [k, stat(st[k])]));
-      return [str(name, 60), { primary: spot(x.primary), secondary: spot(x.secondary), rating: rating >= 1 && rating <= 5 ? rating : 0, source, stats }];
+      const primary = POSITIONS.includes(String(x.primary)) ? String(x.primary) : "";
+      const backups = list(x.backups, 4).map(String).filter((p, i, all) => POSITIONS.includes(p) && p !== primary && all.indexOf(p) === i);
+      return [str(name, 60), { primary, backups }];
     }).filter(([n]) => n)),
-    // A saved chart: for each spot, up to three names in order (starter, second, third).
-    chart: Object.fromEntries(SLOTS.map((slot) => [slot, list(chart[slot], 3).map((n) => str(n, 60))])),
-    includeJv: !!b.includeJv,
-    notes: str(b.notes, 1000),
   };
 }
 

@@ -31,7 +31,7 @@
       ["Team Store", "/store/", "Fan gear for families"],
       ["Store orders", "#orders", "Track payment and fulfillment for every store order"],
       ["Contracts", "#contracts", "Who has signed the Player Contract and Parent Agreement"],
-      ["Depth chart", "#depth", "Varsity depth chart built from stats and your ratings"],
+      ["Depth chart", "#depth", "Varsity depth chart built from season averages"],
       ["Privacy Policy", "/privacy", "How the site handles information"],
       ["Terms of Use", "/terms", "Rules for using the site"],
     ] },
