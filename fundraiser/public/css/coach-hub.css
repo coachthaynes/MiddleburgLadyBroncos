@@ -105,6 +105,8 @@
 .dc-card header span { font-weight: 800; color: var(--red); white-space: nowrap; }
 .dc-line { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin: 4px 0 8px; }
 .dc-card p { margin: 0; font-size: 0.92rem; }
+.dc-card h5 { margin: 12px 0 6px; font: 800 0.78rem var(--display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); }
+.dc-plan { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 0.9rem; }
 .dc-backs { display: flex; gap: 8px; flex-wrap: wrap; }
 .dc-backs label { display: inline-flex; gap: 4px; align-items: center; font-weight: 600; font-size: 0.85rem; }
 @media print {

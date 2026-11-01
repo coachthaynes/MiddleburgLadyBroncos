@@ -31,25 +31,84 @@
   const posLabel = (p) => [p.primary, ...p.backups].filter(Boolean).join(" / ") || "Not set";
   const lastName = (n) => n.split(" ").slice(-1)[0];
 
-  // Why she ranks where she does: her biggest index contributions, any team leads and her playmaking and defense points.
-  function why(p, rank) {
+  // ---------- player breakdowns, written from the numbers ----------
+  // What each position leans on most, in order. Used to pick realistic areas to grow.
+  const FOCUS = { PG: ["ast", "stl", "ppg"], SG: ["ppg", "stl", "ast"], SF: ["ppg", "reb", "stl"], PF: ["reb", "blk", "ppg"], C: ["reb", "blk", "ppg"] };
+  const ROLE = {
+    PG: "a point guard who runs the offense",
+    SG: "a shooting guard who scores and pressures the ball",
+    SF: "a wing who fills in on both ends",
+    PF: "a power forward who works the glass",
+    C: "a post who protects the rim",
+  };
+  const up1 = (x) => Math.max(0.1, Math.ceil(x * 10 - 1e-9) / 10).toFixed(1);
+  const pct = (part, whole) => (whole > 0 ? Math.round((100 * part) / whole) : 0);
+  const andList = (items) => (items.length < 3 ? items.join(" and ") : `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`);
+
+  function breakdown(p, rank, ranked) {
     const s = p.stats;
-    const parts = Object.keys(W).map((k) => [k, num(s[k]) * W[k]]).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
-    const phrase = (k) => `${f1(s[k])} ${WORDS[k]} per game`;
-    const top = Object.keys(W).filter((k) => num(s[k]) > 0 && num(s[k]) === Math.max(...players.map((x) => num(x.stats[k]))));
-    const tied = (k) => players.filter((x) => num(x.stats[k]) === num(s[k])).length > 1;
-    const list = (ks) => ks.map((k) => `${WORDS[k]} (${f1(s[k])})`).join(ks.length > 2 ? ", " : " and ").replace(/, ([^,]*)$/, " and $1");
-    const leads = [];
-    if (top.filter((k) => !tied(k)).length) leads.push(`leads the team in ${list(top.filter((k) => !tied(k)))}`);
-    if (top.filter(tied).length) leads.push(`ties for the team lead in ${list(top.filter(tied))}`);
-    const defense = num(s.ast) * W.ast + num(s.stl) * W.stl + num(s.blk) * W.blk;
-    if (!parts.length) return `${lastName(p.name)} ranks #${rank} overall. No season averages are listed yet.`;
-    let t = `${lastName(p.name)} ranks #${rank} overall at ${posLabel(p)}. Her index of ${f2(p.index)} is driven by ${phrase(parts[0][0])}`;
-    if (parts[1]) t += ` and ${phrase(parts[1][0])}`;
-    t += ".";
-    if (leads.length) t += ` She ${leads.join(", and ")}.`;
-    if (defense > 0) t += ` Playmaking and defense (assists, steals and blocks) add ${f2(defense)} index points.`;
-    return t;
+    const last = lastName(p.name);
+    const keys = Object.keys(W);
+    if (!keys.some((k) => num(s[k]) > 0)) {
+      return { strengths: `${last} has no season averages listed yet, so she ranks #${rank} until her stats are posted.`, plan: ["Get her season averages onto her Elevate Her profile so she can be ranked."] };
+    }
+    const avg = Object.fromEntries(keys.map((k) => [k, ranked.reduce((t, x) => t + num(x.stats[k]), 0) / ranked.length]));
+    const best = Object.fromEntries(keys.map((k) => [k, Math.max(...ranked.map((x) => num(x.stats[k])))]));
+    const teamRank = (k) => 1 + ranked.filter((x) => num(x.stats[k]) > num(s[k])).length;
+    const contrib = keys.map((k) => [k, num(s[k]) * W[k]]).sort((x, y) => y[1] - x[1]);
+
+    // Strengths: what she does better than most of the team, and where her index comes from.
+    const strong = keys.filter((k) => num(s[k]) > 0 && (teamRank(k) <= 3 || num(s[k]) >= avg[k] * 1.4));
+    const leads = keys.filter((k) => num(s[k]) > 0 && num(s[k]) === best[k]);
+    const role = ROLE[p.primary] ? `${last} is ${ROLE[p.primary]}${p.backups.length ? `, with backup minutes at ${andList(p.backups)}` : ""}.` : `${last} has no primary position set.`;
+    let strengths = `${role} Her index of ${f2(p.index)} ranks #${rank} of ${ranked.length}.`;
+    if (leads.length) strengths += ` She leads the team in ${andList(leads.map((k) => `${WORDS[k]} (${f1(s[k])})`))}.`;
+    const others = strong.filter((k) => !leads.includes(k));
+    if (others.length) strengths += ` She ranks ${andList(others.map((k) => `#${teamRank(k)} in ${WORDS[k]} (${f1(s[k])}, team average ${f1(avg[k])})`))}.`;
+    strengths += ` ${WORDS[contrib[0][0]][0].toUpperCase() + WORDS[contrib[0][0]].slice(1)} make up ${pct(contrib[0][1], p.index)}% of her index`;
+    strengths += contrib[1][1] > 0 ? `, and ${WORDS[contrib[1][0]]} another ${pct(contrib[1][1], p.index)}%.` : ".";
+
+    // Where she can grow: the stats her position leans on where she has the most room, by index value.
+    const focus = (FOCUS[p.primary] || ["ppg", "reb", "stl"])
+      .map((k) => [k, (best[k] - num(s[k])) * W[k] + (num(s[k]) < avg[k] ? 1 : 0)])
+      .sort((x, y) => y[1] - x[1]).map(([k]) => k);
+    const [k1, k2] = focus;
+    const plan = [];
+    const need = (gap) => gap + 0.01;
+    if (rank > 1) {
+      const above = ranked[rank - 2];
+      const gap = need(above.index - p.index);
+      plan.push(`<b>To pass ${esc(above.name)} (#${rank - 1}, ${f2(above.index)})</b> she needs ${f2(gap)} more index points: about +${up1(gap / W[k1])} ${WORDS[k1]} per game, or +${up1(gap / W[k2])} ${WORDS[k2]} per game, or a mix of +${up1(gap / 2 / W[k1])} ${WORDS[k1]} and +${up1(gap / 2 / W[k2])} ${WORDS[k2]}.`);
+      if (rank > 6) {
+        const fifth = ranked[4];
+        const g5 = need(fifth.index - p.index);
+        plan.push(`<b>To reach the top five</b> (passing ${esc(fifth.name)} at ${f2(fifth.index)}) takes ${f2(g5)} more index points, for example +${up1(g5 / 2 / W[k1])} ${WORDS[k1]} and +${up1(g5 / 2 / W[k2])} ${WORDS[k2]} per game.`);
+      }
+    } else {
+      const next = ranked[1];
+      plan.push(`<b>She leads the team</b> by ${f2(p.index - next.index)} index points over ${esc(next.name)}. Adding +0.5 ${WORDS[k1]} and +0.5 ${WORDS[k2]} per game would grow that lead by ${f2(0.5 * W[k1] + 0.5 * W[k2])}.`);
+    }
+    // Her standing at her primary position.
+    if (p.primary) {
+      const atPos = ranked.filter((x) => x.primary === p.primary || x.backups.includes(p.primary));
+      const posRank = atPos.indexOf(p) + 1;
+      if (posRank > 1) {
+        const lead = atPos[0];
+        plan.push(`<b>At ${p.primary}</b> she is #${posRank} of ${atPos.length}. Moving to the top of the ${p.primary} depth chart means closing a ${f2(need(lead.index - p.index))} point gap on ${esc(lead.name)}.`);
+      } else {
+        plan.push(`<b>At ${p.primary}</b> she is first on the depth chart.`);
+      }
+    }
+    // Steals and blocks count double, so defense is the fastest way up for a scorer.
+    if (contrib[0][0] === "ppg" && pct(contrib[0][1], p.index) >= 45 && ![k1, k2].includes("stl")) {
+      plan.push(`<b>Defense is her fastest lever.</b> Points make up ${pct(contrib[0][1], p.index)}% of her index, but each steal or block counts double, so one more steal per game is worth as much as two more points.`);
+    }
+    // Her weakest area compared with the team, among the stats her position is judged on.
+    const weak = (FOCUS[p.primary] || keys).filter((k) => avg[k] > 0 && ![k1, k2].includes(k)).sort((x, y) => num(s[x]) / avg[x] - num(s[y]) / avg[y])[0];
+    if (weak && num(s[weak]) < avg[weak] * 0.75) {
+      plan.push(`<b>Biggest gap:</b> ${WORDS[weak]} (${f1(s[weak])} per game against a team average of ${f1(avg[weak])}). Getting to the team average adds ${f2((avg[weak] - num(s[weak])) * W[weak])} index points.`);
+    }
+    return { strengths, plan };
   }
 
   function render() {
@@ -74,8 +133,11 @@
     $("#dcCards").innerHTML = ranked.map((p) => {
       const rank = rankOf.get(p.name);
       const line = Object.keys(W).map((k) => `${f1(p.stats[k])} ${LABEL[k]}`).join(" · ");
+      const r = breakdown(p, rank, ranked);
       return `<article class="dc-card"><header><b>${rank}. ${esc(p.name)} (${esc(posLabel(p))})</b><span>Index ${f2(p.index)}</span></header>
-        <div class="dc-line">${line}</div><p><b>Why she ranks here:</b> ${esc(why(p, rank))}</p></article>`;
+        <div class="dc-line">${line}</div>
+        <p><b>Why she ranks here:</b> ${esc(r.strengths)}</p>
+        <h5>How she moves up</h5><ul class="dc-plan">${r.plan.map((t) => `<li>${t}</li>`).join("")}</ul></article>`;
     }).join("");
 
     $("#dcPosEdit").innerHTML = players.slice().sort((a, b) => a.name.localeCompare(b.name)).map((p) => `<tr data-name="${esc(p.name)}">
