@@ -109,7 +109,8 @@
       const w = info?.waves.find((x) => x.id === pv.wave);
       $("#pvTitle").textContent = w ? w.name : "Email";
       $("#pvSubject").textContent = pv.subject;
-      $("#pvFrame").srcdoc = pv.html;
+      // Links open in a new tab: the site refuses to load inside a frame.
+      $("#pvFrame").srcdoc = pv.html.replace(/^(<!doctype html>)?/i, '$1<base target="_blank">');
       $("#pvSms").textContent = pv.sms;
       $("#pvModal").classList.add("open");
     } catch (e) { toast(e.message); }
