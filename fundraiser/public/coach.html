@@ -309,6 +309,35 @@
           <label class="field">Position<input type="text" id="aPos" maxlength="30"></label>
           <button class="btn btn-primary" type="submit">Add player</button>
         </form>
+        <details class="bulk" id="bulkBox" open>
+          <summary>Add many players at once</summary>
+          <p class="muted" style="font-size:.9rem;margin:8px 0">One player per line, first name then last name. It is filled in with the 2026/27 roster. Anyone already on your player list is skipped.</p>
+          <textarea id="bulkNames" rows="8" spellcheck="false">Aiyana Haynes
+Janiyla Owens
+Nyla Parsons
+Sophia Butler
+Andrea Brady
+Catherine Bodway
+Kennedy Jeffress
+Maliya Lassiter
+Savanna Padgett
+Aliyna McCobb
+Makalyn Sparks
+Caitlin Wilson
+Brooklyn Wilson
+London Hahn
+Emma Barlow
+Gracie Bodway
+Journey Huntsman
+Heather Towne</textarea>
+          <div class="btn-row" style="margin-top:10px"><button class="btn btn-primary" id="bulkGo">Add players and make codes</button></div>
+          <div id="bulkOut" class="hidden">
+            <div class="notice warn" style="margin-top:14px"><span><b>Copy or print these codes now.</b> For safety they are shown only once. If one gets lost, tap New code next to her name below.</span></div>
+            <div class="btn-row" style="margin:12px 0"><button class="btn btn-glass btn-small" id="bulkCopyAll">Copy all</button><button class="btn btn-glass btn-small" id="bulkPrint">Print code cards</button></div>
+            <ul class="bulk-list" id="bulkRows"></ul>
+            <p class="muted" id="bulkSkipped" style="font-size:.88rem;margin:10px 0 0"></p>
+          </div>
+        </details>
         <div class="table-wrap" style="margin-top:16px">
           <table class="players">
             <thead><tr><th>Player</th><th>Status</th><th>Visits</th><th>Shares</th><th>Donation clicks</th><th>Confirmed</th><th>Other $</th><th>Actions</th></tr></thead>
@@ -319,7 +348,7 @@
 
       <div class="glass card span" id="outreachCard">
         <div class="section-head" style="margin-bottom:10px">
-          <div><h3 style="margin:0">Supporter outreach</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Each player adds at least <b id="orMinShow">20</b> supporters when she logs in. You check her list, then approve each message. Emails go out from the team automatically (9 AM to 8 PM Eastern). Players text their own supporters from their phones with the approved text.</p></div>
+          <div><h3 style="margin:0">Supporter outreach</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Each player adds up to <b id="orMaxShow">20</b> supporters when she logs in. You check her list, then approve each message. Emails go out from the team automatically (9 AM to 8 PM Eastern). Players text their own supporters from their phones with the approved text.</p></div>
           <span id="orProvider"></span>
         </div>
 
@@ -332,7 +361,7 @@
 
         <h4 class="or-h">Settings</h4>
         <form class="form" id="orForm" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));align-items:end">
-          <label class="field">Minimum supporters<input type="number" id="orMin" min="1" max="100" step="1"></label>
+          <label class="field">Most supporters per player<input type="number" id="orMax" min="1" max="100" step="1"></label>
           <label class="field">Test email <small>Your own email for test sends</small><input type="email" id="orTest" maxlength="120"></label>
           <label class="field">Mailing address <small>Optional, shown at the bottom of emails</small><input type="text" id="orAddr" maxlength="200"></label>
           <label class="switch"><input type="checkbox" id="orPause"> Pause all emails</label>
@@ -403,7 +432,7 @@
     <span class="eyebrow">Preview</span>
     <h3 id="pvTitle" style="margin:8px 0 4px"></h3>
     <p class="muted" style="margin:0 0 10px;font-size:.9rem">Subject: <b id="pvSubject"></b></p>
-    <iframe id="pvFrame" title="Email preview" sandbox=""></iframe>
+    <iframe id="pvFrame" title="Email preview" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>
     <p style="margin:14px 0 6px;font-weight:700">Text the player sends</p>
     <div class="pv-sms" id="pvSms"></div>
   </div>

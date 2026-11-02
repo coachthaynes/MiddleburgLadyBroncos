@@ -47,8 +47,9 @@
   }
 
   // A row counts once it has a name plus a good email or phone.
+  const maxRows = () => me.settings.maxContacts || 20;
   function refreshCount() {
-    const min = me.settings.minContacts || 20;
+    const max = maxRows();
     let n = 0;
     $$("#supRows .sup-row").forEach((r, i) => {
       const [name, email, phone] = ["name", "email", "phone"].map((k) => r.querySelector(`[data-k="${k}"]`).value.trim());
@@ -58,18 +59,24 @@
       r.querySelector("b").textContent = ok ? "✓" : i + 1;
     });
     $("#supCount").textContent = n;
-    $("#supBar").style.width = Math.min(100, (n / min) * 100) + "%";
+    $("#supBar").style.width = Math.min(100, (n / max) * 100) + "%";
+    $("#supAdd").classList.toggle("hidden", $$("#supRows .sup-row").length >= max);
     try { if (!me.player.contactsDone) localStorage.setItem(draftKey(), JSON.stringify(readRows())); } catch {}
   }
 
+  // Never more rows than the most supporters allowed.
   function addRows(list) {
+    const room = maxRows() - $$("#supRows .sup-row").length;
+    if (list.length > room) {
+      if (list.some((c) => c.name)) toast(`You can add up to ${maxRows()} supporters.`);
+      list = list.slice(0, Math.max(0, room));
+    }
     $("#supRows").insertAdjacentHTML("beforeend", list.map(rowHtml).join(""));
     refreshCount();
   }
 
   async function openSupporters(canCancel) {
-    const min = me.settings.minContacts || 20;
-    $$("[data-min]").forEach((el) => { el.textContent = min; });
+    $$("[data-max]").forEach((el) => { el.textContent = maxRows(); });
     $("#supErr").innerHTML = "";
     $("#supCancel").classList.toggle("hidden", !canCancel);
     let list = [];
@@ -80,7 +87,7 @@
       try { list = JSON.parse(localStorage.getItem(draftKey()) || "[]"); } catch {}
     }
     $("#supRows").innerHTML = "";
-    const blanks = Math.max(min - list.length, 3);
+    const blanks = list.length ? 3 : 5;
     addRows(list.concat(Array.from({ length: blanks }, () => ({}))));
     show("supporters");
     window.scrollTo({ top: 0 });
@@ -94,8 +101,9 @@
     refreshCount();
   });
   $("#supAdd").addEventListener("click", () => {
+    const before = $$("#supRows .sup-row").length;
     addRows([{}, {}, {}]);
-    $$("#supRows .sup-row").slice(-3)[0].querySelector("input").focus();
+    $$("#supRows .sup-row")[before]?.querySelector("input").focus();
   });
   $("#supCancel").addEventListener("click", () => { show("dash"); });
 

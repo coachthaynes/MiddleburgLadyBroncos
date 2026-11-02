@@ -351,7 +351,7 @@ async function playerRoutes(req: Request, parts: string[], player: Player) {
         contactCount: (await getContacts(player.id)).length,
         outreach: player.outreach || null,
       },
-      settings: { ...publicSettings(settings), requirePhotoApproval: settings.requirePhotoApproval, minContacts: settings.minContacts },
+      settings: { ...publicSettings(settings), requirePhotoApproval: settings.requirePhotoApproval, maxContacts: settings.maxContacts },
     });
   }
 
@@ -378,7 +378,7 @@ async function playerRoutes(req: Request, parts: string[], player: Player) {
 
   if (parts[0] === "contacts" && method === "GET") {
     const [contacts, log] = await Promise.all([getContacts(player.id), getLog(player.id)]);
-    return json({ contacts, status: contactStatus(log), min: settings.minContacts, done: !!player.contactsDone });
+    return json({ contacts, status: contactStatus(log), max: settings.maxContacts, done: !!player.contactsDone });
   }
 
   if (parts[0] === "contacts" && method === "PUT") {
@@ -387,8 +387,9 @@ async function playerRoutes(req: Request, parts: string[], player: Player) {
     if (!body.promise) return json({ error: "Please check the box to confirm these are people you know." }, 400);
     const { contacts, problems } = cleanContacts(body.contacts);
     if (problems.length) return json({ error: "A few contacts need fixing.", problems }, 400);
-    if (contacts.length < settings.minContacts) {
-      return json({ error: `Please add at least ${settings.minContacts} supporters. You have ${contacts.length} so far.` }, 400);
+    if (!contacts.length) return json({ error: "Add at least one supporter." }, 400);
+    if (contacts.length > settings.maxContacts) {
+      return json({ error: `You can add up to ${settings.maxContacts} supporters. Please remove ${contacts.length - settings.maxContacts}.` }, 400);
     }
     await saveContacts(player.id, contacts);
     // A fixed list goes back to the coach for another look.
@@ -609,7 +610,7 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       sponsorPrep: body.sponsorPrep && typeof body.sponsorPrep === "object"
         ? Object.fromEntries(Object.entries({ ...(cur.sponsorPrep || {}), ...body.sponsorPrep }).filter(([k]) => /^[a-z]{2,20}$/.test(k)).map(([k, v]) => [k, !!v]))
         : cur.sponsorPrep || {},
-      minContacts: body.minContacts === undefined ? cur.minContacts : Math.max(1, Math.min(100, Math.round(Number(body.minContacts)) || cur.minContacts)),
+      maxContacts: body.maxContacts === undefined ? cur.maxContacts : Math.max(1, Math.min(100, Math.round(Number(body.maxContacts)) || cur.maxContacts)),
       sendingPaused: body.sendingPaused === undefined ? cur.sendingPaused : !!body.sendingPaused,
       mailingAddress: clean(body.mailingAddress ?? cur.mailingAddress, 200),
       testEmail: body.testEmail === undefined ? cur.testEmail : normalizeEmail(body.testEmail),

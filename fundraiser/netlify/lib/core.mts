@@ -24,7 +24,7 @@ export interface Settings {
   logoKey: string;
   requirePhotoApproval: boolean;
   sponsorPrep: Record<string, boolean>; // "Before you sell sponsorships" checklist
-  minContacts: number;
+  maxContacts: number; // most supporters a player can add
   sendingPaused: boolean;
   mailingAddress: string;
   testEmail: string;
@@ -45,7 +45,7 @@ export const DEFAULT_SETTINGS: Settings = {
   logoKey: "",
   requirePhotoApproval: true,
   sponsorPrep: {},
-  minContacts: 20,
+  maxContacts: 20,
   sendingPaused: false,
   mailingAddress: "",
   testEmail: "",

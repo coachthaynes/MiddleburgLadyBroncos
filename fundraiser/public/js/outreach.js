@@ -15,8 +15,8 @@
   async function render(data) {
     overview = data;
     const s = data.settings;
-    $("#orMinShow").textContent = s.minContacts;
-    $("#orMin").value = s.minContacts;
+    $("#orMaxShow").textContent = s.maxContacts;
+    $("#orMax").value = s.maxContacts;
     $("#orTest").value = s.testEmail || "";
     $("#orAddr").value = s.mailingAddress || "";
     $("#orPause").checked = !!s.sendingPaused;
@@ -109,7 +109,8 @@
       const w = info?.waves.find((x) => x.id === pv.wave);
       $("#pvTitle").textContent = w ? w.name : "Email";
       $("#pvSubject").textContent = pv.subject;
-      $("#pvFrame").srcdoc = pv.html;
+      // Links open in a new tab: the site refuses to load inside a frame.
+      $("#pvFrame").srcdoc = pv.html.replace(/^(<!doctype html>)?/i, '$1<base target="_blank">');
       $("#pvSms").textContent = pv.sms;
       $("#pvModal").classList.add("open");
     } catch (e) { toast(e.message); }
@@ -192,7 +193,7 @@
     e.preventDefault();
     try {
       await api("/api/coach/settings", { method: "PUT", body: {
-        minContacts: $("#orMin").value, testEmail: $("#orTest").value, mailingAddress: $("#orAddr").value, sendingPaused: $("#orPause").checked,
+        maxContacts: $("#orMax").value, testEmail: $("#orTest").value, mailingAddress: $("#orAddr").value, sendingPaused: $("#orPause").checked,
       } });
       toast("Saved!");
       await reload();
