@@ -73,6 +73,12 @@
   to = "/contract-copy.html"
   status = 200
 
+# Red and Black Scrimmage announcement. The QR code points here.
+[[redirects]]
+  from = "/scrimmage"
+  to = "/scrimmage.html"
+  status = 200
+
 [[redirects]]
   from = "/players"
   to = "/players.html"
