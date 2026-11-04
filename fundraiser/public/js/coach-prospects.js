@@ -256,6 +256,18 @@
     }
   });
 
+  $("#prImport").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const text = $("#prImportText").value.trim();
+    if (!text) return;
+    try {
+      const r = await api("/api/coach/prospects/import", { method: "POST", body: { text } });
+      $("#prImportMsg").textContent = `Added ${r.added} businesses.${r.skipped ? ` Skipped ${r.skipped} already on your list or missing a name.` : ""}`;
+      $("#prImportText").value = "";
+      await load();
+    } catch (err) { $("#prImportMsg").textContent = err.message; }
+  });
+
   $("#prAdd").addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = e.target;

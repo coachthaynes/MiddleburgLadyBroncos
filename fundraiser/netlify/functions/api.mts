@@ -15,7 +15,7 @@ import {
 } from "../lib/messaging.mts";
 import { elevateProfiles, getDepth, getHome, getLinks, saveDepth, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
 import { createOrder, deleteOrder, listOrders, updateOrder } from "../lib/orders.mts";
-import { addProspect, deleteProspect, findBusinesses, findEmail, GROUPS, listProspects, playerProspects, playerUpdate, updateProspect } from "../lib/prospects.mts";
+import { addProspect, deleteProspect, findBusinesses, findEmail, GROUPS, importProspects, listProspects, playerProspects, playerUpdate, searchSource, updateProspect } from "../lib/prospects.mts";
 import { deleteContract, getContract, listContracts, signContract } from "../lib/contracts.mts";
 
 // The team store lives on its own Netlify site and is also served at mhsladybroncos.com/store/.
@@ -546,7 +546,7 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
     return json({
       prospects: await listProspects(),
       groups: Object.fromEntries(Object.entries(GROUPS).map(([k, g]) => [k, g.label])),
-      source: Netlify.env.get("GOOGLE_PLACES_KEY") ? "Google" : "the free map directory",
+      source: searchSource(),
       drip: await getSponsorDrip(),
       dripSteps: SPONSOR_DRIP,
       emailReady: providerStatus().email,
@@ -557,6 +557,10 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       const r = await findBusinesses(await req.json().catch(() => ({})));
       return "error" in r ? json({ error: r.error }, 400) : json(r);
     } catch (e: any) { return json({ error: e.message || "Search failed. Try again." }, 502); }
+  }
+  if (parts[0] === "prospects" && parts[1] === "import" && method === "POST") {
+    const body = await req.json().catch(() => ({}));
+    return json(await importProspects(body.text));
   }
   if (parts[0] === "prospects" && !parts[1] && method === "POST") {
     const r = await addProspect(await req.json().catch(() => ({})));

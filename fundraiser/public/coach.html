@@ -142,6 +142,15 @@
       </div>
 
       <details class="glass card" style="margin-top:18px">
+        <summary style="cursor:pointer;font-weight:700">Paste a list of businesses</summary>
+        <p class="muted" style="font-size:.9rem;margin:10px 0">One business per line: the name first, then any of the address, phone, email and website, separated by commas. You can also copy rows straight from a spreadsheet.</p>
+        <form class="form" id="prImport">
+          <textarea id="prImportText" rows="6" placeholder="Bronco Pizza, 2440 Blanding Blvd Middleburg, 904 555 0111, owner@broncopizza.com&#10;Clay Auto Repair, 904 555 0122, clayauto.com"></textarea>
+          <div class="btn-row"><button class="btn btn-primary" type="submit">Add these businesses</button><span class="muted" id="prImportMsg" style="align-self:center;font-size:.9rem"></span></div>
+        </form>
+      </details>
+
+      <details class="glass card" style="margin-top:18px">
         <summary style="cursor:pointer;font-weight:700">Add a business by hand</summary>
         <form class="form" id="prAdd" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));align-items:end;margin-top:10px">
           <label class="field">Business<input type="text" name="name" maxlength="100" required></label>
