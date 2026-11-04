@@ -296,6 +296,10 @@ export async function importProspects(text: unknown) {
     const cells = line.split(/\t|,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map((c) => c.replace(/^"|"$/g, "").trim()).filter(Boolean);
     const name = clean(cells.shift(), 100);
     if (name.length < 2 || /^(business|name)$/i.test(name)) { skipped++; continue; }
+    // "Contact: Jane Smith" names the person to ask for; it goes in the notes.
+    const ci = cells.findIndex((c) => /^contact\s*:/i.test(c));
+    const contact = ci >= 0 ? clean(cells.splice(ci, 1)[0].replace(/^contact\s*:\s*/i, ""), 80) : "";
+    const notes = contact ? `Contact: ${contact}` : "";
     const email = cells.find((c) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(c)) || "";
     const website = cells.find((c) => c !== email && /^(https?:\/\/)?(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i.test(c)) || "";
     const phone = cells.find((c) => c !== email && c !== website && (c.replace(/\D/g, "").length >= 10 && c.replace(/\D/g, "").length <= 11) && !/[a-z]{3}/i.test(c)) || "";
@@ -310,6 +314,7 @@ export async function importProspects(text: unknown) {
       if (!old.address && address) fill.address = clean(address, 160);
       if (!old.website && site) { fill.website = site; if (!old.email) fill.emailChecked = false; }
       if (!old.email && email) { fill.email = email.toLowerCase(); fill.emailFrom = "coach"; fill.emailChecked = true; }
+      if (notes && !(old.notes || "").includes(notes)) fill.notes = old.notes ? `${old.notes}\n${notes}` : notes;
       if (Object.keys(fill).length) { await saveProspect({ ...old, ...fill, updatedAt: now }); updated++; } else skipped++;
       continue;
     }
@@ -318,7 +323,7 @@ export async function importProspects(text: unknown) {
       id: `manual:${Date.now()}${i}`, name, category: "business", address: clean(address, 160), phone: clean(phone, 30),
       website: site,
       email: email.toLowerCase(), emailFrom: email ? "coach" : "", emailChecked: !!email || !website, chain: false, distance: 0,
-      status: "new", playerId: "", playerName: "", notes: "", playerNote: "", emails: [], addedAt: now, updatedAt: now, source: "coach",
+      status: "new", playerId: "", playerName: "", notes, playerNote: "", emails: [], addedAt: now, updatedAt: now, source: "coach",
     });
     have.add(norm(name));
     added++;
