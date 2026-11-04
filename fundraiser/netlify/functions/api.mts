@@ -15,7 +15,7 @@ import {
 } from "../lib/messaging.mts";
 import { elevateProfiles, getDepth, getHome, getLinks, saveDepth, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
 import { createOrder, deleteOrder, listOrders, updateOrder } from "../lib/orders.mts";
-import { addProspect, deleteProspect, findBusinesses, findEmail, GROUPS, importProspects, listProspects, playerProspects, playerUpdate, searchSource, updateProspect } from "../lib/prospects.mts";
+import { addProspect, askFor, deleteProspect, findBusinesses, findEmail, GROUPS, importProspects, listProspects, playerProspects, playerUpdate, searchSource, updateProspect } from "../lib/prospects.mts";
 import { deleteContract, getContract, listContracts, signContract } from "../lib/contracts.mts";
 
 // The team store lives on its own Netlify site and is also served at mhsladybroncos.com/store/.
@@ -544,7 +544,7 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
   // Sponsor prospects: businesses to reach out to, and who is visiting them
   if (parts[0] === "prospects" && !parts[1] && method === "GET") {
     return json({
-      prospects: await listProspects(),
+      prospects: (await listProspects()).map((p) => ({ ...p, ask: askFor(p) })),
       groups: Object.fromEntries(Object.entries(GROUPS).map(([k, g]) => [k, g.label])),
       source: searchSource(),
       drip: await getSponsorDrip(),

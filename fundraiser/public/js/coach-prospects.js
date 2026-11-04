@@ -16,6 +16,20 @@
       body: "Hi {business} team,\n\nThis is my last note about our sponsorship program, and I promise not to fill up your inbox. If {business} would like to support the Lady Broncos this season, everything is here: {link}\n\nIf now is not the right time, I completely understand. Thank you for being part of the Middleburg community.\n\nCoach Tenise Haynes\nHead Coach, Middleburg Lady Broncos Basketball" },
   ];
 
+  // Food places: ask for team meals on game days, from one game up to the whole season.
+  const MEAL_STEPS = [
+    { n: 1, label: "Intro email", wait: 0,
+      subject: "Team meals for Middleburg Lady Broncos Basketball",
+      body: "Hi {business} team,\n\nMy name is Tenise Haynes, and I am the head girls basketball coach at Middleburg High School. Our Lady Broncos are a hard working group of young women, and we are looking for local restaurants to help feed our team on game days this season.\n\nWould {business} be willing to donate team meals for our players and coaches? You can cover as few as 1 game or as many as all 25 games on our schedule, whatever works best for you. A good meal before a game or after a long road trip means a lot to our girls.\n\nTo thank you, we will give {business} a shout out at our home games and on our team social media, and we will make sure our families know where their team eats.\n\nJust reply with how many games you would like to cover, and I will send our schedule and head count so you can pick the dates.\n\n{playerLine}Thank you for supporting our community,\nCoach Tenise Haynes\nHead Coach, Middleburg Lady Broncos Basketball\n\nIf you would rather not hear from us, just reply and let me know." },
+    { n: 2, label: "Follow up", wait: 5,
+      subject: "Following up: Lady Broncos team meals",
+      body: "Hi {business} team,\n\nI wanted to follow up on my note about team meals for Middleburg Lady Broncos Basketball. Even one meal for one game makes a big difference for our girls, and you are welcome to cover anywhere from 1 to all 25 games.\n\nJust reply with the number of games, and I will send our schedule and head count. I am also happy to talk by phone or stop by in person.\n\nThank you,\nCoach Tenise Haynes\nHead Coach, Middleburg Lady Broncos Basketball" },
+    { n: 3, label: "Last note", wait: 10,
+      subject: "One last note from the Lady Broncos",
+      body: "Hi {business} team,\n\nThis is my last note about team meals, and I promise not to fill up your inbox. If {business} would like to feed the Lady Broncos for a game or two this season, just reply to this email and we will set it up.\n\nIf now is not the right time, I completely understand. Thank you for being part of the Middleburg community.\n\nCoach Tenise Haynes\nHead Coach, Middleburg Lady Broncos Basketball" },
+  ];
+  const stepsFor = (p) => (p.ask === "meals" ? MEAL_STEPS : STEPS);
+
   let list = [];
   let players = [];
   let filter = "all";
@@ -26,7 +40,7 @@
   const enc = encodeURIComponent;
 
   const lastEmail = (p) => p.emails.slice().sort((a, b) => b.step - a.step)[0];
-  const nextStep = (p) => { const l = lastEmail(p); return l ? STEPS[l.step] : STEPS[0]; };
+  const nextStep = (p) => { const l = lastEmail(p); return l ? stepsFor(p)[l.step] : stepsFor(p)[0]; };
   // A follow up is due once enough days have passed since the last email and the business has not answered.
   function followUpDue(p) {
     const l = lastEmail(p), next = nextStep(p);
@@ -70,7 +84,7 @@
     const steps = p.emails.length ? `<div class="pr-steps">${p.emails.map((e) => `${STEPS[e.step - 1].label} sent ${day(e.at)}`).join(" · ")}${followUpDue(p) ? ' · <b style="color:var(--red)">Follow up due</b>' : ""}</div>` : "";
     return `<article class="pr" data-id="${esc(p.id)}">
       <div class="pr-head">
-        <div><input type="checkbox" data-pick ${chosen.has(p.id) ? "checked" : ""} aria-label="Select ${esc(p.name)}"><div><b>${esc(p.name)}</b><small>${esc(p.category)}${p.distance ? ` · ${p.distance} miles` : ""}</small></div></div>
+        <div><input type="checkbox" data-pick ${chosen.has(p.id) ? "checked" : ""} aria-label="Select ${esc(p.name)}"><div><b>${esc(p.name)}</b><small>${p.ask === "meals" ? "Team meals · " : ""}${esc(p.category)}${p.distance ? ` · ${p.distance} miles` : ""}</small></div></div>
         <span class="pill ${PILL[p.status]}">${STATUS[p.status]}${p.playerName ? ` · ${esc(p.playerName.split(" ")[0])}` : ""}</span>
       </div>
       <div class="pr-info">
@@ -83,6 +97,7 @@
       <div class="pr-body">
         ${emailBox}
         <label class="field">Assigned to<select class="gselect" data-f="player">${playerOpts(p.playerId)}</select></label>
+        <label class="field">Ask for<select class="gselect" data-f="ask"><option value="sponsor"${p.ask !== "meals" ? " selected" : ""}>Sponsorship</option><option value="meals"${p.ask === "meals" ? " selected" : ""}>Team meals</option></select></label>
         <label class="field">Status<select class="gselect" data-f="status">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${k === p.status ? " selected" : ""}>${v}</option>`).join("")}</select></label>
         <label class="field wide">Your notes<input class="gselect" type="text" maxlength="800" data-f="notes" value="${esc(p.notes)}" placeholder="Who you talked to, what they said, when to follow up"></label>
         <div class="btn-row wide">
@@ -229,6 +244,7 @@
     const f = e.target.dataset.f;
     if (f === "status") patch(id, { status: e.target.value }, "Saved");
     if (f === "notes") patch(id, { notes: e.target.value }, "Note saved");
+    if (f === "ask") patch(id, { ask: e.target.value }, e.target.value === "meals" ? "Will ask for team meals" : "Will ask for a sponsorship");
     if (f === "email") patch(id, { email: e.target.value.trim() }, "Email saved");
     if (f === "player") {
       const pl = players.find((p) => p.id === e.target.value);

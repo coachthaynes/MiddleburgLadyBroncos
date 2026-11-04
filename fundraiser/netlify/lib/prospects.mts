@@ -27,6 +27,7 @@ export interface Prospect {
   playerName: string;
   notes: string;
   playerNote: string;
+  ask?: "sponsor" | "meals"; // what the coach asks for; food places default to team meals
   emails: { step: number; at: string }[]; // coach's own emails, by step
   addedAt: string;
   updatedAt: string;
@@ -55,6 +56,13 @@ const miles = (lat: number, lng: number) => {
 const EMAIL_RE = /[A-Z0-9._%+]+@[A-Z0-9.]+\.[A-Z]{2,}/gi;
 const goodEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e) && !/\.(png|jpe?g|gif|webp|svg)$/i.test(e)
   && !/(@example\.|@sentry|wixpress|@domain\.com|@email\.com|yourname|@godaddy|@squarespace|@wordpress|schema\.org|^(name|user|you|your)@)/i.test(e);
+
+// Food places are asked to feed the team on game days instead of buying a sponsorship.
+const FOOD = /restaurant|cafe|coffee|bakery|fast food|ice cream|pizza|bbq|bar b q|barbecue|grill|sushi|seafood|brunch|diner|kitchen|cocina|taco|wings|deli|bistro|smoothie|nutrition|treats|sweet|toppings|culver|mcdonald|chick|subway|jeremiah|meal takeaway|food|eatery|steak|burger|donut|bagel/i;
+export function askFor(p: Pick<Prospect, "name" | "category" | "ask">): "sponsor" | "meals" {
+  if (p.ask === "sponsor" || p.ask === "meals") return p.ask;
+  return FOOD.test(`${p.name} ${p.category}`) ? "meals" : "sponsor";
+}
 
 export async function listProspects(): Promise<Prospect[]> {
   const store = db();
@@ -221,7 +229,7 @@ async function fetchText(url: string) {
 export async function findEmail(id: string) {
   const p = await getProspect(id);
   if (!p) return null;
-  if (p.email || !p.website) { p.emailChecked = true; await saveProspect(p); return p; }
+  if (p.email || !p.website) { p.emailChecked = true; await saveProspect(p); return { ...p, ask: askFor(p) }; }
   let host = "";
   try { host = new URL(p.website).hostname.replace(/^www\./, ""); } catch { /* bad link */ }
   const base = p.website.replace(/\/+$/, "");
@@ -241,7 +249,7 @@ export async function findEmail(id: string) {
   p.emailChecked = true;
   if (pick) { p.email = pick; p.emailFrom = "website"; }
   await saveProspect(p);
-  return p;
+  return { ...p, ask: askFor(p) };
 }
 
 // ---------- coach and player updates ----------
@@ -250,6 +258,7 @@ export async function updateProspect(id: string, body: any) {
   if (!p) return null;
   if (body.status && (STATUSES as readonly string[]).includes(body.status)) p.status = body.status;
   if (body.notes !== undefined) p.notes = clean(body.notes, 800);
+  if (body.ask === "sponsor" || body.ask === "meals") p.ask = body.ask;
   if (body.email !== undefined) {
     const e = clean(body.email, 120).toLowerCase();
     if (!e || /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)) { p.email = e; p.emailFrom = e ? "coach" : ""; }
@@ -268,7 +277,7 @@ export async function updateProspect(id: string, body: any) {
     if (["new", "assigned"].includes(p.status)) p.status = "emailed";
   }
   await saveProspect(p);
-  return p;
+  return { ...p, ask: askFor(p) };
 }
 
 export async function addProspect(body: any) {
@@ -282,7 +291,7 @@ export async function addProspect(body: any) {
     emailChecked: true, chain: false, distance: 0, status: "new", playerId: "", playerName: "", notes: "", playerNote: "", emails: [], addedAt: now, updatedAt: now, source: "coach",
   };
   await saveProspect(p);
-  return { ok: true, prospect: p };
+  return { ok: true, prospect: { ...p, ask: askFor(p) } };
 }
 
 // Paste a list: one business per line, with the name first and then any of address, phone, email
@@ -338,7 +347,7 @@ export async function deleteProspect(id: string) {
 // What a player sees: only the businesses assigned to her, without the coach's notes.
 export async function playerProspects(playerId: string) {
   return (await listProspects()).filter((p) => p.playerId === playerId).map((p) => ({
-    id: p.id, name: p.name, category: p.category, address: p.address, phone: p.phone, website: p.website, status: p.status, playerNote: p.playerNote,
+    id: p.id, name: p.name, category: p.category, address: p.address, phone: p.phone, website: p.website, status: p.status, playerNote: p.playerNote, ask: askFor(p),
   }));
 }
 

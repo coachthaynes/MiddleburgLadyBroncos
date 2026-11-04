@@ -231,7 +231,7 @@
       const map = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.name + " " + (b.address || "Middleburg FL"))}`;
       return `<li data-id="${esc(b.id)}">
         <div class="biz-top"><b>${esc(b.name)}</b><span class="pill ${["interested", "signed"].includes(b.status) ? "good" : b.status === "visited" ? "warn" : ""}">${BIZ[b.status] || "Not visited yet"}</span></div>
-        <small>${esc(b.category)}</small>
+        <small>${b.ask === "meals" ? "Ask about donating team meals for 1 to 25 games" : "Ask about a sponsorship"}${b.category && b.category !== "business" ? ` · ${esc(b.category)}` : ""}</small>
         <div class="biz-links"><a href="${esc(map)}" target="_blank" rel="noopener">${esc(b.address || "Map")}</a>${b.phone ? ` · <a href="tel:${esc(b.phone.replace(/[^\d+]/g, ""))}">${esc(b.phone)}</a>` : ""}</div>
         <div class="biz-btns">${[["visited", "I visited"], ["interested", "They are interested"], ["signed", "They signed up"], ["notnow", "Not this year"]].map(([k, l]) => `<button class="btn btn-small ${b.status === k ? "btn-primary" : "btn-glass"}" data-biz="${k}">${l}</button>`).join("")}</div>
         <label class="field" style="margin-top:8px">What happened? <small>Who you talked to, when to come back</small><input type="text" maxlength="400" data-biznote value="${esc(b.playerNote || "")}"></label>
