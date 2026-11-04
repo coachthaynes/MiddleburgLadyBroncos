@@ -3,9 +3,8 @@
 // herself from her own email account; the site only writes the message and keeps track.
 import { createHash } from "node:crypto";
 import { clean, cleanUrl, db, listSponsors } from "./core.mts";
+import { DIRECTORY } from "./directory.mts";
 
-// Middleburg, Florida.
-export const HOME = { lat: 30.0686, lng: -81.8604 };
 
 export const STATUSES = ["new", "assigned", "emailed", "visited", "interested", "signed", "notnow"] as const;
 export type ProspectStatus = (typeof STATUSES)[number];
@@ -34,25 +33,20 @@ export interface Prospect {
   source: string;
 }
 
-// Business groups the coach can search, mapped to map database tags and Google place types.
-export const GROUPS: Record<string, { label: string; osm: string[]; google: string[] }> = {
-  food: { label: "Food and drink", osm: ['amenity~"^(restaurant|cafe|fast_food|ice_cream|bar|pub)$"', 'shop~"^(bakery|butcher|deli|confectionery|beverages|alcohol)$"'], google: ["restaurant", "cafe", "bakery", "meal_takeaway", "ice_cream_shop"] },
-  auto: { label: "Auto", osm: ['shop~"^(car|car_repair|tyres|car_parts|motorcycle)$"', 'amenity~"^(car_wash|fuel)$"', 'craft~"^(car_repair)$"'], google: ["car_repair", "car_dealer", "car_wash", "gas_station"] },
-  health: { label: "Health and beauty", osm: ['amenity~"^(dentist|doctors|clinic|veterinary|pharmacy)$"', 'healthcare', 'shop~"^(hairdresser|beauty|massage|optician|cosmetics)$"'], google: ["dentist", "doctor", "veterinary_care", "beauty_salon", "hair_salon", "physiotherapist"] },
-  trades: { label: "Home services and trades", osm: ['craft', 'shop~"^(hardware|doityourself|garden_centre|trade|appliance)$"'], google: ["plumber", "electrician", "roofing_contractor", "general_contractor", "landscaping"] },
-  shops: { label: "Shops", osm: ['shop~"^(clothes|shoes|sports|gift|florist|jewelry|furniture|pet|books|toys|convenience|variety_store|second_hand|farm)$"'], google: ["clothing_store", "florist", "pet_store", "furniture_store", "sporting_goods_store", "jewelry_store"] },
-  offices: { label: "Professional offices", osm: ["office"], google: ["insurance_agency", "real_estate_agency", "accounting", "lawyer", "bank"] },
-  fun: { label: "Fitness and fun", osm: ['leisure~"^(fitness_centre|sports_centre|bowling_alley|dance)$"', 'amenity~"^(cinema|childcare)$"'], google: ["gym", "bowling_alley", "child_care_agency", "amusement_center"] },
+// Kinds of business in the team directory.
+export const GROUPS: Record<string, { label: string }> = {
+  food: { label: "Food and drink" },
+  auto: { label: "Auto" },
+  health: { label: "Health and beauty" },
+  trades: { label: "Home services and trades" },
+  shops: { label: "Shops" },
+  offices: { label: "Professional offices" },
+  fun: { label: "Fitness and fun" },
+  community: { label: "Community groups and members" },
 };
 
 const key = (id: string) => `prospects/${createHash("sha256").update(id).digest("hex").slice(0, 32)}`;
 const norm = (s: string) => String(s || "").toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]/g, "");
-const miles = (lat: number, lng: number) => {
-  const r = 3958.8, toRad = (d: number) => (d * Math.PI) / 180;
-  const dLat = toRad(lat - HOME.lat), dLng = toRad(lng - HOME.lng);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(HOME.lat)) * Math.cos(toRad(lat)) * Math.sin(dLng / 2) ** 2;
-  return Math.round(2 * r * Math.asin(Math.sqrt(a)) * 10) / 10;
-};
 const EMAIL_RE = /[A-Z0-9._%+]+@[A-Z0-9.]+\.[A-Z]{2,}/gi;
 const goodEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e) && !/\.(png|jpe?g|gif|webp|svg)$/i.test(e)
   && !/(@example\.|@sentry|wixpress|@domain\.com|@email\.com|yourname|@godaddy|@squarespace|@wordpress|schema\.org|^(name|user|you|your)@)/i.test(e);
@@ -79,108 +73,48 @@ async function saveProspect(p: Prospect) {
 }
 
 // ---------- finding businesses ----------
-type Found = Omit<Prospect, "status" | "playerId" | "playerName" | "notes" | "playerNote" | "emails" | "addedAt" | "updatedAt" | "emailChecked">;
 
-async function searchOsm(radiusMi: number, groups: string[]): Promise<Found[]> {
-  const r = Math.round(radiusMi * 1609);
-  const parts = groups.flatMap((g) => GROUPS[g]?.osm || []).flatMap((t) => [`node[${t}][name](around:${r},${HOME.lat},${HOME.lng});`, `way[${t}][name](around:${r},${HOME.lat},${HOME.lng});`]);
-  const q = `[out:json][timeout:15];(${parts.join("")});out center tags 300;`;
-  // The free directory runs on volunteer servers that are often busy, so try a few in turn.
-  const servers = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
-  const started = Date.now();
-  let data: { elements: any[] } | null = null, last = "";
-  for (const url of servers) {
-    const left = 9000 - (Date.now() - started);
-    if (left < 1500) break;
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), Math.min(left, 6000));
-    try {
-      const res = await fetch(url, {
-        method: "POST", signal: ctrl.signal,
-        headers: { "content-type": "application/x-www-form-urlencoded", "user-agent": "mhsladybroncos.com sponsor finder" },
-        body: "data=" + encodeURIComponent(q),
-      });
-      if (res.ok) { data = (await res.json()) as { elements: any[] }; break; }
-      last = `answered ${res.status}`;
-    } catch { last = "did not answer"; } finally { clearTimeout(timer); }
-  }
-  if (!data) throw new Error(`The business directory is busy right now (${last}). Try again in a minute.`);
-  return data.elements.map((e) => {
-    const t = e.tags || {};
-    const lat = e.lat ?? e.center?.lat, lng = e.lon ?? e.center?.lon;
-    const addr = [[t["addr:housenumber"], t["addr:street"]].filter(Boolean).join(" "), t["addr:city"]].filter(Boolean).join(", ");
-    const email = clean(t.email || t["contact:email"] || "", 120).toLowerCase();
-    return {
-      id: `osm:${e.type}/${e.id}`,
-      name: clean(t.name, 100),
-      category: clean((t.shop || t.amenity || t.craft || t.office || t.healthcare || t.leisure || "business").replace(/_/g, " "), 40),
-      address: clean(addr, 160),
-      phone: clean(t.phone || t["contact:phone"] || "", 30),
-      website: cleanUrl(t.website || t["contact:website"] || ""),
-      email: goodEmail(email) ? email : "",
-      emailFrom: goodEmail(email) ? "listing" : "",
-      chain: !!(t.brand || t["brand:wikidata"]),
-      distance: lat && lng ? miles(lat, lng) : 0,
-      source: "map",
-    };
-  });
-}
+export const searchSource = () => "the team directory";
 
-async function searchGoogle(radiusMi: number, groups: string[], apiKey: string): Promise<Found[]> {
-  const types = [...new Set(groups.flatMap((g) => GROUPS[g]?.google || []))];
-  const out: Found[] = [];
-  // Google allows up to 50 types and 20 results a call, so ask a few types at a time.
-  for (let i = 0; i < types.length; i += 4) {
-    const res = await fetch("https://places.googleapis.com/v1/places:searchNearby", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json", "X-Goog-Api-Key": apiKey,
-        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.primaryTypeDisplayName,places.location",
-      },
-      body: JSON.stringify({ includedTypes: types.slice(i, i + 4), maxResultCount: 20, locationRestriction: { circle: { center: { latitude: HOME.lat, longitude: HOME.lng }, radius: Math.min(50000, radiusMi * 1609) } } }),
-    });
-    if (!res.ok) throw new Error(`Google search failed (${res.status}). Check the Google key.`);
-    const data = (await res.json()) as { places?: any[] };
-    for (const p of data.places || []) {
-      out.push({
-        id: `google:${p.id}`, name: clean(p.displayName?.text, 100), category: clean(p.primaryTypeDisplayName?.text || "business", 40),
-        address: clean(p.formattedAddress, 160), phone: clean(p.nationalPhoneNumber, 30), website: cleanUrl(p.websiteUri || ""),
-        email: "", emailFrom: "", chain: false, distance: p.location ? miles(p.location.latitude, p.location.longitude) : 0, source: "google",
-      });
-    }
-  }
-  return out;
-}
-
-// Which directory to use: Google when its key is set, otherwise the free map directory.
-export function searchSource() {
-  if (Netlify.env.get("GOOGLE_PLACES_KEY")) return "Google";
-  return "the free map directory";
-}
-
-// Search, then add only businesses we do not already have or already work with as sponsors.
+// Add businesses from the team directory, skipping any already on the list or already sponsors.
 export async function findBusinesses(body: any) {
-  const radius = [3, 5, 10, 15, 25].includes(Number(body?.radius)) ? Number(body.radius) : 10;
   const groups = (Array.isArray(body?.groups) ? body.groups : Object.keys(GROUPS)).filter((g: string) => GROUPS[g]);
   if (!groups.length) return { error: "Pick at least one kind of business." };
-  const localOnly = body?.localOnly !== false;
-  const googleKey = Netlify.env.get("GOOGLE_PLACES_KEY") || "";
-  const found = googleKey ? await searchGoogle(radius, groups, googleKey) : await searchOsm(radius, groups);
+  const found = DIRECTORY.filter((d) => groups.includes(d.group));
   const [have, sponsors] = await Promise.all([listProspects(), listSponsors()]);
-  const seen = new Set([...have.map((p) => norm(p.name)), ...sponsors.map((s) => norm(s.business))]);
-  const haveIds = new Set(have.map((p) => p.id));
+  const existing = new Map(have.map((p) => [norm(p.name), p] as const));
+  const seen = new Set([...existing.keys(), ...sponsors.map((s) => norm(s.business))]);
   const now = new Date().toISOString();
-  let added = 0, skippedChains = 0, skippedKnown = 0;
-  for (const f of found) {
-    if (!f.name) continue;
-    if (localOnly && f.chain) { skippedChains++; continue; }
-    if (haveIds.has(f.id) || seen.has(norm(f.name))) { skippedKnown++; continue; }
-    seen.add(norm(f.name));
-    await saveProspect({ ...f, emailChecked: !!f.email, status: "new", playerId: "", playerName: "", notes: "", playerNote: "", emails: [], addedAt: now, updatedAt: now });
+  let added = 0, updated = 0, skippedKnown = 0;
+  for (const d of found) {
+    // Already on the list: fill in anything it is missing and keep what the coach has.
+    const old = existing.get(norm(d.name));
+    if (old) {
+      const fill: Partial<Prospect> = {};
+      if (!old.email && d.email) Object.assign(fill, { email: d.email, emailFrom: "listing", emailChecked: true });
+      if (!old.phone && d.phone) fill.phone = d.phone;
+      if (!old.address && d.address) fill.address = d.address;
+      if (!old.website && d.website) fill.website = d.website;
+      const note = d.contact ? `Contact: ${d.contact}` : "";
+      if (note && !(old.notes || "").includes(note)) fill.notes = old.notes ? `${old.notes}\n${note}` : note;
+      if (Object.keys(fill).length) { await saveProspect({ ...old, ...fill, updatedAt: now }); updated++; } else skippedKnown++;
+      continue;
+    }
+    if (seen.has(norm(d.name))) { skippedKnown++; continue; }
+    seen.add(norm(d.name));
+    await saveProspect({
+      id: `dir:${norm(d.name)}`, name: d.name, category: GROUPS[d.group].label, address: d.address, phone: d.phone,
+      website: d.website, email: d.email, emailFrom: d.email ? "listing" : "", emailChecked: !!d.email || !d.website,
+      chain: false, distance: 0, status: "new", playerId: "", playerName: "", notes: d.contact ? `Contact: ${d.contact}` : "",
+      playerNote: "", emails: [], addedAt: now, updatedAt: now, source: "directory",
+    });
     added++;
   }
-  return { added, found: found.length, skippedChains, skippedKnown, source: searchSource() };
+  return { added, updated, found: found.length, skippedChains: 0, skippedKnown, source: searchSource() };
 }
+
+// How many directory businesses there are of each kind.
+export const groupLabels = () => Object.fromEntries(Object.entries(GROUPS).map(([k, g]) => [k, `${g.label} (${DIRECTORY.filter((d) => d.group === k).length})`]));
 
 // ---------- pulling an email address from a business website ----------
 async function fetchText(url: string) {

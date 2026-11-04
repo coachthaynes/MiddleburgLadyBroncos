@@ -133,7 +133,6 @@
       const [d, o] = await Promise.all([api("/api/coach/prospects"), api("/api/coach/overview").catch(() => ({ players: [] }))]);
       list = d.prospects || [];
       players = (o.players || []).map((p) => ({ id: p.id, name: [p.first, p.last].filter(Boolean).join(" ") || p.name })).sort((a, b) => a.name.localeCompare(b.name));
-      $("#prSource").textContent = d.source;
       $("#prGroups").innerHTML = Object.entries(d.groups).map(([k, v]) => `<label><input type="checkbox" value="${esc(k)}" checked> ${esc(v)}</label>`).join("");
       const opts = players.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
       $("#prPlayerFilter").innerHTML = `<option value="">Every player</option>${opts}`;
@@ -153,31 +152,21 @@
   }
 
   // ----- search -----
-  // One kind of business per request keeps each search small, so the busy free directory can answer.
   $("#prSearch").addEventListener("submit", async (e) => {
     e.preventDefault();
     const groups = $$("#prGroups input:checked").map((x) => x.value);
     if (!groups.length) { $("#prSearchMsg").textContent = "Pick at least one kind of business."; return; }
     const btn = $("#prSearchBtn");
     btn.disabled = true;
-    const total = { added: 0, found: 0, skippedKnown: 0, skippedChains: 0 }, failed = [];
-    let source = "";
-    for (const [i, g] of groups.entries()) {
-      const label = $(`#prGroups input[value="${g}"]`).parentElement.textContent.trim();
-      btn.textContent = `Searching ${i + 1} of ${groups.length}...`;
-      $("#prSearchMsg").textContent = `Searching ${label.toLowerCase()}...`;
-      try {
-        const r = await api("/api/coach/prospects/search", { method: "POST", body: { radius: $("#prRadius").value, groups: [g], localOnly: $("#prLocal").checked } });
-        total.added += r.added; total.found += r.found; total.skippedKnown += r.skippedKnown; total.skippedChains += r.skippedChains; source = r.source;
-      } catch { failed.push(label); }
-    }
-    $("#prSearchMsg").textContent = `${source ? `${source[0].toUpperCase()}${source.slice(1)} listed ${total.found} businesses. ` : ""}Added ${total.added} new ones.`
-      + (total.skippedKnown ? ` Skipped ${total.skippedKnown} already on your list or already sponsors.` : "")
-      + (total.skippedChains ? ` Skipped ${total.skippedChains} big chains.` : "")
-      + (failed.length ? ` The directory was too busy for: ${failed.join(", ")}. Search those again in a minute.` : "")
-      + (total.added ? " Tap Find emails on their websites next." : "");
+    btn.textContent = "Adding...";
+    try {
+      const r = await api("/api/coach/prospects/search", { method: "POST", body: { groups } });
+      $("#prSearchMsg").textContent = `Added ${r.added} businesses from the team directory.`
+        + (r.updated ? ` Filled in emails or details for ${r.updated} already on your list.` : "")
+        + (r.skippedKnown ? ` Skipped ${r.skippedKnown} with nothing new or already sponsors.` : "");
+    } catch (err) { $("#prSearchMsg").textContent = err.message; }
     btn.disabled = false;
-    btn.textContent = "Search for businesses";
+    btn.textContent = "Add these businesses";
     await load();
   });
 
