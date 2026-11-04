@@ -138,18 +138,32 @@
   }
 
   // ----- search -----
+  // One kind of business per request keeps each search small, so the busy free directory can answer.
   $("#prSearch").addEventListener("submit", async (e) => {
     e.preventDefault();
     const groups = $$("#prGroups input:checked").map((x) => x.value);
+    if (!groups.length) { $("#prSearchMsg").textContent = "Pick at least one kind of business."; return; }
     const btn = $("#prSearchBtn");
-    btn.disabled = true; btn.textContent = "Searching...";
-    $("#prSearchMsg").textContent = "This can take up to a minute.";
-    try {
-      const r = await api("/api/coach/prospects/search", { method: "POST", body: { radius: $("#prRadius").value, groups, localOnly: $("#prLocal").checked } });
-      $("#prSearchMsg").textContent = `Added ${r.added} new businesses from ${r.source}.${r.skippedKnown ? ` Skipped ${r.skippedKnown} already on your list or already sponsors.` : ""}${r.skippedChains ? ` Skipped ${r.skippedChains} big chains.` : ""}${r.added ? " Tap Find emails on their websites next." : ""}`;
-      await load();
-    } catch (err) { $("#prSearchMsg").textContent = err.message; }
-    finally { btn.disabled = false; btn.textContent = "Search for businesses"; }
+    btn.disabled = true;
+    const total = { added: 0, skippedKnown: 0, skippedChains: 0 }, failed = [];
+    let source = "";
+    for (const [i, g] of groups.entries()) {
+      const label = $(`#prGroups input[value="${g}"]`).parentElement.textContent.trim();
+      btn.textContent = `Searching ${i + 1} of ${groups.length}...`;
+      $("#prSearchMsg").textContent = `Searching ${label.toLowerCase()}...`;
+      try {
+        const r = await api("/api/coach/prospects/search", { method: "POST", body: { radius: $("#prRadius").value, groups: [g], localOnly: $("#prLocal").checked } });
+        total.added += r.added; total.skippedKnown += r.skippedKnown; total.skippedChains += r.skippedChains; source = r.source;
+      } catch { failed.push(label); }
+    }
+    $("#prSearchMsg").textContent = `Added ${total.added} new businesses${source ? ` from ${source}` : ""}.`
+      + (total.skippedKnown ? ` Skipped ${total.skippedKnown} already on your list or already sponsors.` : "")
+      + (total.skippedChains ? ` Skipped ${total.skippedChains} big chains.` : "")
+      + (failed.length ? ` The directory was too busy for: ${failed.join(", ")}. Search those again in a minute.` : "")
+      + (total.added ? " Tap Find emails on their websites next." : "");
+    btn.disabled = false;
+    btn.textContent = "Search for businesses";
+    await load();
   });
 
   // Look through each website for an email address, three at a time.

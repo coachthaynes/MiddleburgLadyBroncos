@@ -76,14 +76,27 @@ type Found = Omit<Prospect, "status" | "playerId" | "playerName" | "notes" | "pl
 async function searchOsm(radiusMi: number, groups: string[]): Promise<Found[]> {
   const r = Math.round(radiusMi * 1609);
   const parts = groups.flatMap((g) => GROUPS[g]?.osm || []).flatMap((t) => [`node[${t}][name](around:${r},${HOME.lat},${HOME.lng});`, `way[${t}][name](around:${r},${HOME.lat},${HOME.lng});`]);
-  const q = `[out:json][timeout:40];(${parts.join("")});out center tags 600;`;
-  const res = await fetch("https://overpass-api.de/api/interpreter", {
-    method: "POST", headers: { "content-type": "application/x-www-form-urlencoded", "user-agent": "mhsladybroncos.com sponsor finder" },
-    body: "data=" + encodeURIComponent(q),
-  }).catch(() => null);
-  if (!res) throw new Error("Could not reach the business directory. Try again in a minute.");
-  if (!res.ok) throw new Error(`The business directory did not answer (${res.status}). Try again in a minute.`);
-  const data = (await res.json()) as { elements: any[] };
+  const q = `[out:json][timeout:15];(${parts.join("")});out center tags 300;`;
+  // The free directory runs on volunteer servers that are often busy, so try a few in turn.
+  const servers = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
+  const started = Date.now();
+  let data: { elements: any[] } | null = null, last = "";
+  for (const url of servers) {
+    const left = 9000 - (Date.now() - started);
+    if (left < 1500) break;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), Math.min(left, 6000));
+    try {
+      const res = await fetch(url, {
+        method: "POST", signal: ctrl.signal,
+        headers: { "content-type": "application/x-www-form-urlencoded", "user-agent": "mhsladybroncos.com sponsor finder" },
+        body: "data=" + encodeURIComponent(q),
+      });
+      if (res.ok) { data = (await res.json()) as { elements: any[] }; break; }
+      last = `answered ${res.status}`;
+    } catch { last = "did not answer"; } finally { clearTimeout(timer); }
+  }
+  if (!data) throw new Error(`The business directory is busy right now (${last}). Try again in a minute.`);
   return data.elements.map((e) => {
     const t = e.tags || {};
     const lat = e.lat ?? e.center?.lat, lng = e.lon ?? e.center?.lon;
