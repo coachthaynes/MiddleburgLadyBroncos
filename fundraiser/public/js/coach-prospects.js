@@ -52,7 +52,12 @@
     const vars = { business: p.name, link: `${SITE}/sponsor`, packet: `${SITE}/sponsor-packet.pdf`, playerLine: first ? `One of our players, ${first}, may also stop by to introduce herself. ` : "" };
     return t.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
   }
-  const gmailLink = (p, s) => `https://mail.google.com/mail/?view=cm&fs=1&to=${enc(p.email)}&su=${enc(fill(s.subject, p))}&body=${enc(fill(s.body, p))}`;
+  // Gmail on a computer opens in the coach's own account; phones open the Gmail app instead (see the click handler).
+  let gmailUser = "";
+  const gmailLink = (p, s) => `https://mail.google.com/mail/?view=cm&fs=1${gmailUser ? `&authuser=${enc(gmailUser)}` : ""}&to=${enc(p.email)}&su=${enc(fill(s.subject, p))}&body=${enc(fill(s.body, p))}`;
+  const gmailApp = (p, s) => `googlegmail:///co?to=${enc(p.email)}&subject=${enc(fill(s.subject, p))}&body=${enc(fill(s.body, p))}`;
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroid = /Android/i.test(navigator.userAgent);
   const mailLink = (p, s) => `mailto:${p.email}?subject=${enc(fill(s.subject, p))}&body=${enc(fill(s.body, p))}`;
 
   function matches(p) {
@@ -101,7 +106,7 @@
         <label class="field">Status<select class="gselect" data-f="status">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${k === p.status ? " selected" : ""}>${v}</option>`).join("")}</select></label>
         <label class="field wide">Your notes<input class="gselect" type="text" maxlength="800" data-f="notes" value="${esc(p.notes)}" placeholder="Who you talked to, what they said, when to follow up"></label>
         <div class="btn-row wide">
-          ${p.email && next ? `<a class="btn ${!lastEmail(p) || followUpDue(p) ? "btn-primary" : "btn-glass"} btn-small" href="${esc(gmailLink(p, next))}" target="_blank" rel="noopener" data-send="${next.n}">${esc(next.label)} in Gmail${lastEmail(p) && !followUpDue(p) ? ` (due ${day(Date.parse(lastEmail(p).at) + next.wait * 86400000)})` : ""}</a><a class="btn btn-glass btn-small" href="${esc(mailLink(p, next))}" data-send="${next.n}">Mail app</a>` : ""}
+          ${p.email && next ? `<a class="btn ${!lastEmail(p) || followUpDue(p) ? "btn-primary" : "btn-glass"} btn-small" href="${esc(gmailLink(p, next))}" target="_blank" rel="noopener" data-gmail data-send="${next.n}">${esc(next.label)} in Gmail${lastEmail(p) && !followUpDue(p) ? ` (due ${day(Date.parse(lastEmail(p).at) + next.wait * 86400000)})` : ""}</a><a class="btn btn-glass btn-small" href="${esc(mailLink(p, next))}" data-send="${next.n}">Mail app</a>` : ""}
           ${!p.email && p.website && !p.emailChecked ? '<button class="btn btn-glass btn-small" data-act="find">Find their email</button>' : ""}
           ${p.email && !next ? '<span class="muted" style="font-size:.85rem">All three emails sent</span>' : ""}
           <button class="btn btn-glass btn-small" data-act="delete">Remove</button>
@@ -132,6 +137,7 @@
     try {
       const [d, o] = await Promise.all([api("/api/coach/prospects"), api("/api/coach/overview").catch(() => ({ players: [] }))]);
       list = d.prospects || [];
+      gmailUser = d.gmailUser || "";
       players = (o.players || []).map((p) => ({ id: p.id, name: [p.first, p.last].filter(Boolean).join(" ") || p.name })).sort((a, b) => a.name.localeCompare(b.name));
       $("#prGroups").innerHTML = Object.entries(d.groups).map(([k, v]) => `<label><input type="checkbox" value="${esc(k)}" checked> ${esc(v)}</label>`).join("");
       const opts = players.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
@@ -245,7 +251,20 @@
     if (!card) return;
     const id = card.dataset.id;
     const send = e.target.closest("[data-send]");
-    if (send) { setTimeout(() => patch(id, { emailed: Number(send.dataset.send) }), 600); return; }
+    if (send) {
+      const p = list.find((x) => x.id === id), step = p && nextStep(p);
+      // The Gmail web page cannot write an email on a phone, so open the Gmail app there.
+      if (p && step && send.dataset.gmail !== undefined && (isIOS || isAndroid)) {
+        e.preventDefault();
+        if (isIOS) {
+          location.href = gmailApp(p, step);
+          // No Gmail app on this phone: fall back to the phone's mail app.
+          setTimeout(() => { if (!document.hidden) location.href = mailLink(p, step); }, 1500);
+        } else location.href = mailLink(p, step); // Android sends mail links to the Gmail app
+      }
+      setTimeout(() => patch(id, { emailed: Number(send.dataset.send) }), 600);
+      return;
+    }
     const act = e.target.closest("[data-act]")?.dataset.act;
     if (act === "find") {
       try {

@@ -550,6 +550,7 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       drip: await getSponsorDrip(),
       dripSteps: SPONSOR_DRIP,
       emailReady: providerStatus().email,
+      gmailUser: Netlify.env.get("EMAIL_REPLY_TO") || "",
     });
   }
   if (parts[0] === "prospects" && parts[1] === "search" && method === "POST") {
