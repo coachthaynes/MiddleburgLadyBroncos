@@ -406,6 +406,10 @@ input[type=email] { width: 100%; font: 500 1rem var(--body); color: var(--ink); 
 .text-list li > span { flex: 1; min-width: 0; }
 .text-list li small { display: block; color: var(--muted); }
 .text-list li.done { opacity: .7; }
+.text-preview { background: rgba(255,255,255,.75); border: 1px solid var(--glass-line); border-left: 4px solid var(--red); border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; }
+.text-preview span { font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.text-preview p { margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.text-next { width: 100%; margin-bottom: 12px; }
 .text-list .texted { font-style: normal; font-weight: 700; color: var(--good); }
 
 /* Coach outreach */

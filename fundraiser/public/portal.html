@@ -144,8 +144,14 @@
         <div id="supStatus" style="margin-top:12px"></div>
         <div id="textBox" class="hidden" style="margin-top:16px">
           <h3 style="margin:0">Text my supporters</h3>
-          <p class="muted" style="margin:4px 0 10px;font-size:.92rem">Tap Text next to each name. Your messages app opens with the note already written, so just press send. <b id="textProgress"></b></p>
-          <ul class="text-list" id="textList"></ul>
+          <div id="textWait" class="notice hidden" style="margin-top:10px"></div>
+          <div id="textReady" class="hidden">
+            <p class="muted" style="margin:4px 0 10px;font-size:.92rem">Tap <b>Text them now</b>. Your messages app opens with their number and the message already written, so just press send. The text comes from your own phone number. <b id="textProgress"></b></p>
+            <div class="text-preview"><span>Your message</span><p id="textPreview"></p></div>
+            <a class="btn btn-primary btn-big text-next" id="textNext" data-text>Text them now</a>
+            <ul class="text-list" id="textList"></ul>
+            <p class="muted hidden" id="textNoPhone" style="font-size:.85rem;margin:10px 0 0"></p>
+          </div>
         </div>
       </div>
 

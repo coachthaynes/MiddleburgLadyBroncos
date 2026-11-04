@@ -159,28 +159,63 @@
       : o.status === "changes"
         ? `<div class="notice warn"><span>Your coach asked for a change: <b>${esc(o.note || "Please check your list.")}</b> Tap Edit my list to fix it.</span></div>`
         : '<span class="pill warn">Waiting for your coach to check your list</span>';
-    $("#textBox").classList.add("hidden");
-    if (o.status !== "approved") return;
+    // Texting from her own phone: locked until the coach approves her list and a text message is ready.
+    const wait = (msg) => {
+      $("#textWait").innerHTML = msg;
+      $("#textWait").classList.remove("hidden");
+      $("#textReady").classList.add("hidden");
+      $("#textBox").classList.remove("hidden");
+    };
+    if (!p.contactCount) { $("#textBox").classList.add("hidden"); return; }
+    if (o.status !== "approved") return wait("<span>Texting opens once your coach approves your supporter list.</span>");
     let data;
-    try { data = await api("/api/me/texts"); } catch { return; }
-    if (!data.ready || !data.texts.length) return;
-    const done = data.texts.filter((t) => t.texted).length;
-    $("#textProgress").textContent = `${done} of ${data.texts.length} texted.`;
-    $("#textList").innerHTML = data.texts.map((t) => `
-      <li class="${t.texted ? "done" : ""}" data-id="${esc(t.id)}" data-wave="${esc(data.wave.id)}">
-        <span><b>${esc(t.name)}</b><small>${esc(prettyPhone(t.phone))}${t.texted ? ' · <em class="texted">Texted ✓</em>' : ""}</small></span>
-        <a class="btn ${t.texted ? "btn-glass" : "btn-primary"} btn-small" href="sms:${esc(t.phone)}?&body=${encodeURIComponent(t.body)}" data-text>${t.texted ? "Again" : "Text"}</a>
-      </li>`).join("");
+    try { data = await api("/api/me/texts"); } catch { $("#textBox").classList.add("hidden"); return; }
+    if (!data.ready) return wait("<span>Your coach has not sent out a text message yet. Check back soon.</span>");
+    if (!data.texts.length) return wait("<span>None of your supporters has a phone number. The team emails them for you.</span>");
+    texts = data.texts;
+    textWave = data.wave.id;
+    $("#textWait").classList.add("hidden");
+    $("#textReady").classList.remove("hidden");
     $("#textBox").classList.remove("hidden");
+    const emailOnly = p.contactCount - texts.length;
+    $("#textNoPhone").textContent = emailOnly > 0 ? `${emailOnly} supporter${emailOnly === 1 ? " has" : "s have"} only an email address. The team emails them for you.` : "";
+    $("#textNoPhone").classList.toggle("hidden", !(emailOnly > 0));
+    renderTexts();
   }
 
-  $("#textList").addEventListener("click", (e) => {
+  // The text app link: their number with the message filled in. Works on iPhone and Android.
+  const smsLink = (t) => `sms:${t.phone}?&body=${encodeURIComponent(t.body)}`;
+  let texts = [], textWave = "";
+  function renderTexts() {
+    const done = texts.filter((t) => t.texted).length;
+    const next = texts.find((t) => !t.texted);
+    $("#textProgress").textContent = `${done} of ${texts.length} texted.`;
+    $("#textPreview").textContent = (next || texts[0]).body;
+    const btn = $("#textNext");
+    if (next) {
+      btn.href = smsLink(next);
+      btn.dataset.id = next.id;
+      btn.textContent = `Text them now: ${next.name}`;
+      btn.classList.remove("hidden");
+    } else {
+      btn.classList.add("hidden");
+    }
+    $("#textList").innerHTML = texts.map((t) => `
+      <li class="${t.texted ? "done" : ""}">
+        <span><b>${esc(t.name)}</b><small>${esc(prettyPhone(t.phone))}${t.texted ? ' · <em class="texted">Texted ✓</em>' : ""}</small></span>
+        <a class="btn ${t.texted ? "btn-glass" : "btn-primary"} btn-small" href="${esc(smsLink(t))}" data-text data-id="${esc(t.id)}">${t.texted ? "Text again" : "Text them now"}</a>
+      </li>`).join("");
+  }
+
+  // Opening the text counts it as sent, and the big button moves on to the next supporter.
+  $("#textBox").addEventListener("click", (e) => {
     const a = e.target.closest("[data-text]");
     if (!a) return;
-    const li = a.closest("li");
-    if (li.classList.contains("done")) return;
-    api("/api/me/texted", { method: "POST", body: { contact: li.dataset.id, wave: li.dataset.wave } })
-      .then(() => setTimeout(loadSupporters, 1500)).catch(() => {});
+    const t = texts.find((x) => x.id === a.dataset.id);
+    if (!t || t.texted) return;
+    t.texted = true;
+    setTimeout(renderTexts, 800);
+    api("/api/me/texted", { method: "POST", body: { contact: t.id, wave: textWave } }).catch(() => {});
   });
 
   function renderDash() {
