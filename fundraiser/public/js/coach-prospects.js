@@ -145,7 +145,7 @@
     if (!groups.length) { $("#prSearchMsg").textContent = "Pick at least one kind of business."; return; }
     const btn = $("#prSearchBtn");
     btn.disabled = true;
-    const total = { added: 0, skippedKnown: 0, skippedChains: 0 }, failed = [];
+    const total = { added: 0, found: 0, skippedKnown: 0, skippedChains: 0 }, failed = [];
     let source = "";
     for (const [i, g] of groups.entries()) {
       const label = $(`#prGroups input[value="${g}"]`).parentElement.textContent.trim();
@@ -153,10 +153,10 @@
       $("#prSearchMsg").textContent = `Searching ${label.toLowerCase()}...`;
       try {
         const r = await api("/api/coach/prospects/search", { method: "POST", body: { radius: $("#prRadius").value, groups: [g], localOnly: $("#prLocal").checked } });
-        total.added += r.added; total.skippedKnown += r.skippedKnown; total.skippedChains += r.skippedChains; source = r.source;
+        total.added += r.added; total.found += r.found; total.skippedKnown += r.skippedKnown; total.skippedChains += r.skippedChains; source = r.source;
       } catch { failed.push(label); }
     }
-    $("#prSearchMsg").textContent = `Added ${total.added} new businesses${source ? ` from ${source}` : ""}.`
+    $("#prSearchMsg").textContent = `${source ? `${source[0].toUpperCase()}${source.slice(1)} listed ${total.found} businesses. ` : ""}Added ${total.added} new ones.`
       + (total.skippedKnown ? ` Skipped ${total.skippedKnown} already on your list or already sponsors.` : "")
       + (total.skippedChains ? ` Skipped ${total.skippedChains} big chains.` : "")
       + (failed.length ? ` The directory was too busy for: ${failed.join(", ")}. Search those again in a minute.` : "")
