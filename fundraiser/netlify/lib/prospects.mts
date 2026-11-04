@@ -289,27 +289,41 @@ export async function addProspect(body: any) {
 // and website in any order, separated by commas or tabs (a copied spreadsheet works).
 export async function importProspects(text: unknown) {
   const lines = String(text || "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean).slice(0, 300);
-  const have = new Set([...(await listProspects()).map((p) => norm(p.name)), ...(await listSponsors()).map((s) => norm(s.business))]);
-  let added = 0, skipped = 0;
+  const existing = new Map((await listProspects()).map((p) => [norm(p.name), p] as const));
+  const have = new Set([...existing.keys(), ...(await listSponsors()).map((s) => norm(s.business))]);
+  let added = 0, updated = 0, skipped = 0;
   for (const [i, line] of lines.entries()) {
     const cells = line.split(/\t|,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map((c) => c.replace(/^"|"$/g, "").trim()).filter(Boolean);
     const name = clean(cells.shift(), 100);
-    if (name.length < 2 || /^(business|name)$/i.test(name) || have.has(norm(name))) { skipped++; continue; }
+    if (name.length < 2 || /^(business|name)$/i.test(name)) { skipped++; continue; }
     const email = cells.find((c) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(c)) || "";
     const website = cells.find((c) => c !== email && /^(https?:\/\/)?(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i.test(c)) || "";
     const phone = cells.find((c) => c !== email && c !== website && (c.replace(/\D/g, "").length >= 10 && c.replace(/\D/g, "").length <= 11) && !/[a-z]{3}/i.test(c)) || "";
     const address = cells.filter((c) => ![email, website, phone].includes(c)).join(", ");
     const now = new Date().toISOString();
+    const site = website ? cleanUrl(/^https?:\/\//i.test(website) ? website : `https://${website}`) : "";
+    // Already on the list: fill in anything it is missing, and keep everything the coach already has.
+    const old = existing.get(norm(name));
+    if (old) {
+      const fill: Partial<Prospect> = {};
+      if (!old.phone && phone) fill.phone = clean(phone, 30);
+      if (!old.address && address) fill.address = clean(address, 160);
+      if (!old.website && site) { fill.website = site; if (!old.email) fill.emailChecked = false; }
+      if (!old.email && email) { fill.email = email.toLowerCase(); fill.emailFrom = "coach"; fill.emailChecked = true; }
+      if (Object.keys(fill).length) { await saveProspect({ ...old, ...fill, updatedAt: now }); updated++; } else skipped++;
+      continue;
+    }
+    if (have.has(norm(name))) { skipped++; continue; }
     await saveProspect({
       id: `manual:${Date.now()}${i}`, name, category: "business", address: clean(address, 160), phone: clean(phone, 30),
-      website: website ? cleanUrl(/^https?:\/\//i.test(website) ? website : `https://${website}`) : "",
+      website: site,
       email: email.toLowerCase(), emailFrom: email ? "coach" : "", emailChecked: !!email || !website, chain: false, distance: 0,
       status: "new", playerId: "", playerName: "", notes: "", playerNote: "", emails: [], addedAt: now, updatedAt: now, source: "coach",
     });
     have.add(norm(name));
     added++;
   }
-  return { added, skipped };
+  return { added, updated, skipped };
 }
 
 export async function deleteProspect(id: string) {

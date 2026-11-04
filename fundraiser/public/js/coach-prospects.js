@@ -262,7 +262,7 @@
     if (!text) return;
     try {
       const r = await api("/api/coach/prospects/import", { method: "POST", body: { text } });
-      $("#prImportMsg").textContent = `Added ${r.added} businesses.${r.skipped ? ` Skipped ${r.skipped} already on your list or missing a name.` : ""}`;
+      $("#prImportMsg").textContent = `Added ${r.added} businesses.${r.updated ? ` Filled in missing details for ${r.updated} already on your list.` : ""}${r.skipped ? ` Skipped ${r.skipped} with nothing new.` : ""}`;
       $("#prImportText").value = "";
       await load();
     } catch (err) { $("#prImportMsg").textContent = err.message; }
