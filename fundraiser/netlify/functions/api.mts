@@ -9,12 +9,13 @@ import {
   listSponsors, getSponsor, saveSponsor, syncSponsorTasks, isSponsorLevel, cleanUrl, cleanSponsorDetails, HOME_GAMES, takenGames, Sponsor, SponsorLevel, SPONSOR_LEVELS, REPORT_LABELS, INTERNAL_TASKS,
 } from "../lib/core.mts";
 import {
-  cleanContacts, currentWave, DEFAULT_WAVES, getContacts, getLog, getWaves, inSendWindow, kickSender, liveSettings, mergeVars,
+  cleanContacts, currentWave, DEFAULT_WAVES, getSponsorDrip, setSponsorDrip, SPONSOR_DRIP, getContacts, getLog, getWaves, inSendWindow, kickSender, liveSettings, mergeVars,
   normalizeEmail, providerStatus, renderEmail, renderSms, saveContacts, saveWaves,
   sendEmail, SendLog, siteOrigin, unsubUrl, Wave,
 } from "../lib/messaging.mts";
 import { elevateProfiles, getDepth, getHome, getLinks, saveDepth, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
 import { createOrder, deleteOrder, listOrders, updateOrder } from "../lib/orders.mts";
+import { addProspect, deleteProspect, findBusinesses, findEmail, GROUPS, listProspects, playerProspects, playerUpdate, updateProspect } from "../lib/prospects.mts";
 import { deleteContract, getContract, listContracts, signContract } from "../lib/contracts.mts";
 
 // The team store lives on its own Netlify site and is also served at mhsladybroncos.com/store/.
@@ -408,6 +409,13 @@ async function playerRoutes(req: Request, parts: string[], player: Player) {
     return json(await preview(wave, player, await liveSettings(), siteOrigin(new URL(req.url).origin), first?.name || "Grandma"));
   }
 
+  // Businesses the coach assigned to this player to visit.
+  if (parts[0] === "prospects" && !parts[1] && method === "GET") return json({ prospects: await playerProspects(player.id) });
+  if (parts[0] === "prospects" && parts[1] && method === "PATCH") {
+    const r = await playerUpdate(player.id, decodeURIComponent(parts[1]), await req.json().catch(() => ({})));
+    return r ? json(r) : json({ error: "Business not found." }, 404);
+  }
+
   // Texts the player sends from her own phone: the newest approved message, written out for each supporter.
   if (parts[0] === "texts" && method === "GET") {
     if (player.outreach?.status !== "approved") return json({ ready: false, reason: "review" });
@@ -532,6 +540,41 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
   }
 
   if (parts[0] === "sponsors") return coachSponsors(req, parts.slice(1));
+
+  // Sponsor prospects: businesses to reach out to, and who is visiting them
+  if (parts[0] === "prospects" && !parts[1] && method === "GET") {
+    return json({
+      prospects: await listProspects(),
+      groups: Object.fromEntries(Object.entries(GROUPS).map(([k, g]) => [k, g.label])),
+      source: Netlify.env.get("GOOGLE_PLACES_KEY") ? "Google" : "the free map directory",
+      drip: await getSponsorDrip(),
+      dripSteps: SPONSOR_DRIP,
+      emailReady: providerStatus().email,
+    });
+  }
+  if (parts[0] === "prospects" && parts[1] === "search" && method === "POST") {
+    try {
+      const r = await findBusinesses(await req.json().catch(() => ({})));
+      return "error" in r ? json({ error: r.error }, 400) : json(r);
+    } catch (e: any) { return json({ error: e.message || "Search failed. Try again." }, 502); }
+  }
+  if (parts[0] === "prospects" && !parts[1] && method === "POST") {
+    const r = await addProspect(await req.json().catch(() => ({})));
+    return "error" in r ? json({ error: r.error }, 400) : json(r);
+  }
+  if (parts[0] === "prospects" && parts[1] && parts[2] === "find-email" && method === "POST") {
+    const p = await findEmail(decodeURIComponent(parts[1]));
+    return p ? json({ prospect: p }) : json({ error: "Business not found." }, 404);
+  }
+  if (parts[0] === "prospects" && parts[1] && !parts[2] && method === "PATCH") {
+    const p = await updateProspect(decodeURIComponent(parts[1]), await req.json().catch(() => ({})));
+    return p ? json({ prospect: p }) : json({ error: "Business not found." }, 404);
+  }
+  if (parts[0] === "prospects" && parts[1] && !parts[2] && method === "DELETE") { await deleteProspect(decodeURIComponent(parts[1])); return json({ ok: true }); }
+  if (parts[0] === "sponsor-drip" && method === "PUT") {
+    const body = await req.json().catch(() => ({}));
+    return json({ ok: true, drip: await setSponsorDrip(!!body.on) });
+  }
 
   // Signed team contracts
   if (parts[0] === "contracts" && !parts[1] && method === "GET") return json({ contracts: await listContracts() });

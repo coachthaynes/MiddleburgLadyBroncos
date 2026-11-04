@@ -19,6 +19,7 @@
     renderDash();
     show("dash");
     loadSupporters();
+    loadBusinesses();
   }
 
   // ---------- supporters list ----------
@@ -216,6 +217,41 @@
     t.texted = true;
     setTimeout(renderTexts, 800);
     api("/api/me/texted", { method: "POST", body: { contact: t.id, wave: textWave } }).catch(() => {});
+  });
+
+  // ---------- businesses the coach assigned her to visit ----------
+  const BIZ = { assigned: "Not visited yet", new: "Not visited yet", emailed: "Not visited yet", visited: "Visited", interested: "Interested", signed: "Signed up", notnow: "Not this year" };
+  let biz = [];
+  async function loadBusinesses() {
+    try { biz = (await api("/api/me/prospects")).prospects || []; } catch { biz = []; }
+    $("#bizCard").classList.toggle("hidden", !biz.length);
+    if (!biz.length) return;
+    $("#bizMe").textContent = me.player.first;
+    $("#bizList").innerHTML = biz.map((b) => {
+      const map = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.name + " " + (b.address || "Middleburg FL"))}`;
+      return `<li data-id="${esc(b.id)}">
+        <div class="biz-top"><b>${esc(b.name)}</b><span class="pill ${["interested", "signed"].includes(b.status) ? "good" : b.status === "visited" ? "warn" : ""}">${BIZ[b.status] || "Not visited yet"}</span></div>
+        <small>${esc(b.category)}</small>
+        <div class="biz-links"><a href="${esc(map)}" target="_blank" rel="noopener">${esc(b.address || "Map")}</a>${b.phone ? ` · <a href="tel:${esc(b.phone.replace(/[^\d+]/g, ""))}">${esc(b.phone)}</a>` : ""}</div>
+        <div class="biz-btns">${[["visited", "I visited"], ["interested", "They are interested"], ["signed", "They signed up"], ["notnow", "Not this year"]].map(([k, l]) => `<button class="btn btn-small ${b.status === k ? "btn-primary" : "btn-glass"}" data-biz="${k}">${l}</button>`).join("")}</div>
+        <label class="field" style="margin-top:8px">What happened? <small>Who you talked to, when to come back</small><input type="text" maxlength="400" data-biznote value="${esc(b.playerNote || "")}"></label>
+      </li>`;
+    }).join("");
+  }
+  $("#bizList").addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-biz]");
+    if (!btn) return;
+    const id = btn.closest("[data-id]").dataset.id;
+    try {
+      await api(`/api/me/prospects/${encodeURIComponent(id)}`, { method: "PATCH", body: { status: btn.dataset.biz } });
+      toast("Thanks! Your coach can see this.");
+      loadBusinesses();
+    } catch (err) { toast(err.message); }
+  });
+  $("#bizList").addEventListener("change", async (e) => {
+    if (!e.target.matches("[data-biznote]")) return;
+    const id = e.target.closest("[data-id]").dataset.id;
+    try { await api(`/api/me/prospects/${encodeURIComponent(id)}`, { method: "PATCH", body: { note: e.target.value } }); toast("Note saved"); } catch (err) { toast(err.message); }
   });
 
   function renderDash() {

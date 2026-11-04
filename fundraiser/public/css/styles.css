@@ -434,3 +434,14 @@ input[type=email] { width: 100%; font: 500 1rem var(--body); color: var(--ink); 
 .bulk-code { font: 700 1.05rem ui-monospace, monospace; letter-spacing: 1px; color: var(--red-deep); }
 .bulk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .bulk-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 14px; align-items: center; padding: 8px 12px; border-radius: 12px; background: rgba(255,255,255,.7); }
+
+/* Player portal: businesses to visit */
+.biz-pitch { margin-bottom: 12px; padding: 10px 14px; border-radius: 14px; background: rgba(255,255,255,.75); border-left: 4px solid var(--red); }
+.biz-pitch summary { cursor: pointer; font-weight: 700; }
+.biz-pitch p { margin: 8px 0 0; line-height: 1.55; }
+.biz-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.biz-list li { padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,.6); border: 1px solid var(--glass-line); }
+.biz-top { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; }
+.biz-list small { color: var(--muted); }
+.biz-links { margin-top: 4px; font-size: .9rem; }
+.biz-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }

@@ -1,5 +1,5 @@
 import { createHash, createHmac, randomBytes } from "node:crypto";
-import { confirmedTotals, db, displayName, getSettings, listGifts, listPlayers, Player, Settings } from "./core.mts";
+import { confirmedTotals, db, displayName, getSettings, listGifts, listPlayers, listSponsors, Player, saveSponsor, Settings, Sponsor, SPONSOR_LEVELS } from "./core.mts";
 
 // ================= contacts =================
 
@@ -503,6 +503,7 @@ export async function runSend(origin: string, budgetMs = 13 * 60 * 1000) {
       }
       if (changed) await store.setJSON(`sendlog/${p.id}`, log);
     }
+    if (providers.email && Date.now() - started < budgetMs) await sponsorDrip(settings, origin, summary);
     return summary;
   } finally {
     const cur = (await store.get("lock/send", { type: "json" })) as { id: string } | null;
@@ -529,5 +530,87 @@ export async function kickSender(origin: string) {
     });
   } catch (err) {
     console.error("Could not start sender", err);
+  }
+}
+
+// ================= sponsor follow up =================
+// Businesses that fill out the sponsor form asked to hear from us, so they get a short series of emails.
+// Only businesses that sign up after the coach turns this on get it, and each email goes once.
+export const SPONSOR_DRIP = [
+  { id: "thanks", name: "Thank you for signing up", when: "Right after a business fills out the sponsor form", days: 0, statuses: ["interested", "committed", "paid"],
+    subject: "Thank you for supporting the Lady Broncos",
+    body: "Hi {contact},\n\nThank you for your interest in sponsoring Middleburg Lady Broncos Basketball as a {level}! Our coaching staff will reach out within a few days to confirm the details.\n\nIn the meantime, here is our sponsor packet with every level and benefit: {packet}\n\nWe are so grateful to businesses like {business} that help our girls compete.\n\nGo Broncos!\nCoach Tenise Haynes" },
+  { id: "next", name: "Next steps", when: "3 days after sign up, if not committed yet", days: 3, statuses: ["interested"],
+    subject: "Next steps for your Lady Broncos sponsorship",
+    body: "Hi {contact},\n\nJust following up on your {level} sponsorship for {business}. Here is how it works:\n\n1. We confirm your level and the details for your banner, shout outs and social posts.\n2. Payment goes to Middleburg High School, and we send you the details.\n3. We start delivering your benefits right away and send you a report of everything we did.\n\nIf you have not sent your logo yet, just reply to this email with it attached. Any questions, reply here and I will get right back to you.\n\nCoach Tenise Haynes" },
+  { id: "reminder", name: "Friendly reminder", when: "10 days after sign up, if not committed yet", days: 10, statuses: ["interested"],
+    subject: "Still interested in sponsoring the Lady Broncos?",
+    body: "Hi {contact},\n\nI wanted to check in one more time about sponsoring the Lady Broncos. Our season is in full swing, and we would love to have {business} on our sponsor wall and in our game day announcements.\n\nYou can see every level here: {link}\n\nIf now is not the right time, no problem at all. Just reply and let me know.\n\nCoach Tenise Haynes" },
+  { id: "welcome", name: "Welcome to the herd", when: "When you mark a sponsor Paid", days: 0, statuses: ["paid"],
+    subject: "Welcome to the herd, {business}!",
+    body: "Hi {contact},\n\nThank you! Your {level} sponsorship is official, and the whole team is grateful.\n\nWe will start delivering your benefits right away and keep a record of everything we do for {business}, so you can see exactly what your sponsorship made possible.\n\nWe hope to see you at a game soon. Fear the Herd!\n\nCoach Tenise Haynes" },
+] as const;
+
+export async function getSponsorDrip() {
+  return ((await db().get("sponsor-drip", { type: "json" })) as { on: boolean; onAt: string } | null) || { on: false, onAt: "" };
+}
+export async function setSponsorDrip(on: boolean) {
+  const cur = await getSponsorDrip();
+  const rec = { on, onAt: on ? cur.onAt || new Date().toISOString() : "" };
+  await db().setJSON("sponsor-drip", rec);
+  return rec;
+}
+
+export function renderSponsorEmail(step: (typeof SPONSOR_DRIP)[number], sp: Sponsor, s: Settings, origin: string, unsub: string) {
+  const vars: Record<string, string> = {
+    contact: (sp.contact || "").split(/\s+/)[0] || "there", business: sp.business, level: SPONSOR_LEVELS[sp.level]?.name || "sponsor",
+    packet: `${origin}/sponsor-packet.pdf`, link: `${origin}/sponsor`,
+  };
+  const fillIn = (t: string) => t.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
+  const subject = fillIn(step.subject), text = fillIn(step.body);
+  const logo = s.logoKey ? `${origin}/img/${encodeURIComponent(s.logoKey)}` : `${origin}/brand/logo.png`;
+  const paras = text.split(/\n{2,}/).map((para) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#2a1418">${escHtml(para).replace(/\n/g, "<br>").replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color:#c8102e">$1</a>')}</p>`).join("");
+  const address = s.mailingAddress ? `<br>${escHtml(s.mailingAddress)}` : "";
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#fbe9ec">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#fbe9ec;padding:24px 12px"><tr><td align="center">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#ffffff;border-radius:22px;overflow:hidden;font-family:Helvetica,Arial,sans-serif">
+<tr><td style="background-color:#c8102e;padding:22px 26px"><img src="${logo}" width="44" height="44" alt="" style="vertical-align:middle;background:#ffffff;border-radius:12px;padding:4px">
+<span style="vertical-align:middle;margin-left:10px;font-size:18px;font-weight:700;color:#ffffff">${escHtml(s.schoolName)} ${escHtml(s.teamName)}</span></td></tr>
+<tr><td style="padding:24px 28px 8px">${paras}</td></tr>
+<tr><td style="padding:18px 28px 26px;border-top:1px solid #f3dde1;font-size:12px;line-height:1.6;color:#8a7478" align="center">
+You are getting this because ${escHtml(sp.business)} filled out our sponsor form.${address}<br><a href="${unsub}" style="color:#8a7478">Unsubscribe</a></td></tr>
+</table></td></tr></table></body></html>`;
+  return { subject, html, text: `${text}\n\nUnsubscribe: ${unsub}` };
+}
+
+async function sponsorDrip(settings: Settings, origin: string, summary: { sent: number; failed: number }) {
+  const drip = await getSponsorDrip();
+  if (!drip.on) return;
+  const since = Date.parse(drip.onAt);
+  for (const sp of await listSponsors()) {
+    if (!sp.email || Date.parse(sp.createdAt) < since) continue;
+    const sent = ((sp as any).drip ||= {}) as Record<string, string>;
+    let changed = false;
+    for (const step of SPONSOR_DRIP) {
+      if (sent[step.id] || !(step.statuses as readonly string[]).includes(sp.status)) continue;
+      if (Date.now() < Date.parse(sp.createdAt) + step.days * 86400000) continue;
+      // A business that has already paid skips the sign up reminders.
+      if (step.id === "next" || step.id === "reminder") { if (sp.status !== "interested") continue; }
+      changed = true;
+      if (await isOptedOut("email", sp.email)) { sent[step.id] = "optout"; continue; }
+      try {
+        const u = await unsubUrl(origin, sp.email);
+        await sendEmail(sp.email, renderSponsorEmail(step, sp, settings, origin, u), u);
+        sent[step.id] = new Date().toISOString();
+        summary.sent++;
+        await sleep(550);
+      } catch (err) {
+        sent[step.id] = "failed";
+        summary.failed++;
+      }
+      // One email per business per run, so a business never gets two at once.
+      break;
+    }
+    if (changed) await saveSponsor(sp);
   }
 }

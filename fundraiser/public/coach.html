@@ -43,6 +43,7 @@
       <button role="tab" id="tb-hub" aria-controls="tabHub" data-tab="hub">Hub</button>
       <button role="tab" id="tb-home" aria-controls="tabHome" data-tab="home">Home page</button>
       <button role="tab" id="tb-fundraiser" aria-controls="tabFund" data-tab="fundraiser">Fundraiser</button>
+      <button role="tab" id="tb-prospects" aria-controls="tabProspects" data-tab="prospects">Sponsor prospects</button>
       <button role="tab" id="tb-depth" aria-controls="tabDepth" data-tab="depth">Depth chart</button>
       <button role="tab" id="tb-contracts" aria-controls="tabContracts" data-tab="contracts">Contracts</button>
       <button role="tab" id="tb-orders" aria-controls="tabOrders" data-tab="orders">Store orders <span class="tab-count hidden" id="ordBadge"></span></button>
@@ -89,6 +90,79 @@
       </div>
       <div class="notice warn hidden" id="dashWarn" style="margin-top:12px"></div>
       <div id="homeEditor"></div>
+    </div>
+
+    <div class="tab-panel" id="tabProspects" role="tabpanel" aria-labelledby="tb-prospects" hidden>
+      <div class="glass card fade-in">
+        <div class="section-head" style="margin:0 0 14px">
+          <div><span class="eyebrow">Sponsors</span><h2 style="margin-top:10px">Sponsor prospects</h2>
+            <p class="muted" style="font-size:.9rem;margin:4px 0 0">Find local businesses, pull their email addresses, send each one a personal note from your own email and assign players to visit them. Businesses that sign up at the <a href="/sponsor" target="_blank" rel="noopener">sponsor page</a> move to your Sponsors list on the Fundraiser tab.</p></div>
+          <div class="btn-row"><button class="btn btn-glass btn-small" id="prCsv">Download list</button></div>
+        </div>
+        <div class="stat-row" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">
+          <div class="stat"><b id="psTotal">0</b><span>Businesses</span></div>
+          <div class="stat"><b id="psEmail">0</b><span>With email</span></div>
+          <div class="stat"><b id="psAssigned">0</b><span>Assigned to players</span></div>
+          <div class="stat"><b id="psEmailed">0</b><span>Emailed</span></div>
+          <div class="stat"><b id="psDue">0</b><span>Follow ups due</span></div>
+          <div class="stat"><b id="psInterested">0</b><span>Interested</span></div>
+          <div class="stat"><b id="psSigned">0</b><span>Signed</span></div>
+        </div>
+      </div>
+
+      <div class="glass card" style="margin-top:18px">
+        <h3 style="margin:0 0 4px">Find businesses</h3>
+        <p class="muted" style="font-size:.9rem;margin:0 0 12px">Searches <span id="prSource">the free map directory</span> around Middleburg. Businesses already on your list or already sponsors are skipped.</p>
+        <form class="form pr-search" id="prSearch">
+          <label class="field">Within<select id="prRadius" class="gselect big"><option value="3">3 miles</option><option value="5">5 miles</option><option value="10" selected>10 miles</option><option value="15">15 miles</option><option value="25">25 miles</option></select></label>
+          <div class="field"><span>Kinds of business</span><div class="pr-groups" id="prGroups"></div></div>
+          <label class="switch"><input type="checkbox" id="prLocal" checked> Local businesses only (skip big chains)</label>
+          <div class="btn-row"><button class="btn btn-primary" type="submit" id="prSearchBtn">Search for businesses</button><button class="btn btn-glass" type="button" id="prFindAll">Find emails on their websites</button></div>
+          <p class="muted" id="prSearchMsg" style="margin:0;font-size:.9rem"></p>
+        </form>
+      </div>
+
+      <div class="glass card" style="margin-top:18px">
+        <div class="ord-tools">
+          <div class="chips" id="prTabs">
+            <button data-pf="all" class="on">All</button><button data-pf="new">Not contacted</button><button data-pf="due">Follow up due</button><button data-pf="assigned">Assigned</button><button data-pf="emailed">Emailed</button><button data-pf="visited">Visited</button><button data-pf="interested">Interested</button><button data-pf="signed">Signed</button><button data-pf="notnow">Not this year</button>
+          </div>
+          <div class="btn-row" style="align-items:center">
+            <select id="prPlayerFilter" class="gselect" aria-label="Filter by player"><option value="">Every player</option></select>
+            <input type="search" id="prFind" class="gselect" placeholder="Search businesses" style="max-width:220px">
+          </div>
+        </div>
+        <div class="pr-bulk">
+          <label class="switch"><input type="checkbox" id="prAll"> Select all shown</label>
+          <select id="prBulkPlayer" class="gselect" aria-label="Assign selected to"><option value="">Assign selected to...</option></select>
+          <button class="btn btn-glass btn-small" id="prBulkGo">Assign</button>
+          <span class="muted" id="prCount" style="font-size:.85rem"></span>
+        </div>
+        <div id="prList" style="margin-top:12px"></div>
+      </div>
+
+      <details class="glass card" style="margin-top:18px">
+        <summary style="cursor:pointer;font-weight:700">Add a business by hand</summary>
+        <form class="form" id="prAdd" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));align-items:end;margin-top:10px">
+          <label class="field">Business<input type="text" name="name" maxlength="100" required></label>
+          <label class="field">Kind of business<input type="text" name="category" maxlength="40"></label>
+          <label class="field">Address<input type="text" name="address" maxlength="160"></label>
+          <label class="field">Phone<input type="tel" name="phone" maxlength="30"></label>
+          <label class="field">Email<input type="email" name="email" maxlength="120"></label>
+          <label class="field">Website<input type="url" name="website" maxlength="300" placeholder="https://"></label>
+          <button class="btn btn-primary" type="submit">Add business</button>
+        </form>
+      </details>
+
+      <div class="glass card" style="margin-top:18px" id="prDripCard">
+        <div class="section-head" style="margin-bottom:10px">
+          <div><h3 style="margin:0">Automatic emails after a business signs up</h3>
+            <p class="muted" style="font-size:.9rem;margin:4px 0 0">When a business fills out the sponsor form, it can get this short series from team@mhsladybroncos.com, with replies coming to your email. Only businesses that sign up after you turn this on get it. Businesses you find above are never emailed automatically.</p></div>
+          <button class="btn btn-primary btn-small" id="prDripBtn">Turn on</button>
+        </div>
+        <div id="prDripStatus" style="margin-bottom:10px"></div>
+        <div id="prDripSteps"></div>
+      </div>
     </div>
 
     <div class="tab-panel" id="tabDepth" role="tabpanel" aria-labelledby="tb-depth" hidden>
@@ -267,7 +341,7 @@
       <div class="glass card span" id="sponsorsCard">
         <div class="section-head" style="margin-bottom:10px">
           <div><h3 style="margin:0">Sponsors</h3><p class="muted" style="font-size:.9rem;margin:4px 0 0">Interest forms from the <a href="/sponsor" target="_blank" rel="noopener">sponsor page</a> land under New. Mark a sponsor Committed or Paid and their level's to do list appears. Sponsorship money is tracked here, separate from the donation goal; add it under Other money raised if you want it to count toward the goal.</p></div>
-          <div class="btn-row"><button class="btn btn-glass btn-small" id="spCsv">Download sponsors</button></div>
+          <div class="btn-row"><button class="btn btn-primary btn-small" data-go="prospects">Find new businesses</button><button class="btn btn-glass btn-small" id="spCsv">Download sponsors</button></div>
         </div>
         <div class="prep" id="spPrep"></div>
         <div class="chips" id="spTabs" style="margin-bottom:12px">
@@ -448,5 +522,6 @@ Heather Towne</textarea>
 <script src="/js/coach-orders.js"></script>
 <script src="/js/coach-contracts.js"></script>
 <script src="/js/coach-depth.js"></script>
+<script src="/js/coach-prospects.js"></script>
 </body>
 </html>

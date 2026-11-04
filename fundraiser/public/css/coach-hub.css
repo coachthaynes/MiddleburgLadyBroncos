@@ -115,3 +115,24 @@
   body.print-depth .dc-report .glass { box-shadow: none !important; background: #fff !important; backdrop-filter: none !important; }
   body.print-depth .dc-sec { break-inside: avoid-page; }
 }
+
+/* Sponsor prospects */
+.pr-search { grid-template-columns: 1fr; }
+.pr-groups { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.pr-groups label { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.7); border: 1px solid var(--glass-line); font-weight: 600; font-size: 0.88rem; cursor: pointer; }
+.pr-bulk { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--glass-line); }
+.pr { border: 1px solid var(--glass-line); border-radius: 18px; background: rgba(255, 255, 255, 0.55); padding: 14px 16px; margin-bottom: 10px; }
+.pr-head { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+.pr-head > div:first-child { display: flex; gap: 10px; align-items: flex-start; }
+.pr-head b { font-size: 1.02rem; }
+.pr-head small { display: block; color: var(--muted); font-weight: 600; }
+.pr-info { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 0 0 28px; font-size: 0.88rem; }
+.pr-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px 10px; margin: 10px 0 0 28px; align-items: end; }
+.pr-body .field { font-size: 0.8rem; }
+.pr-body .wide { grid-column: 1 / -1; }
+.pr-pnote { margin: 8px 0 0 28px; font-size: 0.88rem; padding: 8px 12px; border-radius: 12px; background: var(--good-soft, #e7f7ee); }
+.pr-steps { font-size: 0.8rem; color: var(--muted); margin-left: 28px; margin-top: 6px; }
+.pr-drip { border: 1px solid var(--glass-line); border-radius: 14px; padding: 10px 14px; margin-bottom: 8px; background: rgba(255, 255, 255, 0.55); }
+.pr-drip summary { cursor: pointer; font-weight: 700; }
+.pr-drip pre { white-space: pre-wrap; font: inherit; font-size: 0.9rem; margin: 8px 0 0; }
+@media (max-width: 640px) { .pr-info, .pr-body, .pr-pnote, .pr-steps { margin-left: 0; } }

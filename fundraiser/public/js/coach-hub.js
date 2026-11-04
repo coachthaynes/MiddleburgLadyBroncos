@@ -1,7 +1,7 @@
 // Coaches dashboard: Hub (every login and admin page), Home page editor, the Fundraiser tab, plus Depth chart (coach-depth.js), Contracts (coach-contracts.js) and Store orders (coach-orders.js).
 (function () {
   // ----- tabs -----
-  const TABS = { hub: "tabHub", home: "tabHome", fundraiser: "tabFund", depth: "tabDepth", contracts: "tabContracts", orders: "tabOrders" };
+  const TABS = { hub: "tabHub", home: "tabHome", fundraiser: "tabFund", prospects: "tabProspects", depth: "tabDepth", contracts: "tabContracts", orders: "tabOrders" };
   function showTab(name) {
     if (!TABS[name]) name = "hub";
     Object.entries(TABS).forEach(([k, id]) => {
@@ -32,6 +32,7 @@
       ["Store orders", "#orders", "Track payment and fulfillment for every store order"],
       ["Contracts", "#contracts", "Who has signed the Player Contract and Parent Agreement"],
       ["Depth chart", "#depth", "Varsity depth chart built from season averages"],
+      ["Sponsor prospects", "#prospects", "Find local businesses, email them and assign players to visit"],
       ["Privacy Policy", "/privacy", "How the site handles information"],
       ["Terms of Use", "/terms", "Rules for using the site"],
     ] },

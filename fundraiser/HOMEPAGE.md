@@ -45,3 +45,10 @@ Athlete Monitor loads its files and calls its API with page relative paths (`api
 * PDFs live in `public/docs/` (`playercontract.pdf`, `parentagreement.pdf`) and show in the Contracts section of the Player Hub.
 * Families sign online at `/contracts/player` and `/contracts/parent` (`sign.html`, `js/sign.js`). The contract text shown on screen lives in `js/contracts.js`. When a PDF changes, update the matching text there and bump its `version`.
 * Signed records go to `/api/contracts/sign` and are stored by `netlify/lib/contracts.mts`. Coaches see them on the dashboard Contracts tab, matched to the varsity and JV rosters, and open a printable signed copy at `/contract-copy?id=`.
+
+## Sponsor prospects
+
+* Coaches dashboard, Sponsor prospects tab (`js/coach-prospects.js`, `netlify/lib/prospects.mts`): searches the free OpenStreetMap directory around Middleburg, or Google Places when a `GOOGLE_PLACES_KEY` environment variable is set, and pulls email addresses from each business website.
+* The site never emails a prospect. The coach sends the intro, follow up and last note herself through Gmail or her mail app; the tab only writes them and tracks what was sent.
+* Players see the businesses assigned to them in the player login and mark each one visited, interested, signed up or not this year.
+* Businesses that fill out the sponsor form can get a short automatic series (`SPONSOR_DRIP` in `netlify/lib/messaging.mts`) once the coach turns it on.
