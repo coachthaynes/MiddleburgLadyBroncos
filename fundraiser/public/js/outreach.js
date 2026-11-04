@@ -6,6 +6,7 @@
   const prettyPhone = (p) => { const d = String(p || "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, ""); return d.length === 10 ? `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}` : p || ""; };
 
   function whenText(t) {
+    if (t.type === "date") return `On ${new Date(t.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" })}`;
     if (t.type === "after") return t.days ? `${t.days} days after her list is approved` : "As soon as her list is approved";
     if (t.days > 0) return `${t.days} days before the end date`;
     if (t.days === 0) return "On the end date";
@@ -84,12 +85,13 @@
           <div class="two">
             <label class="field">Name<input type="text" name="name" maxlength="40" value="${esc(w.name)}"></label>
             <label class="field">When it goes out<span class="two" style="gap:8px">
-              <select name="type" class="gselect big"><option value="after" ${w.trigger.type === "after" ? "selected" : ""}>After her list is approved (days)</option><option value="beforeEnd" ${w.trigger.type === "beforeEnd" ? "selected" : ""}>Before the end date (days)</option></select>
-              <input type="number" name="days" min="-30" max="120" value="${w.trigger.days}"></span></label>
+              <select name="type" class="gselect big"><option value="date" ${w.trigger.type === "date" ? "selected" : ""}>On a date</option><option value="after" ${w.trigger.type === "after" ? "selected" : ""}>After her list is approved (days)</option><option value="beforeEnd" ${w.trigger.type === "beforeEnd" ? "selected" : ""}>Before the end date (days)</option></select>
+              <input type="date" name="date" value="${esc(w.trigger.date || "")}" ${w.trigger.type === "date" ? "" : "hidden"}>
+              <input type="number" name="days" min="-30" max="120" value="${w.trigger.days}" ${w.trigger.type === "date" ? "hidden" : ""}></span></label>
           </div>
           <label class="field">Email subject<input type="text" name="subject" maxlength="150" value="${esc(w.subject)}"></label>
           <label class="field">Email<textarea name="email" maxlength="3000">${esc(w.email)}</textarea></label>
-          <label class="field">Text message <small>The player sends this from her phone</small><textarea name="sms" maxlength="480" style="min-height:80px">${esc(w.sms)}</textarea></label>
+          <label class="field">Text message <small>The player sends this from her phone. Leave it empty for an email only message.</small><textarea name="sms" maxlength="480" style="min-height:80px">${esc(w.sms)}</textarea></label>
           <p class="muted" style="font-size:.85rem;margin:0">Fill ins: {first} supporter's first name, {player} player's first name, {goal}, {raised}, {percent}, {days} days left, {endDate}, {link} her page. For "before the end date", use a negative number for days after.</p>
           <div class="btn-row">
             <label class="switch"><input type="checkbox" name="donateButton" ${w.donateButton ? "checked" : ""}> Donate button in the email</label>
@@ -98,7 +100,7 @@
           <div><button class="btn btn-primary" type="submit">Save message</button></div>
         </form>` : ""}
       </div>`;
-    }).join("") + '<div class="btn-row" style="margin-top:6px"><button class="btn btn-glass btn-small" id="orReset">Restore the original messages</button></div>';
+    }).join("") + '<div class="btn-row" style="margin-top:6px"><button class="btn btn-primary btn-small" id="orApproveAll">Approve all messages</button><button class="btn btn-glass btn-small" id="orReset">Restore the original messages</button></div>';
   }
 
   async function preview(waveId, playerId) {
@@ -144,8 +146,13 @@
   });
 
   $("#orWaves").addEventListener("click", async (e) => {
+    if (e.target.id === "orApproveAll") {
+      if (!confirm("Approve every message that is turned on? Each one goes out on its date to supporters of players whose lists you approved.")) return;
+      try { await api("/api/coach/waves/approve-all", { method: "POST" }); toast("All messages approved"); await reload(); } catch (err) { toast(err.message); }
+      return;
+    }
     if (e.target.id === "orReset") {
-      if (!confirm("Put back the original five messages? Your edits and approvals on messages will be cleared.")) return;
+      if (!confirm("Put back the original messages? Your edits and approvals on messages will be cleared.")) return;
       try { await api("/api/coach/waves/reset", { method: "POST" }); open.edit.clear(); await reload(); } catch (err) { toast(err.message); }
       return;
     }
@@ -171,6 +178,14 @@
     } catch (err) { toast(err.message); }
   });
 
+  // Show the date picker for "On a date" and the days box for the others.
+  $("#orWaves").addEventListener("change", (e) => {
+    if (e.target.name !== "type") return;
+    const f = e.target.closest("form");
+    f.elements.date.hidden = e.target.value !== "date";
+    f.elements.days.hidden = e.target.value === "date";
+  });
+
   $("#orWaves").addEventListener("submit", async (e) => {
     const f = e.target.closest("[data-wv-form]");
     if (!f) return;
@@ -180,7 +195,7 @@
     try {
       await api(`/api/coach/waves/${id}`, { method: "PUT", body: {
         name: v("name").value, subject: v("subject").value, email: v("email").value, sms: v("sms").value,
-        trigger: { type: v("type").value, days: v("days").value },
+        trigger: { type: v("type").value, days: v("days").value, date: v("date").value },
         donateButton: v("donateButton").checked, enabled: v("enabled").checked,
       } });
       open.edit.delete(id);

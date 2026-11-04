@@ -62,13 +62,16 @@ export interface Wave {
   enabled: boolean;
   approved: boolean;
   // "after": days after the coach approves a player. "beforeEnd": days before the end date (negative means after).
-  trigger: { type: "after" | "beforeEnd"; days: number };
+  // "date": a set calendar day (YYYY-MM-DD), the same for every player.
+  trigger: { type: "after" | "beforeEnd" | "date"; days: number; date?: string };
   subject: string;
   email: string;
   sms: string;
   donateButton: boolean;
 }
 
+// The season's messages: a kickoff when each player's list is approved, then about two emails a week on set
+// dates through the end of the fundraiser, a last call and a thank you. Only a few carry a text for players to send.
 export const DEFAULT_WAVES: Wave[] = [
   {
     id: "kickoff", name: "Kickoff", enabled: true, approved: false, donateButton: true,
@@ -78,18 +81,144 @@ export const DEFAULT_WAVES: Wave[] = [
     sms: "Hi {first}, it's {player}! The {school} {team} are raising {goal} for our season. Would you support me? {link}",
   },
   {
-    id: "checkin", name: "One week check in", enabled: true, approved: false, donateButton: true,
-    trigger: { type: "after", days: 7 },
-    subject: "A quick update from {player}",
-    email: "Hi {first},\n\nThank you for being part of my season! Our team has raised {raised} so far toward our {goal} goal.\n\nIf you have not had a chance yet, you can support me with the button below. Every gift helps.\n\nGo Broncos!\n{player}",
-    sms: "Hi {first}, {player} here with a quick update! Our team has raised {raised} of our {goal} goal. Can you help? {link}",
+    id: "meet-team", name: "Meet the team", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-11-09" },
+    subject: "Meet the 2026 to 2027 Lady Broncos",
+    email: "Hi {first},\n\nI wanted you to meet my team! This year's {school} {team} are Bronco Built: hard working, close and ready to Fear the Herd.\n\nOur season is just getting started, and your support helps cover tournaments, travel, uniforms and gear.\n\nThank you for cheering me on!\n{player}",
+    sms: "",
   },
   {
-    id: "halfway", name: "Big push", enabled: true, approved: false, donateButton: true,
-    trigger: { type: "after", days: 21 },
+    id: "why-it-matters", name: "Why it matters", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-11-12" },
+    subject: "Where your gift goes",
+    email: "Hi {first},\n\nA lot of people ask where the money goes. Every gift helps pay for tournament entry fees, bus travel, uniforms, shoes and practice gear, plus our Saturday Bronco Brainstorm life skills sessions.\n\nWe are trying to raise {goal} this season, and we have raised {raised} so far. A gift of any size helps me and my teammates.\n\nThank you!\n{player}",
+    sms: "",
+  },
+  {
+    id: "home-opener", name: "First home game", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-11-16" },
+    subject: "Come see our first home game!",
+    email: "Hi {first},\n\nOur first home game is Tuesday, November 17 against Tocoi Creek at the Middleburg High School gym. I would love to see you in the stands!\n\nIf you cannot make it, you can still be part of the season by supporting me below.\n\nGo Broncos!\n{player}",
+    sms: "",
+  },
+  {
+    id: "season-update", name: "Season update", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-11-19" },
+    subject: "Our first season update",
+    email: "Hi {first},\n\nQuick update from the gym: practices are tough, the team is working hard and we are getting better every day.\n\nSo far our team has raised {raised} toward our {goal} goal. Thank you to everyone who has already given. If you have not yet, now is a great time to jump in.\n\n{player}",
+    sms: "",
+  },
+  {
+    id: "thankful", name: "Thankful for you", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-11-23" },
+    subject: "Thankful for you this week",
+    email: "Hi {first},\n\nWith Thanksgiving this week, I wanted to say thank you for being someone I can count on. It means a lot to have you in my corner this season.\n\nHappy Thanksgiving!\n{player}",
+    sms: "",
+  },
+  {
+    id: "giving-tuesday", name: "Giving Tuesday", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-12-01" },
+    subject: "Today is Giving Tuesday",
+    email: "Hi {first},\n\nToday is Giving Tuesday, a day when people around the world give to causes they care about. Would you make the Lady Broncos one of yours?\n\nWe have raised {raised} of our {goal} goal. A gift today of $25, $50 or any amount helps us close the gap.\n\nThank you so much!\n{player}",
+    sms: "Hi {first}, it's {player}! Today is Giving Tuesday. Would you support the Lady Broncos? We have raised {raised} of our {goal} goal. {link}",
+  },
+  {
+    id: "team-store", name: "Holiday gear", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-12-03" },
+    subject: "Holiday gifts that help our team",
+    email: "Hi {first},\n\nLooking for holiday gifts? Our Team Store has Lady Broncos tees, hoodies, warmups and hats, and 30% of every purchase goes back to the team. You can find it at mhsladybroncos.com/store.\n\nOr you can give directly with the button below. Either way, thank you for supporting me!\n\n{player}",
+    sms: "",
+  },
+  {
+    id: "halfway", name: "Halfway update", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-12-07" },
     subject: "We are {percent} of the way there!",
-    email: "Hi {first},\n\nGreat news! The {team} are {percent} of the way to our {goal} goal, with {days} days to go.\n\nA gift of $25 or $50 makes a real difference for me and my teammates. Would you help us close the gap?\n\nThank you!\n{player}",
-    sms: "Hi {first}, it's {player}! We are {percent} of the way to our {goal} goal with {days} days left. Would you help us finish strong? {link}",
+    email: "Hi {first},\n\nWe are {percent} of the way to our {goal} goal with {days} days to go. Thank you to everyone who has helped get us here!\n\nIf you have not had a chance yet, a gift of any size helps me and my teammates finish the season strong.\n\nGo Broncos!\n{player}",
+    sms: "Hi {first}, {player} here! We are {percent} of the way to our {goal} goal. Can you help us keep going? {link}",
+  },
+  {
+    id: "day-in-life", name: "A day as a Lady Bronco", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-12-10" },
+    subject: "A day in the life of a Lady Bronco",
+    email: "Hi {first},\n\nBeing a Lady Bronco means early mornings, hard practices, film study, schoolwork and Saturday sessions where we learn life skills like budgeting and leadership. My coaches expect a lot, and they give a lot back.\n\nYour support makes all of it possible. Thank you for being part of my season!\n\n{player}",
+    sms: "",
+  },
+  {
+    id: "clay-game", name: "County rivalry night", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-12-14" },
+    subject: "Tonight we play Clay",
+    email: "Hi {first},\n\nTonight we take on Clay in a big county rivalry game at home. Come pack the gym and bring your loudest cheer!\n\nIf you cannot be there, you can still support me with the button below.\n\nFear the Herd!\n{player}",
+    sms: "",
+  },
+  {
+    id: "gift-idea", name: "Give in someone's name", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-12-17" },
+    subject: "A holiday gift idea",
+    email: "Hi {first},\n\nStill looking for a gift for the person who has everything? You can give to the Lady Broncos in their name. It is a gift that supports young women working hard on and off the court.\n\nThank you for thinking of us this season!\n{player}",
+    sms: "",
+  },
+  {
+    id: "happy-holidays", name: "Happy holidays", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-12-22" },
+    subject: "Happy holidays from {player}",
+    email: "Hi {first},\n\nHappy holidays! I am so thankful for everyone who has supported me and my team this year. Together we have raised {raised} so far.\n\nI hope you have a wonderful break with your family.\n\n{player}",
+    sms: "",
+  },
+  {
+    id: "year-end", name: "Year end gifts", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2026-12-29" },
+    subject: "One more chance to give in 2026",
+    email: "Hi {first},\n\nIf you would like to make a gift before the year ends, there is still time. Gifts go straight to Middleburg High School through the official MySchoolBucks portal.\n\nWe have raised {raised} of our {goal} goal. Thank you for helping us finish 2026 strong!\n\n{player}",
+    sms: "",
+  },
+  {
+    id: "new-year", name: "New year, big games", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2027-01-04" },
+    subject: "A big week for the Lady Broncos",
+    email: "Hi {first},\n\nHappy New Year! We are back in the gym, and this week is a big one: on Thursday, January 7 we play county rival Fleming Island.\n\nThe second half of our season is where it all comes together. Thank you for sticking with me!\n\n{player}",
+    sms: "",
+  },
+  {
+    id: "fleming-game", name: "Rivalry night", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2027-01-07" },
+    subject: "Rivalry night at Fleming Island",
+    email: "Hi {first},\n\nTonight we play Fleming Island, one of our biggest county rivals. If you are nearby, come cheer us on!\n\nEvery gift this week helps us close out the season strong. Thank you for being in my corner.\n\nFear the Herd!\n{player}",
+    sms: "",
+  },
+  {
+    id: "down-stretch", name: "Down the stretch", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2027-01-11" },
+    subject: "{days} days left in our fundraiser",
+    email: "Hi {first},\n\nWe are heading down the stretch with {days} days left in our fundraiser. We have raised {raised} of our {goal} goal.\n\nIf you have been meaning to give, this is a great time. Thank you!\n\n{player}",
+    sms: "",
+  },
+  {
+    id: "finish-strong", name: "Help us finish strong", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2027-01-14" },
+    subject: "Help us finish strong",
+    email: "Hi {first},\n\nWe are so close. A gift of $25 or $50 from a few more supporters could get us to our {goal} goal.\n\nWould you help me and my teammates finish strong?\n\nThank you!\n{player}",
+    sms: "Hi {first}, it's {player}! We are so close to our {goal} goal. Would you help us finish strong? {link}",
+  },
+  {
+    id: "senior-night", name: "Senior Night", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2027-01-18" },
+    subject: "Senior Night is this Wednesday",
+    email: "Hi {first},\n\nThis Wednesday, January 20 is Senior Night at the Middleburg High School gym, when we honor our seniors for everything they have given this program. I would love to see you there!\n\nThank you for supporting our team all season.\n\n{player}",
+    sms: "",
+  },
+  {
+    id: "thank-seniors", name: "Thank you seniors", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2027-01-21" },
+    subject: "Thank you to our seniors",
+    email: "Hi {first},\n\nLast night we celebrated our seniors, and it reminded me how much this team means to all of us. Your support has been a big part of our season.\n\nWe have raised {raised} of our {goal} goal. If you would like to help us finish, the button is below.\n\n{player}",
+    sms: "",
+  },
+  {
+    id: "one-week", name: "One week left", enabled: true, approved: false, donateButton: true,
+    trigger: { type: "date", days: 0, date: "2027-01-25" },
+    subject: "One week left to support {player}",
+    email: "Hi {first},\n\nOur fundraiser ends on {endDate}, just one week from now. We have raised {raised} of our {goal} goal.\n\nIf you have been meaning to give, please do it this week. Thank you so much!\n\n{player}",
+    sms: "Hi {first}, it's {player}! One week left in our fundraiser. Every gift gets us closer to {goal}. {link}",
   },
   {
     id: "final", name: "Final days", enabled: true, approved: false, donateButton: true,
@@ -107,9 +236,30 @@ export const DEFAULT_WAVES: Wave[] = [
   },
 ];
 
+// Saved message lists from before the dated schedule get the new messages added once. The two old
+// "days after approval" reminders are turned off, since the dated emails cover those weeks.
+const WAVES_VERSION = 2;
+async function upgradeWaves(saved: Wave[]) {
+  const store = db();
+  const meta = ((await store.get("waves-meta", { type: "json" })) as { version: number } | null) || { version: 1 };
+  if (meta.version >= WAVES_VERSION) return saved;
+  const have = new Set(saved.map((w) => w.id));
+  const out = saved.map((w) => (w.id === "checkin" ? { ...w, enabled: false } : w));
+  // The old "Big push" used the id halfway; keep it, turned off, under a new id so the dated one can be added.
+  const old = out.find((w) => w.id === "halfway" && w.trigger.type === "after");
+  if (old) { old.id = "bigpush"; old.enabled = false; have.delete("halfway"); }
+  const extra = DEFAULT_WAVES.filter((w) => !have.has(w.id));
+  const finalAt = out.findIndex((w) => w.id === "final");
+  if (finalAt >= 0) out.splice(finalAt, 0, ...extra.filter((w) => !["final", "thanks"].includes(w.id)));
+  else out.push(...extra);
+  await saveWaves(out);
+  await store.setJSON("waves-meta", { version: WAVES_VERSION });
+  return out;
+}
+
 export async function getWaves(): Promise<Wave[]> {
   const saved = (await db().get("waves", { type: "json" })) as Wave[] | null;
-  return saved && saved.length ? saved : DEFAULT_WAVES;
+  return saved && saved.length ? upgradeWaves(saved) : DEFAULT_WAVES;
 }
 
 export async function saveWaves(w: Wave[]) {
@@ -123,6 +273,8 @@ export async function liveSettings(): Promise<Settings> {
 }
 
 export function waveDueAt(w: Wave, p: Player, s: Settings): number {
+  // Set dates go out from 9 AM Eastern that morning.
+  if (w.trigger.type === "date") return Date.parse(`${w.trigger.date}T09:00:00-05:00`);
   if (w.trigger.type === "after") {
     const base = p.outreach?.status === "approved" ? Date.parse(p.outreach.at) : NaN;
     return base + w.trigger.days * 86400000;
@@ -139,8 +291,8 @@ export function currentWave(waves: Wave[], p: Player, s: Settings): Wave | null 
     .filter((w) => w.enabled && w.approved)
     .map((w) => ({ w, at: waveDueAt(w, p, s) }))
     .filter((x) => Number.isFinite(x.at) && x.at <= Date.now())
-    // "After approval" reminders stop once the fundraiser is over.
-    .filter((x) => !(x.w.trigger.type === "after" && Date.now() > endPlus))
+    // "After approval" and dated reminders stop once the fundraiser is over.
+    .filter((x) => !(x.w.trigger.type !== "beforeEnd" && Date.now() > endPlus))
     .sort((a, b) => a.at - b.at);
   return due.length ? due[due.length - 1].w : null;
 }

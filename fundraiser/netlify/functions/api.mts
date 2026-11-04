@@ -412,8 +412,9 @@ async function playerRoutes(req: Request, parts: string[], player: Player) {
   if (parts[0] === "texts" && method === "GET") {
     if (player.outreach?.status !== "approved") return json({ ready: false, reason: "review" });
     const live = await liveSettings();
-    const wave = currentWave(await getWaves(), player, live);
-    if (!wave || !wave.sms) return json({ ready: false, reason: "none" });
+    // The newest message with a text in it, so emails without one never hide the text players can send.
+    const wave = currentWave((await getWaves()).filter((w) => w.sms), player, live);
+    if (!wave) return json({ ready: false, reason: "none" });
     const [contacts, log] = await Promise.all([getContacts(player.id), getLog(player.id)]);
     const origin = siteOrigin(new URL(req.url).origin);
     return json({
@@ -646,6 +647,15 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
     });
   }
 
+  // Approve every message that is turned on, in one tap.
+  if (parts[0] === "waves" && parts[1] === "approve-all" && method === "POST") {
+    const waves = await getWaves();
+    waves.forEach((w) => { if (w.enabled) w.approved = true; });
+    await saveWaves(waves);
+    await kickSender(siteOrigin(new URL(req.url).origin));
+    return json({ ok: true });
+  }
+
   if (parts[0] === "waves" && parts[1] === "reset" && method === "POST") {
     await saveWaves(DEFAULT_WAVES);
     return json({ ok: true });
@@ -669,7 +679,9 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       wave.sms = clean(body.sms ?? wave.sms, 480);
       wave.enabled = body.enabled === undefined ? wave.enabled : !!body.enabled;
       wave.donateButton = body.donateButton === undefined ? wave.donateButton : !!body.donateButton;
-      if (body.trigger && ["after", "beforeEnd"].includes(body.trigger.type)) {
+      if (body.trigger && body.trigger.type === "date" && /^\d{4}-\d{2}-\d{2}$/.test(String(body.trigger.date))) {
+        wave.trigger = { type: "date", days: 0, date: String(body.trigger.date) };
+      } else if (body.trigger && ["after", "beforeEnd"].includes(body.trigger.type)) {
         wave.trigger = { type: body.trigger.type, days: Math.max(-30, Math.min(120, Math.round(Number(body.trigger.days) || 0))) };
       }
       // Any edit needs a fresh approval before it can go out.
