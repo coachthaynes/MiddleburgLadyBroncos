@@ -35,14 +35,14 @@ export interface Prospect {
 }
 
 // Business groups the coach can search, mapped to map database tags and Google place types.
-export const GROUPS: Record<string, { label: string; tomtom: string[]; osm: string[]; google: string[] }> = {
-  food: { label: "Food and drink", tomtom: ["restaurant", "cafe", "bakery"], osm: ['amenity~"^(restaurant|cafe|fast_food|ice_cream|bar|pub)$"', 'shop~"^(bakery|butcher|deli|confectionery|beverages|alcohol)$"'], google: ["restaurant", "cafe", "bakery", "meal_takeaway", "ice_cream_shop"] },
-  auto: { label: "Auto", tomtom: ["auto repair", "car wash", "car dealer"], osm: ['shop~"^(car|car_repair|tyres|car_parts|motorcycle)$"', 'amenity~"^(car_wash|fuel)$"', 'craft~"^(car_repair)$"'], google: ["car_repair", "car_dealer", "car_wash", "gas_station"] },
-  health: { label: "Health and beauty", tomtom: ["dentist", "doctor", "veterinarian", "hair salon", "beauty salon"], osm: ['amenity~"^(dentist|doctors|clinic|veterinary|pharmacy)$"', 'healthcare', 'shop~"^(hairdresser|beauty|massage|optician|cosmetics)$"'], google: ["dentist", "doctor", "veterinary_care", "beauty_salon", "hair_salon", "physiotherapist"] },
-  trades: { label: "Home services and trades", tomtom: ["plumber", "electrician", "contractor", "landscaping", "hardware store"], osm: ['craft', 'shop~"^(hardware|doityourself|garden_centre|trade|appliance)$"'], google: ["plumber", "electrician", "roofing_contractor", "general_contractor", "landscaping"] },
-  shops: { label: "Shops", tomtom: ["clothing store", "florist", "pet store", "furniture store", "sporting goods", "gift shop"], osm: ['shop~"^(clothes|shoes|sports|gift|florist|jewelry|furniture|pet|books|toys|convenience|variety_store|second_hand|farm)$"'], google: ["clothing_store", "florist", "pet_store", "furniture_store", "sporting_goods_store", "jewelry_store"] },
-  offices: { label: "Professional offices", tomtom: ["insurance", "real estate", "accountant", "lawyer", "bank"], osm: ["office"], google: ["insurance_agency", "real_estate_agency", "accounting", "lawyer", "bank"] },
-  fun: { label: "Fitness and fun", tomtom: ["gym", "dance studio", "bowling", "child care"], osm: ['leisure~"^(fitness_centre|sports_centre|bowling_alley|dance)$"', 'amenity~"^(cinema|childcare)$"'], google: ["gym", "bowling_alley", "child_care_agency", "amusement_center"] },
+export const GROUPS: Record<string, { label: string; osm: string[]; google: string[] }> = {
+  food: { label: "Food and drink", osm: ['amenity~"^(restaurant|cafe|fast_food|ice_cream|bar|pub)$"', 'shop~"^(bakery|butcher|deli|confectionery|beverages|alcohol)$"'], google: ["restaurant", "cafe", "bakery", "meal_takeaway", "ice_cream_shop"] },
+  auto: { label: "Auto", osm: ['shop~"^(car|car_repair|tyres|car_parts|motorcycle)$"', 'amenity~"^(car_wash|fuel)$"', 'craft~"^(car_repair)$"'], google: ["car_repair", "car_dealer", "car_wash", "gas_station"] },
+  health: { label: "Health and beauty", osm: ['amenity~"^(dentist|doctors|clinic|veterinary|pharmacy)$"', 'healthcare', 'shop~"^(hairdresser|beauty|massage|optician|cosmetics)$"'], google: ["dentist", "doctor", "veterinary_care", "beauty_salon", "hair_salon", "physiotherapist"] },
+  trades: { label: "Home services and trades", osm: ['craft', 'shop~"^(hardware|doityourself|garden_centre|trade|appliance)$"'], google: ["plumber", "electrician", "roofing_contractor", "general_contractor", "landscaping"] },
+  shops: { label: "Shops", osm: ['shop~"^(clothes|shoes|sports|gift|florist|jewelry|furniture|pet|books|toys|convenience|variety_store|second_hand|farm)$"'], google: ["clothing_store", "florist", "pet_store", "furniture_store", "sporting_goods_store", "jewelry_store"] },
+  offices: { label: "Professional offices", osm: ["office"], google: ["insurance_agency", "real_estate_agency", "accounting", "lawyer", "bank"] },
+  fun: { label: "Fitness and fun", osm: ['leisure~"^(fitness_centre|sports_centre|bowling_alley|dance)$"', 'amenity~"^(cinema|childcare)$"'], google: ["gym", "bowling_alley", "child_care_agency", "amusement_center"] },
 };
 
 const key = (id: string) => `prospects/${createHash("sha256").update(id).digest("hex").slice(0, 32)}`;
@@ -152,40 +152,9 @@ async function searchGoogle(radiusMi: number, groups: string[], apiKey: string):
   return out;
 }
 
-// TomTom: a free developer key with no card, business listings with phone numbers and websites.
-async function searchTomTom(radiusMi: number, groups: string[], apiKey: string): Promise<Found[]> {
-  const words = [...new Set(groups.flatMap((g) => GROUPS[g]?.tomtom || []))];
-  const radius = Math.min(50000, Math.round(radiusMi * 1609));
-  const lists = await Promise.all(words.map(async (w) => {
-    const url = `https://api.tomtom.com/search/2/categorySearch/${encodeURIComponent(w)}.json?key=${encodeURIComponent(apiKey)}&lat=${HOME.lat}&lon=${HOME.lng}&radius=${radius}&limit=100&countrySet=US`;
-    const res = await fetch(url).catch(() => null);
-    if (!res) return [];
-    if (res.status === 403 || res.status === 401) throw new Error("TomTom did not accept the key. Check the TomTom key.");
-    if (!res.ok) return [];
-    const data = (await res.json()) as { results?: any[] };
-    return (data.results || []).map((r): Found => {
-      const site = String(r.poi?.url || "").trim();
-      return {
-        id: `tomtom:${r.id}`,
-        name: clean(r.poi?.name, 100),
-        category: clean((r.poi?.categories || [w])[0], 40),
-        address: clean(r.address?.freeformAddress, 160),
-        phone: clean(r.poi?.phone, 30),
-        website: site ? cleanUrl(/^https?:\/\//i.test(site) ? site : `https://${site}`) : "",
-        email: "", emailFrom: "",
-        chain: !!(r.poi?.brands || []).length,
-        distance: r.position ? miles(r.position.lat, r.position.lon) : 0,
-        source: "tomtom",
-      };
-    });
-  }));
-  return lists.flat();
-}
-
-// Which directory to use: Google or TomTom when their key is set, otherwise the free map directory.
+// Which directory to use: Google when its key is set, otherwise the free map directory.
 export function searchSource() {
   if (Netlify.env.get("GOOGLE_PLACES_KEY")) return "Google";
-  if (Netlify.env.get("TOMTOM_KEY")) return "TomTom";
   return "the free map directory";
 }
 
@@ -195,10 +164,8 @@ export async function findBusinesses(body: any) {
   const groups = (Array.isArray(body?.groups) ? body.groups : Object.keys(GROUPS)).filter((g: string) => GROUPS[g]);
   if (!groups.length) return { error: "Pick at least one kind of business." };
   const localOnly = body?.localOnly !== false;
-  const googleKey = Netlify.env.get("GOOGLE_PLACES_KEY") || "", tomtomKey = Netlify.env.get("TOMTOM_KEY") || "";
-  const found = googleKey ? await searchGoogle(radius, groups, googleKey)
-    : tomtomKey ? await searchTomTom(radius, groups, tomtomKey)
-    : await searchOsm(radius, groups);
+  const googleKey = Netlify.env.get("GOOGLE_PLACES_KEY") || "";
+  const found = googleKey ? await searchGoogle(radius, groups, googleKey) : await searchOsm(radius, groups);
   const [have, sponsors] = await Promise.all([listProspects(), listSponsors()]);
   const seen = new Set([...have.map((p) => norm(p.name)), ...sponsors.map((s) => norm(s.business))]);
   const haveIds = new Set(have.map((p) => p.id));
