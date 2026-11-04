@@ -1,6 +1,6 @@
 // Sponsor prospects: local businesses found near Middleburg, the coach's own outreach to them, and the
-// players assigned to visit them. Nothing here emails a business. The coach sends every prospect email
-// herself from her own email account; the site only writes the message and keeps track.
+// players assigned to visit them. The coach sends each prospect email herself, one tap at a time, through the
+// team email (Resend) or her own Gmail. Nothing here emails a business on its own.
 import { createHash } from "node:crypto";
 import { clean, cleanUrl, db, listSponsors } from "./core.mts";
 import { DIRECTORY } from "./directory.mts";

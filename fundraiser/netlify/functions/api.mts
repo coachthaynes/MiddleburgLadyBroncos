@@ -10,12 +10,12 @@ import {
 } from "../lib/core.mts";
 import {
   cleanContacts, currentWave, DEFAULT_WAVES, getSponsorDrip, setSponsorDrip, SPONSOR_DRIP, getContacts, getLog, getWaves, inSendWindow, kickSender, liveSettings, mergeVars,
-  normalizeEmail, providerStatus, renderEmail, renderSms, saveContacts, saveWaves,
+  isOptedOut, normalizeEmail, providerStatus, renderEmail, renderProspectEmail, renderSms, saveContacts, saveWaves,
   sendEmail, SendLog, siteOrigin, unsubUrl, Wave,
 } from "../lib/messaging.mts";
 import { elevateProfiles, getDepth, getHome, getLinks, saveDepth, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
 import { createOrder, deleteOrder, listOrders, updateOrder } from "../lib/orders.mts";
-import { addProspect, askFor, deleteProspect, groupLabels, findBusinesses, findEmail, importProspects, listProspects, playerProspects, playerUpdate, searchSource, updateProspect } from "../lib/prospects.mts";
+import { addProspect, askFor, deleteProspect, getProspect, groupLabels, findBusinesses, findEmail, importProspects, listProspects, playerProspects, playerUpdate, searchSource, updateProspect } from "../lib/prospects.mts";
 import { deleteContract, getContract, listContracts, signContract } from "../lib/contracts.mts";
 
 // The team store lives on its own Netlify site and is also served at mhsladybroncos.com/store/.
@@ -566,6 +566,33 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
   if (parts[0] === "prospects" && !parts[1] && method === "POST") {
     const r = await addProspect(await req.json().catch(() => ({})));
     return "error" in r ? json({ error: r.error }, 400) : json(r);
+  }
+  // Send the coach's next email to one business through Resend, from the team address.
+  if (parts[0] === "prospects" && parts[1] && parts[2] === "send" && method === "POST") {
+    if (!providerStatus().email) return json({ error: "Team email is not set up yet." }, 400);
+    const id = decodeURIComponent(parts[1]);
+    const p = await getProspect(id);
+    if (!p) return json({ error: "Business not found." }, 404);
+    if (!p.email) return json({ error: "This business has no email address." }, 400);
+    const body = await req.json().catch(() => ({}));
+    const step = Math.round(Number(body.step));
+    if (!(step >= 1 && step <= 3)) return json({ error: "Pick which email to send." }, 400);
+    if (p.emails.some((e) => e.step === step)) return json({ error: "That email was already sent to this business." }, 409);
+    if (await isOptedOut("email", p.email)) {
+      await updateProspect(id, { status: "notnow" });
+      return json({ error: `${p.name} unsubscribed, so nothing was sent.` }, 409);
+    }
+    const subject = String(body.subject || "").replace(/[\r\n]+/g, " ").trim().slice(0, 200);
+    const text = String(body.body || "").trim().slice(0, 6000);
+    if (!subject || !text) return json({ error: "The email is empty." }, 400);
+    const origin = siteOrigin(new URL(req.url).origin);
+    try {
+      const u = await unsubUrl(origin, p.email);
+      await sendEmail(p.email, renderProspectEmail(subject, text, p.name, await getSettings(), origin, u), u);
+    } catch (err) {
+      return json({ error: `The email did not send. ${(err as Error).message}` }, 502);
+    }
+    return json({ prospect: await updateProspect(id, { emailed: step }) });
   }
   if (parts[0] === "prospects" && parts[1] && parts[2] === "find-email" && method === "POST") {
     const p = await findEmail(decodeURIComponent(parts[1]));

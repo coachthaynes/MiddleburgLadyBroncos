@@ -3,7 +3,7 @@
   const STATUS = { new: "Not contacted", assigned: "Assigned", emailed: "Emailed", visited: "Visited", interested: "Interested", signed: "Signed", notnow: "Not this year" };
   const PILL = { new: "", assigned: "warn", emailed: "warn", visited: "warn", interested: "red", signed: "good", notnow: "" };
   const SITE = "https://mhsladybroncos.com";
-  // The three emails you send yourself, and how many days to wait before each follow up.
+  // The three emails the coach sends, and how many days to wait before each follow up.
   const STEPS = [
     { n: 1, label: "Intro email", wait: 0,
       subject: "Sponsoring Middleburg Lady Broncos Basketball",
@@ -53,7 +53,7 @@
     return t.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
   }
   // Gmail on a computer opens in the coach's own account; phones open the Gmail app instead (see the click handler).
-  let gmailUser = "";
+  let gmailUser = "", emailReady = false;
   const gmailLink = (p, s) => `https://mail.google.com/mail/?view=cm&fs=1${gmailUser ? `&authuser=${enc(gmailUser)}` : ""}&to=${enc(p.email)}&su=${enc(fill(s.subject, p))}&body=${enc(fill(s.body, p))}`;
   const gmailApp = (p, s) => `googlegmail:///co?to=${enc(p.email)}&subject=${enc(fill(s.subject, p))}&body=${enc(fill(s.body, p))}`;
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -106,7 +106,7 @@
         <label class="field">Status<select class="gselect" data-f="status">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${k === p.status ? " selected" : ""}>${v}</option>`).join("")}</select></label>
         <label class="field wide">Your notes<input class="gselect" type="text" maxlength="800" data-f="notes" value="${esc(p.notes)}" placeholder="Who you talked to, what they said, when to follow up"></label>
         <div class="btn-row wide">
-          ${p.email && next ? `<a class="btn ${!lastEmail(p) || followUpDue(p) ? "btn-primary" : "btn-glass"} btn-small" href="${esc(gmailLink(p, next))}" target="_blank" rel="noopener" data-gmail data-send="${next.n}">${esc(next.label)} in Gmail${lastEmail(p) && !followUpDue(p) ? ` (due ${day(Date.parse(lastEmail(p).at) + next.wait * 86400000)})` : ""}</a><a class="btn btn-glass btn-small" href="${esc(mailLink(p, next))}" data-send="${next.n}">Mail app</a>` : ""}
+          ${p.email && next ? `${emailReady ? `<button class="btn ${!lastEmail(p) || followUpDue(p) ? "btn-primary" : "btn-glass"} btn-small" data-act="send">Send ${esc(next.label.toLowerCase())}${lastEmail(p) && !followUpDue(p) ? ` (due ${day(Date.parse(lastEmail(p).at) + next.wait * 86400000)})` : ""}</button>` : ""}<a class="btn btn-glass btn-small" href="${esc(gmailLink(p, next))}" target="_blank" rel="noopener" data-gmail data-send="${next.n}">${emailReady ? "Write it in Gmail" : `${esc(next.label)} in Gmail`}</a>` : ""}
           ${!p.email && p.website && !p.emailChecked ? '<button class="btn btn-glass btn-small" data-act="find">Find their email</button>' : ""}
           ${p.email && !next ? '<span class="muted" style="font-size:.85rem">All three emails sent</span>' : ""}
           <button class="btn btn-glass btn-small" data-act="delete">Remove</button>
@@ -138,6 +138,7 @@
       const [d, o] = await Promise.all([api("/api/coach/prospects"), api("/api/coach/overview").catch(() => ({ players: [] }))]);
       list = d.prospects || [];
       gmailUser = d.gmailUser || "";
+      emailReady = !!d.emailReady;
       players = (o.players || []).map((p) => ({ id: p.id, name: [p.first, p.last].filter(Boolean).join(" ") || p.name })).sort((a, b) => a.name.localeCompare(b.name));
       $("#prGroups").innerHTML = Object.entries(d.groups).map(([k, v]) => `<label><input type="checkbox" value="${esc(k)}" checked> ${esc(v)}</label>`).join("");
       const opts = players.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
@@ -215,6 +216,34 @@
     list.filter(matches).forEach((p) => (e.target.checked ? chosen.add(p.id) : chosen.delete(p.id)));
     render();
   });
+  // Send the next email in the series through the team email (Resend). Replies go to the coach's Gmail.
+  async function sendNow(p) {
+    const step = nextStep(p);
+    const r = await api(`/api/coach/prospects/${enc(p.id)}/send`, { method: "POST", body: { step: step.n, subject: fill(step.subject, p), body: fill(step.body, p) } });
+    list = list.map((x) => (x.id === p.id ? r.prospect : x));
+  }
+  $("#prBulkSend").addEventListener("click", async () => {
+    if (!emailReady) return toast("Team email is not set up yet.");
+    const picked = list.filter((p) => chosen.has(p.id));
+    const ready = picked.filter((p) => p.email && nextStep(p) && (!lastEmail(p) || followUpDue(p)) && !["signed", "notnow"].includes(p.status));
+    if (!ready.length) return toast("None of the selected businesses have an email due.");
+    if (!confirm(`Send the next email to ${ready.length} businesses from the team email? Replies will come to your Gmail.`)) return;
+    const btn = $("#prBulkSend");
+    btn.disabled = true;
+    let sent = 0;
+    const failed = [];
+    for (const [i, p] of ready.entries()) {
+      btn.textContent = `Sending ${i + 1} of ${ready.length}...`;
+      try { await sendNow(p); sent++; } catch (err) { failed.push(`${p.name}: ${err.message}`); }
+      await new Promise((r) => setTimeout(r, 600));
+    }
+    btn.disabled = false;
+    btn.textContent = "Send next email to selected";
+    chosen.clear();
+    render();
+    toast(`Sent ${sent} emails.${picked.length > ready.length ? ` Skipped ${picked.length - ready.length} with no email, nothing due, or already signed.` : ""}${failed.length ? ` ${failed.length} did not send: ${failed[0]}` : ""}`);
+  });
+
   $("#prBulkGo").addEventListener("click", async () => {
     const v = $("#prBulkPlayer").value;
     if (!v || !chosen.size) return toast("Pick businesses and a player first.");
@@ -266,6 +295,15 @@
       return;
     }
     const act = e.target.closest("[data-act]")?.dataset.act;
+    if (act === "send") {
+      const p = list.find((x) => x.id === id), btn = e.target.closest("[data-act]");
+      if (lastEmail(p) && !followUpDue(p) && !confirm(`The ${nextStep(p).label.toLowerCase()} is not due yet. Send it now anyway?`)) return;
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      try { await sendNow(p); toast(`Sent to ${p.name}`); } catch (err) { toast(err.message); }
+      render();
+      return;
+    }
     if (act === "find") {
       try {
         const r = await api(`/api/coach/prospects/${enc(id)}/find-email`, { method: "POST" });

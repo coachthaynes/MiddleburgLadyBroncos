@@ -583,6 +583,23 @@ You are getting this because ${escHtml(sp.business)} filled out our sponsor form
   return { subject, html, text: `${text}\n\nUnsubscribe: ${unsub}` };
 }
 
+// A coach email to a local business on the prospect list, sent from the team address with replies to the coach.
+export function renderProspectEmail(subject: string, body: string, business: string, s: Settings, origin: string, unsub: string) {
+  const logo = s.logoKey ? `${origin}/img/${encodeURIComponent(s.logoKey)}` : `${origin}/brand/logo.png`;
+  const paras = body.split(/\n{2,}/).map((para) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#2a1418">${escHtml(para).replace(/\n/g, "<br>").replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color:#c8102e">$1</a>')}</p>`).join("");
+  const address = s.mailingAddress ? `<br>${escHtml(s.mailingAddress)}` : "";
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#fbe9ec">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#fbe9ec;padding:24px 12px"><tr><td align="center">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#ffffff;border-radius:22px;overflow:hidden;font-family:Helvetica,Arial,sans-serif">
+<tr><td style="background-color:#c8102e;padding:22px 26px"><img src="${logo}" width="44" height="44" alt="" style="vertical-align:middle;background:#ffffff;border-radius:12px;padding:4px">
+<span style="vertical-align:middle;margin-left:10px;font-size:18px;font-weight:700;color:#ffffff">${escHtml(s.schoolName)} ${escHtml(s.teamName)}</span></td></tr>
+<tr><td style="padding:24px 28px 8px">${paras}</td></tr>
+<tr><td style="padding:18px 28px 26px;border-top:1px solid #f3dde1;font-size:12px;line-height:1.6;color:#8a7478" align="center">
+You are getting this because ${escHtml(business)} is a local business in our community. Just reply to reach Coach Haynes.${address}<br><a href="${unsub}" style="color:#8a7478">Unsubscribe</a></td></tr>
+</table></td></tr></table></body></html>`;
+  return { subject, html, text: `${body}\n\nUnsubscribe: ${unsub}` };
+}
+
 async function sponsorDrip(settings: Settings, origin: string, summary: { sent: number; failed: number }) {
   const drip = await getSponsorDrip();
   if (!drip.on) return;
