@@ -106,17 +106,30 @@
     return t.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
   }
   // Gmail on a computer opens in the coach's own account; phones open the Gmail app instead (see the click handler).
-  let gmailUser = "", emailReady = false;
+  let gmailUser = "", emailReady = false, tracking = false;
   const gmailLink = (p, s) => `https://mail.google.com/mail/?view=cm&fs=1${gmailUser ? `&authuser=${enc(gmailUser)}` : ""}&to=${enc(p.email)}&su=${enc(fill(s.subject, p))}&body=${enc(fill(s.body, p))}`;
   const gmailApp = (p, s) => `googlegmail:///co?to=${enc(p.email)}&subject=${enc(fill(s.subject, p))}&body=${enc(fill(s.body, p))}`;
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const isAndroid = /Android/i.test(navigator.userAgent);
   const mailLink = (p, s) => `mailto:${p.email}?subject=${enc(fill(s.subject, p))}&body=${enc(fill(s.body, p))}`;
 
+  // What Resend reported about one email.
+  function mailState(e) {
+    if (e.bounced) return ' · <b style="color:var(--red)">bounced</b>';
+    if (e.complained) return ' · <b style="color:var(--red)">marked as spam</b>';
+    if (e.clicked) return ` · <b style="color:var(--good, #1d7a46)">opened and clicked ${day(e.clicked)}</b>`;
+    if (e.opened) return ` · <b style="color:var(--good, #1d7a46)">opened ${day(e.opened)}</b>`;
+    if (e.delivered) return " · delivered, not opened yet";
+    return tracking && e.id ? " · waiting on delivery" : "";
+  }
+  const opened = (p) => p.emails.some((e) => e.opened || e.clicked);
+
   function matches(p) {
+    if (filter === "opened" && !opened(p)) return false;
+    if (filter === "bounced" && !p.bounced) return false;
     if (filter === "due" && !followUpDue(p)) return false;
     if (filter === "open" && !OPEN.includes(p.status)) return false;
-    if (!["all", "due", "open"].includes(filter) && p.status !== filter) return false;
+    if (!["all", "due", "open", "opened", "bounced"].includes(filter) && p.status !== filter) return false;
     if (query && ![p.name, p.category, p.address, p.email, p.notes].join(" ").toLowerCase().includes(query)) return false;
     return true;
   }
@@ -136,6 +149,8 @@
     $("#prTabs").innerHTML = [
       tab("all", "Everything", list.length),
       tab("due", "Follow up due", n(followUpDue)),
+      tab("opened", "Opened an email", n(opened)),
+      tab("bounced", "Bounced", n((p) => !!p.bounced)),
       ...STAGES.map((s) => tab(s.k, s.label, n((p) => p.status === s.k))),
     ].join("");
   }
@@ -143,7 +158,7 @@
   // What to do next for a business, based on where it is on the lead path.
   function nextAction(p, next) {
     const due = lastEmail(p) && next ? Date.parse(lastEmail(p).at) + next.wait * 86400000 : 0;
-    const send = p.email && next && emailReady
+    const send = p.email && next && emailReady && !p.bounced
       ? `<button class="btn ${!lastEmail(p) || followUpDue(p) ? "btn-primary" : "btn-glass"} btn-small" data-act="send">Send ${esc(next.label.toLowerCase())}${due && !followUpDue(p) ? ` (due ${day(due)})` : ""}</button>` : "";
     const call = p.phone ? `<a class="btn btn-glass btn-small" href="tel:${esc(p.phone.replace(/[^\d+]/g, ""))}">Call</a>` : "";
     const move = (k, label, primary) => `<button class="btn ${primary ? "btn-primary" : "btn-glass"} btn-small" data-stage="${k}">${label}</button>`;
@@ -165,12 +180,13 @@
     const emailBox = p.email
       ? `<label class="field">Email <small>${p.emailFrom === "website" ? "found on their website" : p.emailFrom === "listing" ? "from the directory" : "added by you"}</small><input class="gselect" type="email" data-f="email" value="${esc(p.email)}"></label>`
       : `<label class="field">Email <small>${p.emailChecked ? (p.website ? "none found on their website" : "no website listed") : ""}</small><input class="gselect" type="email" data-f="email" placeholder="Add an email"></label>`;
-    const sent = p.emails.length ? `<div class="pr-steps">${p.emails.map((e) => `${stepsFor(p)[e.step - 1].label} sent ${day(e.at)}`).join(" · ")}${followUpDue(p) ? ' · <b style="color:var(--red)">Follow up due</b>' : ""}</div>` : "";
+    const sent = p.emails.length ? `<div class="pr-steps">${p.emails.map((e) => `${stepsFor(p)[e.step - 1].label} sent ${day(e.at)}${mailState(e)}`).join(" · ")}${followUpDue(p) ? ' · <b style="color:var(--red)">Follow up due</b>' : ""}</div>` : "";
+    const bounce = p.bounced ? `<div class="pr-bounce"><b>Email bounced.</b> ${esc(p.bounced)} Check the address under Details and fix it, or call them instead.</div>` : "";
     const stages = STAGES.map((s, i) => `<button type="button" data-stage="${s.k}" class="${s.k === p.status ? "on" : ""}${i < at && at < 5 ? " done" : ""}${s.k === "notnow" ? " lost" : ""}" title="${esc(s.hint)}"${s.k === p.status ? ' aria-current="step"' : ""}>${esc(s.label)}</button>`).join("");
     return `<article class="pr" data-id="${esc(p.id)}">
       <div class="pr-head">
         <div><input type="checkbox" data-pick ${chosen.has(p.id) ? "checked" : ""} aria-label="Select ${esc(p.name)}"><div><b>${esc(p.name)}</b><small>${p.ask === "meals" ? "Team meals · " : ""}${esc(p.category)}</small></div></div>
-        <span class="pill ${PILL[p.status] || ""}">${esc(STATUS[p.status] || "New lead")}</span>
+        <span>${p.bounced ? '<span class="pill red">Bounced</span> ' : opened(p) ? '<span class="pill good">Opened</span> ' : ""}<span class="pill ${PILL[p.status] || ""}">${esc(STATUS[p.status] || "New lead")}</span></span>
       </div>
       <div class="pr-info">
         <a href="${esc(map)}" target="_blank" rel="noopener">${esc(p.address || "Find on the map")}</a>
@@ -181,6 +197,7 @@
       <div class="pr-stages" role="group" aria-label="Lead stage">${stages}</div>
       <div class="pr-next">${nextAction(p, next)}</div>
       ${sent}
+      ${bounce}
       ${p.notes ? `<div class="pr-note">${esc(p.notes)}</div>` : ""}
       <details class="pr-more"><summary>Details and notes</summary>
         <div class="pr-body">
@@ -224,6 +241,7 @@
       list = d.prospects || [];
       gmailUser = d.gmailUser || "";
       emailReady = !!d.emailReady;
+      tracking = !!d.tracking;
       if (d.emailText) { emailText = d.emailText; applyEmailText(); renderEmails(); }
       $("#prGroups").innerHTML = Object.entries(d.groups).map(([k, v]) => `<label><input type="checkbox" value="${esc(k)}" checked> ${esc(v)}</label>`).join("");
       $("#prBulkStage").innerHTML = `<option value="">Move selected to...</option>${STAGES.map((x) => `<option value="${x.k}">${esc(x.label)}</option>`).join("")}`;
@@ -306,7 +324,7 @@
   $("#prBulkSend").addEventListener("click", async () => {
     if (!emailReady) return toast("Team email is not set up yet.");
     const picked = list.filter((p) => chosen.has(p.id));
-    const ready = picked.filter((p) => p.email && nextStep(p) && (!lastEmail(p) || followUpDue(p)) && !["signed", "notnow"].includes(p.status));
+    const ready = picked.filter((p) => p.email && !p.bounced && nextStep(p) && (!lastEmail(p) || followUpDue(p)) && !["signed", "notnow"].includes(p.status));
     if (!ready.length) return toast("None of the selected businesses have an email due.");
     if (!confirm(`Send the next email to ${ready.length} businesses from the team email? Replies will come to your Gmail.`)) return;
     const btn = $("#prBulkSend");

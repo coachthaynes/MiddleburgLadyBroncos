@@ -9,6 +9,19 @@ import { DIRECTORY } from "./directory.mts";
 export const STATUSES = ["new", "assigned", "emailed", "visited", "interested", "signed", "notnow"] as const;
 export type ProspectStatus = (typeof STATUSES)[number];
 
+// One email to a business, with what Resend later reports about it.
+export interface ProspectEmail {
+  step: number;
+  at: string;
+  id?: string; // Resend's id for the email
+  delivered?: string;
+  opened?: string;
+  clicked?: string;
+  bounced?: string;
+  complained?: string;
+  reason?: string;
+}
+
 export interface Prospect {
   id: string; // "osm:node/123" or "google:abc"
   name: string;
@@ -28,7 +41,8 @@ export interface Prospect {
   playerNote: string;
   ask?: "sponsor" | "meals"; // what the coach asks for; food places default to team meals
   stageAt?: Record<string, string>; // when the business reached each stage
-  emails: { step: number; at: string }[]; // coach's own emails, by step
+  emails: ProspectEmail[]; // coach's own emails, by step
+  bounced?: string; // why the last email to this address bounced; cleared when the address changes
   addedAt: string;
   updatedAt: string;
   source: string;
@@ -173,13 +187,21 @@ export async function updateProspect(id: string, body: any) {
   if (body.ask === "sponsor" || body.ask === "meals") p.ask = body.ask;
   if (body.email !== undefined) {
     const e = clean(body.email, 120).toLowerCase();
-    if (!e || /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)) { p.email = e; p.emailFrom = e ? "coach" : ""; }
+    if (!e || /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)) {
+      if (e !== p.email) delete p.bounced;
+      p.email = e; p.emailFrom = e ? "coach" : "";
+    }
   }
   if (body.phone !== undefined) p.phone = clean(body.phone, 30);
   // The coach opened her own email to this business: record which step it was.
   if (body.emailed) {
     const step = Math.max(1, Math.min(3, Math.round(Number(body.emailed))));
-    p.emails = [...p.emails.filter((e) => e.step !== step), { step, at: new Date().toISOString() }].sort((a, b) => a.step - b.step);
+    const sent: ProspectEmail = { step, at: new Date().toISOString() };
+    if (body.emailId) {
+      sent.id = clean(body.emailId, 80);
+      await db().set(`prospect-mail/${sent.id}`, p.id);
+    }
+    p.emails = [...p.emails.filter((e) => e.step !== step), sent].sort((a, b) => a.step - b.step);
     if (["new", "assigned"].includes(p.status)) setStage(p, "emailed");
   }
   await saveProspect(p);
@@ -244,6 +266,34 @@ export async function importProspects(text: unknown) {
     added++;
   }
   return { added, updated, skipped };
+}
+
+// Delivery news from Resend about an email to a business: delivered, opened, clicked, bounced or marked as spam.
+export async function recordEmailEvent(type: string, data: any) {
+  const emailId = String(data?.email_id || "");
+  if (!emailId) return false;
+  const prospectId = (await db().get(`prospect-mail/${emailId}`, { type: "text" })) as string | null;
+  if (!prospectId) return false;
+  const p = await getProspect(prospectId);
+  const sent = p?.emails.find((e) => e.id === emailId);
+  if (!p || !sent) return false;
+  const at = String(data?.created_at || new Date().toISOString());
+  const kind = type.replace(/^email\./, "");
+  if (kind === "delivered") sent.delivered ||= at;
+  else if (kind === "opened") sent.opened ||= at;
+  else if (kind === "clicked") { sent.clicked ||= at; sent.opened ||= at; }
+  else if (kind === "bounced") {
+    sent.bounced = at;
+    sent.reason = clean(data?.bounce?.message || data?.bounce?.type || "", 200);
+    p.bounced = sent.reason || "The email could not be delivered.";
+  } else if (kind === "complained") {
+    sent.complained = at;
+    // Marked as spam: never email them again.
+    await db().set(`optout/email/${createHash("sha256").update(p.email.toLowerCase()).digest("hex").slice(0, 40)}`, at);
+    if (p.status !== "signed") setStage(p, "notnow");
+  } else return false;
+  await saveProspect(p);
+  return true;
 }
 
 // The coach's own wording for the emails to businesses on her list. Blank means the built in wording.

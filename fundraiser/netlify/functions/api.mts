@@ -552,6 +552,7 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       emailReady: providerStatus().email,
       gmailUser: Netlify.env.get("EMAIL_REPLY_TO") || "",
       emailText: await getProspectEmails(),
+      tracking: !!Netlify.env.get("RESEND_WEBHOOK_SECRET"),
     });
   }
   if (parts[0] === "prospects" && parts[1] === "search" && method === "POST") {
@@ -587,13 +588,14 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
     const text = String(body.body || "").trim().slice(0, 6000);
     if (!subject || !text) return json({ error: "The email is empty." }, 400);
     const origin = siteOrigin(new URL(req.url).origin);
+    let emailId = "";
     try {
       const u = await unsubUrl(origin, p.email);
-      await sendEmail(p.email, renderProspectEmail(subject, text, p.name, await getSettings(), origin, u), u);
+      emailId = await sendEmail(p.email, renderProspectEmail(subject, text, p.name, await getSettings(), origin, u), u);
     } catch (err) {
       return json({ error: `The email did not send. ${(err as Error).message}` }, 502);
     }
-    return json({ prospect: await updateProspect(id, { emailed: step }) });
+    return json({ prospect: await updateProspect(id, { emailed: step, emailId }) });
   }
   if (parts[0] === "prospects" && parts[1] && parts[2] === "find-email" && method === "POST") {
     const p = await findEmail(decodeURIComponent(parts[1]));
