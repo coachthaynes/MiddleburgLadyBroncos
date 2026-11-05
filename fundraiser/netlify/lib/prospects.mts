@@ -1,5 +1,5 @@
 // Sponsor prospects: local businesses found near Middleburg, the coach's own outreach to them, and the
-// players assigned to visit them. The coach sends each prospect email herself, one tap at a time, through the
+// pipeline stage each one is in. The coach sends each prospect email herself, one tap at a time, through the
 // team email (Resend) or her own Gmail. Nothing here emails a business on its own.
 import { createHash } from "node:crypto";
 import { clean, cleanUrl, db, listSponsors } from "./core.mts";
@@ -27,6 +27,7 @@ export interface Prospect {
   notes: string;
   playerNote: string;
   ask?: "sponsor" | "meals"; // what the coach asks for; food places default to team meals
+  stageAt?: Record<string, string>; // when the business reached each stage
   emails: { step: number; at: string }[]; // coach's own emails, by step
   addedAt: string;
   updatedAt: string;
@@ -130,7 +131,7 @@ async function fetchText(url: string) {
 export async function findEmail(id: string) {
   const p = await getProspect(id);
   if (!p) return null;
-  if (p.email || !p.website) { p.emailChecked = true; await saveProspect(p); return { ...p, ask: askFor(p) }; }
+  if (p.email || !p.website) { p.emailChecked = true; await saveProspect(p); return { ...stageOf(p), ask: askFor(p) }; }
   let host = "";
   try { host = new URL(p.website).hostname.replace(/^www\./, ""); } catch { /* bad link */ }
   const base = p.website.replace(/\/+$/, "");
@@ -150,14 +151,24 @@ export async function findEmail(id: string) {
   p.emailChecked = true;
   if (pick) { p.email = pick; p.emailFrom = "website"; }
   await saveProspect(p);
-  return { ...p, ask: askFor(p) };
+  return { ...stageOf(p), ask: askFor(p) };
 }
 
 // ---------- coach and player updates ----------
+// The lead path: new, emailed (contacted), visited (talking), interested (ready to sign), then signed or notnow.
+// "assigned" is from when players were given businesses to visit; it now counts as a new lead.
+function setStage(p: Prospect, status: ProspectStatus) {
+  p.status = status;
+  p.stageAt = { ...(p.stageAt || {}), [status]: new Date().toISOString() };
+}
+export function stageOf(p: Prospect): Prospect {
+  return p.status === "assigned" ? { ...p, status: p.emails.length ? "emailed" : "new" } : p;
+}
+
 export async function updateProspect(id: string, body: any) {
   const p = await getProspect(id);
   if (!p) return null;
-  if (body.status && (STATUSES as readonly string[]).includes(body.status)) p.status = body.status;
+  if (body.status && (STATUSES as readonly string[]).includes(body.status) && body.status !== p.status) setStage(p, body.status);
   if (body.notes !== undefined) p.notes = clean(body.notes, 800);
   if (body.ask === "sponsor" || body.ask === "meals") p.ask = body.ask;
   if (body.email !== undefined) {
@@ -165,20 +176,14 @@ export async function updateProspect(id: string, body: any) {
     if (!e || /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)) { p.email = e; p.emailFrom = e ? "coach" : ""; }
   }
   if (body.phone !== undefined) p.phone = clean(body.phone, 30);
-  if (body.player !== undefined) {
-    p.playerId = clean(body.player?.id, 40);
-    p.playerName = p.playerId ? clean(body.player?.name, 60) : "";
-    if (p.playerId && p.status === "new") p.status = "assigned";
-    if (!p.playerId && p.status === "assigned") p.status = "new";
-  }
   // The coach opened her own email to this business: record which step it was.
   if (body.emailed) {
     const step = Math.max(1, Math.min(3, Math.round(Number(body.emailed))));
     p.emails = [...p.emails.filter((e) => e.step !== step), { step, at: new Date().toISOString() }].sort((a, b) => a.step - b.step);
-    if (["new", "assigned"].includes(p.status)) p.status = "emailed";
+    if (["new", "assigned"].includes(p.status)) setStage(p, "emailed");
   }
   await saveProspect(p);
-  return { ...p, ask: askFor(p) };
+  return { ...stageOf(p), ask: askFor(p) };
 }
 
 export async function addProspect(body: any) {
@@ -192,7 +197,7 @@ export async function addProspect(body: any) {
     emailChecked: true, chain: false, distance: 0, status: "new", playerId: "", playerName: "", notes: "", playerNote: "", emails: [], addedAt: now, updatedAt: now, source: "coach",
   };
   await saveProspect(p);
-  return { ok: true, prospect: { ...p, ask: askFor(p) } };
+  return { ok: true, prospect: { ...stageOf(p), ask: askFor(p) } };
 }
 
 // Paste a list: one business per line, with the name first and then any of address, phone, email
@@ -263,16 +268,14 @@ export async function deleteProspect(id: string) {
   await db().delete(key(id));
 }
 
-// What a player sees: only the businesses assigned to her, without the coach's notes.
-export async function playerProspects(playerId: string) {
-  return (await listProspects()).filter((p) => p.playerId === playerId).map((p) => ({
-    id: p.id, name: p.name, category: p.category, address: p.address, phone: p.phone, website: p.website, status: p.status, playerNote: p.playerNote, ask: askFor(p),
-  }));
+// Players no longer get businesses to visit; the coach manages every lead herself.
+export async function playerProspects(_playerId: string) {
+  return [] as { id: string }[];
 }
 
 export async function playerUpdate(playerId: string, id: string, body: any) {
   const p = await getProspect(id);
-  if (!p || p.playerId !== playerId) return null;
+  if (!p || !p.playerId || p.playerId !== playerId) return null;
   if (["visited", "interested", "signed", "notnow"].includes(body?.status)) p.status = body.status;
   if (body?.note !== undefined) p.playerNote = clean(body.note, 400);
   await saveProspect(p);

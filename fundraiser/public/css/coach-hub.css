@@ -130,6 +130,20 @@
 .pr-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px 10px; margin: 10px 0 0 28px; align-items: end; }
 .pr-body .field { font-size: 0.8rem; }
 .pr-body .wide { grid-column: 1 / -1; }
+.pr-path { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; margin-top: 12px; }
+.pr-path button { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 14px; border-radius: 14px; border: 1px solid var(--glass-line); background: rgba(255, 255, 255, 0.7); font: inherit; font-size: 0.82rem; font-weight: 700; color: inherit; cursor: pointer; text-align: left; }
+.pr-path button b { font-size: 1.15rem; line-height: 1; }
+.pr-path button.on { background: var(--red, #c8102e); border-color: var(--red, #c8102e); color: #fff; }
+.pr-stages { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0 28px; }
+.pr-stages button { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--glass-line); background: rgba(255, 255, 255, 0.75); font: inherit; font-size: 0.78rem; font-weight: 700; color: var(--muted); cursor: pointer; }
+.pr-stages button.done { color: inherit; background: rgba(200, 16, 46, 0.08); }
+.pr-stages button.on { background: var(--red, #c8102e); border-color: var(--red, #c8102e); color: #fff; }
+.pr-stages button.lost.on { background: #6b5a5d; border-color: #6b5a5d; }
+.pr-next { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 0 28px; font-size: 0.88rem; }
+.pr-note { margin: 8px 0 0 28px; font-size: 0.86rem; color: var(--muted); white-space: pre-line; }
+.pr-more { margin: 10px 0 0 28px; }
+.pr-more > summary { cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+.pr-more .pr-body { margin-left: 0; }
 .pr-pnote { margin: 8px 0 0 28px; font-size: 0.88rem; padding: 8px 12px; border-radius: 12px; background: var(--good-soft, #e7f7ee); }
 .pr-steps { font-size: 0.8rem; color: var(--muted); margin-left: 28px; margin-top: 6px; }
 .pr-drip { border: 1px solid var(--glass-line); border-radius: 14px; padding: 10px 14px; margin-bottom: 8px; background: rgba(255, 255, 255, 0.55); }

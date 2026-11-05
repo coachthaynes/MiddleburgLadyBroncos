@@ -96,17 +96,15 @@
       <div class="glass card fade-in">
         <div class="section-head" style="margin:0 0 14px">
           <div><span class="eyebrow">Sponsors</span><h2 style="margin-top:10px">Sponsor prospects</h2>
-            <p class="muted" style="font-size:.9rem;margin:4px 0 0">Find local businesses, pull their email addresses, send each one a note from the team email (replies come to your Gmail) and assign players to visit them. Businesses that sign up at the <a href="/sponsor" target="_blank" rel="noopener">sponsor page</a> move to your Sponsors list on the Fundraiser tab.</p></div>
+            <p class="muted" style="font-size:.9rem;margin:4px 0 0">Add local businesses, email them from the team email (replies come to your Gmail) and move each one along the lead path from new lead to a closed deal. Businesses that sign up at the <a href="/sponsor" target="_blank" rel="noopener">sponsor page</a> move to your Sponsors list on the Fundraiser tab.</p></div>
           <div class="btn-row"><button class="btn btn-glass btn-small" id="prCsv">Download list</button></div>
         </div>
         <div class="stat-row" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">
           <div class="stat"><b id="psTotal">0</b><span>Businesses</span></div>
           <div class="stat"><b id="psEmail">0</b><span>With email</span></div>
-          <div class="stat"><b id="psAssigned">0</b><span>Assigned to players</span></div>
-          <div class="stat"><b id="psEmailed">0</b><span>Emailed</span></div>
+          <div class="stat"><b id="psOpen">0</b><span>Open leads</span></div>
           <div class="stat"><b id="psDue">0</b><span>Follow ups due</span></div>
-          <div class="stat"><b id="psInterested">0</b><span>Interested</span></div>
-          <div class="stat"><b id="psSigned">0</b><span>Signed</span></div>
+          <div class="stat"><b id="psSigned">0</b><span>Won</span></div>
         </div>
       </div>
 
@@ -122,18 +120,16 @@
 
       <div class="glass card" style="margin-top:18px">
         <div class="ord-tools">
-          <div class="chips" id="prTabs">
-            <button data-pf="all" class="on">All</button><button data-pf="new">Not contacted</button><button data-pf="due">Follow up due</button><button data-pf="assigned">Assigned</button><button data-pf="emailed">Emailed</button><button data-pf="visited">Visited</button><button data-pf="interested">Interested</button><button data-pf="signed">Signed</button><button data-pf="notnow">Not this year</button>
-          </div>
-          <div class="btn-row" style="align-items:center">
-            <select id="prPlayerFilter" class="gselect" aria-label="Filter by player"><option value="">Every player</option></select>
-            <input type="search" id="prFind" class="gselect" placeholder="Search businesses" style="max-width:220px">
-          </div>
+          <div><h3 style="margin:0">Lead path</h3><p class="muted" style="font-size:.88rem;margin:4px 0 0">Tap a stage to see the businesses in it. On each business, tap a stage to move it, or use the next step button.</p></div>
+          <input type="search" id="prFind" class="gselect" placeholder="Search businesses" style="max-width:220px">
+        </div>
+        <div class="pr-path" id="prTabs"></div>
+        <div>
         </div>
         <div class="pr-bulk">
           <label class="switch"><input type="checkbox" id="prAll"> Select all shown</label>
-          <select id="prBulkPlayer" class="gselect" aria-label="Assign selected to"><option value="">Assign selected to...</option></select>
-          <button class="btn btn-glass btn-small" id="prBulkGo">Assign</button>
+          <select id="prBulkStage" class="gselect" aria-label="Move selected to"><option value="">Move selected to...</option></select>
+          <button class="btn btn-glass btn-small" id="prBulkGo">Move</button>
           <button class="btn btn-primary btn-small" id="prBulkSend">Send next email to selected</button>
           <span class="muted" id="prCount" style="font-size:.85rem"></span>
         </div>
@@ -164,7 +160,7 @@
 
       <div class="glass card" style="margin-top:18px" id="prEmailsCard">
         <h3 style="margin:0 0 4px">Emails to businesses on your list</h3>
-        <p class="muted" style="font-size:.9rem;margin:0 0 12px">These are the three emails each business on your list gets when you tap Send: the intro, a follow up 5 days later and a last note 10 days after that. Food places get the team meal emails. Change any wording and tap Save. In the text, {business} becomes the business name, {link} the sponsor page, {packet} the sponsor packet and {playerLine} a line about the player assigned to visit.</p>
+        <p class="muted" style="font-size:.9rem;margin:0 0 12px">These are the three emails each business on your list gets when you tap Send: the intro, a follow up 5 days later and a last note 10 days after that. Food places get the team meal emails. Change any wording and tap Save. In the text, {business} becomes the business name, {link} the sponsor page and {packet} the sponsor packet.</p>
         <div class="pr-tabs" role="tablist" style="display:flex;gap:8px;margin-bottom:10px">
           <button class="btn btn-primary btn-small" type="button" data-etab="sponsor">Sponsorship emails</button>
           <button class="btn btn-glass btn-small" type="button" data-etab="meals">Team meal emails</button>

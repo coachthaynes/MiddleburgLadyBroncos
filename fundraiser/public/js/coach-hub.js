@@ -32,7 +32,7 @@
       ["Store orders", "#orders", "Track payment and fulfillment for every store order"],
       ["Contracts", "#contracts", "Who has signed the Player Contract and Parent Agreement"],
       ["Depth chart", "#depth", "Varsity depth chart built from season averages"],
-      ["Sponsor prospects", "#prospects", "Find local businesses, email them and assign players to visit"],
+      ["Sponsor prospects", "#prospects", "Add local businesses, email them and track each lead to a closed deal"],
       ["Privacy Policy", "/privacy", "How the site handles information"],
       ["Terms of Use", "/terms", "Rules for using the site"],
     ] },
