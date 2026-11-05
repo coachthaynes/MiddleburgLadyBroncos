@@ -220,7 +220,7 @@
     renderPath();
     const shown = list.filter(matches);
     const stage = STAGES.find((s) => s.k === filter);
-    $("#prCount").textContent = `${shown.length} shown${stage ? ` in ${stage.label}` : ""}${chosen.size ? `, ${chosen.size} selected` : ""}`;
+    $("#prCount").textContent = `${shown.length} shown${stage ? ` in ${stage.label}` : ""}${chosen.size ? `, ${chosen.size} selected` : ""}${emailReady && !tracking ? ". Opens and bounces show once Resend tracking is connected." : ""}`;
     $("#prList").innerHTML = shown.length ? shown.map(card).join("")
       : `<p class="muted" style="margin:0">${list.length ? (stage ? `No businesses in ${stage.label} right now. ${stage.hint}.` : "No businesses match this view.") : "No businesses yet. Add some from the team directory above."}</p>`;
     $("#prAll").checked = shown.length > 0 && shown.every((p) => chosen.has(p.id));
