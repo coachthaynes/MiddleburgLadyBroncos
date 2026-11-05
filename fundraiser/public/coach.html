@@ -162,6 +162,16 @@
         </form>
       </details>
 
+      <div class="glass card" style="margin-top:18px" id="prEmailsCard">
+        <h3 style="margin:0 0 4px">Emails to businesses on your list</h3>
+        <p class="muted" style="font-size:.9rem;margin:0 0 12px">These are the three emails each business on your list gets when you tap Send: the intro, a follow up 5 days later and a last note 10 days after that. Food places get the team meal emails. Change any wording and tap Save. In the text, {business} becomes the business name, {link} the sponsor page, {packet} the sponsor packet and {playerLine} a line about the player assigned to visit.</p>
+        <div class="pr-tabs" role="tablist" style="display:flex;gap:8px;margin-bottom:10px">
+          <button class="btn btn-primary btn-small" type="button" data-etab="sponsor">Sponsorship emails</button>
+          <button class="btn btn-glass btn-small" type="button" data-etab="meals">Team meal emails</button>
+        </div>
+        <div id="prEmailList"></div>
+      </div>
+
       <div class="glass card" style="margin-top:18px" id="prDripCard">
         <div class="section-head" style="margin-bottom:10px">
           <div><h3 style="margin:0">Automatic emails after a business signs up</h3>

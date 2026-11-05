@@ -29,6 +29,52 @@
       body: "Hi {business} team,\n\nThis is my last note about team meals, and I promise not to fill up your inbox. If {business} would like to feed the Lady Broncos for a game or two this season, just reply to this email and we will set it up.\n\nIf now is not the right time, I completely understand. Thank you for being part of the Middleburg community.\n\nCoach Tenise Haynes\nHead Coach, Middleburg Lady Broncos Basketball" },
   ];
   const stepsFor = (p) => (p.ask === "meals" ? MEAL_STEPS : STEPS);
+  // The built in wording, kept so the coach can go back to it.
+  const ORIGINAL = { sponsor: STEPS.map((x) => ({ subject: x.subject, body: x.body })), meals: MEAL_STEPS.map((x) => ({ subject: x.subject, body: x.body })) };
+  let emailText = { sponsor: [null, null, null], meals: [null, null, null] }, emailTab = "sponsor";
+  function applyEmailText() {
+    for (const [kind, steps] of [["sponsor", STEPS], ["meals", MEAL_STEPS]]) {
+      steps.forEach((x, i) => Object.assign(x, emailText[kind][i] || ORIGINAL[kind][i]));
+    }
+  }
+  function renderEmails() {
+    const steps = emailTab === "meals" ? MEAL_STEPS : STEPS;
+    $$("[data-etab]").forEach((b) => { b.className = `btn btn-small ${b.dataset.etab === emailTab ? "btn-primary" : "btn-glass"}`; });
+    $("#prEmailList").innerHTML = steps.map((x, i) => `<details class="pr-drip"${i === 0 ? " open" : ""} data-ei="${i}">
+      <summary>${esc(x.label)} <small class="muted">${i === 0 ? "sent first" : `${x.wait} days after the last one`}${emailText[emailTab][i] ? " · your wording" : ""}</small></summary>
+      <label class="field" style="margin-top:8px">Subject<input class="gselect" type="text" maxlength="200" data-esub value="${esc(x.subject)}"></label>
+      <label class="field" style="margin-top:8px">Email<textarea class="gselect" rows="12" maxlength="6000" data-ebody>${esc(x.body)}</textarea></label>
+      <div class="btn-row" style="margin-top:8px"><button class="btn btn-primary btn-small" type="button" data-esave>Save</button>${emailText[emailTab][i] ? '<button class="btn btn-glass btn-small" type="button" data-ereset>Back to the original</button>' : ""}</div>
+    </details>`).join("");
+  }
+  async function saveEmails(next, msg) {
+    try {
+      const r = await api("/api/coach/prospect-emails", { method: "PUT", body: next });
+      emailText = r.emailText;
+      applyEmailText();
+      renderEmails();
+      render();
+      toast(msg);
+    } catch (err) { toast(err.message); }
+  }
+  $$("[data-etab]").forEach((b) => b.addEventListener("click", () => { emailTab = b.dataset.etab; renderEmails(); }));
+  $("#prEmailList").addEventListener("click", (e) => {
+    const box = e.target.closest("[data-ei]");
+    if (!box) return;
+    const i = Number(box.dataset.ei), next = { sponsor: [...emailText.sponsor], meals: [...emailText.meals] };
+    if (e.target.closest("[data-esave]")) {
+      const subject = box.querySelector("[data-esub]").value.trim(), body = box.querySelector("[data-ebody]").value.trim();
+      if (!subject || !body) return toast("The subject and email both need words.");
+      const same = subject === ORIGINAL[emailTab][i].subject && body === ORIGINAL[emailTab][i].body;
+      next[emailTab][i] = same ? null : { subject, body };
+      saveEmails(next, "Email saved");
+    }
+    if (e.target.closest("[data-ereset]")) {
+      if (!confirm("Go back to the original wording for this email?")) return;
+      next[emailTab][i] = null;
+      saveEmails(next, "Back to the original");
+    }
+  });
 
   let list = [];
   let players = [];
@@ -139,6 +185,7 @@
       list = d.prospects || [];
       gmailUser = d.gmailUser || "";
       emailReady = !!d.emailReady;
+      if (d.emailText) { emailText = d.emailText; applyEmailText(); renderEmails(); }
       players = (o.players || []).map((p) => ({ id: p.id, name: [p.first, p.last].filter(Boolean).join(" ") || p.name })).sort((a, b) => a.name.localeCompare(b.name));
       $("#prGroups").innerHTML = Object.entries(d.groups).map(([k, v]) => `<label><input type="checkbox" value="${esc(k)}" checked> ${esc(v)}</label>`).join("");
       const opts = players.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");

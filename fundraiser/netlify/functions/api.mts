@@ -15,7 +15,7 @@ import {
 } from "../lib/messaging.mts";
 import { elevateProfiles, getDepth, getHome, getLinks, saveDepth, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
 import { createOrder, deleteOrder, listOrders, updateOrder } from "../lib/orders.mts";
-import { addProspect, askFor, deleteProspect, getProspect, groupLabels, findBusinesses, findEmail, importProspects, listProspects, playerProspects, playerUpdate, searchSource, updateProspect } from "../lib/prospects.mts";
+import { addProspect, askFor, deleteProspect, getProspect, getProspectEmails, saveProspectEmails, groupLabels, findBusinesses, findEmail, importProspects, listProspects, playerProspects, playerUpdate, searchSource, updateProspect } from "../lib/prospects.mts";
 import { deleteContract, getContract, listContracts, signContract } from "../lib/contracts.mts";
 
 // The team store lives on its own Netlify site and is also served at mhsladybroncos.com/store/.
@@ -551,6 +551,7 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
       dripSteps: SPONSOR_DRIP,
       emailReady: providerStatus().email,
       gmailUser: Netlify.env.get("EMAIL_REPLY_TO") || "",
+      emailText: await getProspectEmails(),
     });
   }
   if (parts[0] === "prospects" && parts[1] === "search" && method === "POST") {
@@ -603,6 +604,9 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
     return p ? json({ prospect: p }) : json({ error: "Business not found." }, 404);
   }
   if (parts[0] === "prospects" && parts[1] && !parts[2] && method === "DELETE") { await deleteProspect(decodeURIComponent(parts[1])); return json({ ok: true }); }
+  if (parts[0] === "prospect-emails" && method === "PUT") {
+    return json({ emailText: await saveProspectEmails(await req.json().catch(() => ({}))) });
+  }
   if (parts[0] === "sponsor-drip" && method === "PUT") {
     const body = await req.json().catch(() => ({}));
     return json({ ok: true, drip: await setSponsorDrip(!!body.on) });

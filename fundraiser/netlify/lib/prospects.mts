@@ -241,6 +241,24 @@ export async function importProspects(text: unknown) {
   return { added, updated, skipped };
 }
 
+// The coach's own wording for the emails to businesses on her list. Blank means the built in wording.
+type EmailText = { subject: string; body: string };
+export type ProspectEmails = { sponsor: (EmailText | null)[]; meals: (EmailText | null)[] };
+export async function getProspectEmails(): Promise<ProspectEmails> {
+  const v = (await db().get("coach/prospect-emails", { type: "json" })) as ProspectEmails | null;
+  return { sponsor: v?.sponsor || [null, null, null], meals: v?.meals || [null, null, null] };
+}
+export async function saveProspectEmails(body: any) {
+  const one = (t: any): EmailText | null => {
+    const subject = clean(t?.subject, 200), text = String(t?.body || "").replace(/\r/g, "").trim().slice(0, 6000);
+    return subject && text ? { subject, body: text } : null;
+  };
+  const list = (a: any) => [0, 1, 2].map((i) => (Array.isArray(a) ? one(a[i]) : null));
+  const v: ProspectEmails = { sponsor: list(body?.sponsor), meals: list(body?.meals) };
+  await db().setJSON("coach/prospect-emails", v);
+  return v;
+}
+
 export async function deleteProspect(id: string) {
   await db().delete(key(id));
 }
