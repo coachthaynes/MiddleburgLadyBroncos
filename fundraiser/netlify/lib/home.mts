@@ -129,6 +129,18 @@ const MIGRATIONS: { id: string; run: (c: HomeRecord["content"]) => boolean }[] =
     },
   },
   {
+    // Mikayla Burns, #21, moves up to varsity. Her Elevate Her site gets added once she has one.
+    id: "2026-11-varsity-mikayla-burns",
+    run: (c) => {
+      const isHer = (n: string) => /^mikayla burns$/i.test(String(n || "").trim());
+      const before = (c.jv || []).length;
+      c.jv = (c.jv || []).filter((x) => !isHer(x.name));
+      if (Object.keys(c.rosterExtras || {}).some(isHer)) return c.jv.length !== before;
+      c.rosterExtras = { ...c.rosterExtras, "Mikayla Burns": { number: "21", position: "", classYear: "", height: "", site: "", maxpreps: "" } };
+      return true;
+    },
+  },
+  {
     id: "2026-10-nyla-parsons-elite",
     run: (c) => {
       const key = Object.keys(c.rosterExtras || {}).find((n) => /^nyla parsons$/i.test(n.trim()));
