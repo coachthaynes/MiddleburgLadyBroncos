@@ -283,7 +283,7 @@
       const names = players.map((p) => p.name);
       const matched = {}, notMatched = [];
       read.players.forEach((r) => {
-        const who = MaxPrepsStats.match(r.name, names);
+        const who = MaxPrepsStats.match(r.name, names, r.names);
         if (who && !matched[who]) matched[who] = { gp: r.gp, ...r.stats };
         else notMatched.push(r.name);
       });
@@ -297,7 +297,7 @@
         ${Object.entries(matched).map(([n, x]) => `<tr><td>${esc(n)}</td><td>${x.gp}</td><td>${f1(x.ppg)}</td><td>${f1(x.reb)}</td><td>${f1(x.ast)}</td><td>${f1(x.stl)}</td><td>${f1(x.blk)}</td></tr>`).join("")}
         </tbody></table></div>
         ${notMatched.length ? `<p class="muted" style="font-size:.82rem;margin:6px 0 0">On MaxPreps but not on the varsity list (JV or a different spelling): ${esc(notMatched.join(", "))}.</p>` : ""}
-        ${missing.length ? `<p class="muted" style="font-size:.82rem;margin:6px 0 0">Varsity players not in this PDF: ${esc(missing.join(", "))}. They show with no stats until they appear on MaxPreps.</p>` : ""}
+        ${missing.length ? `<p class="muted" style="font-size:.82rem;margin:6px 0 0">Varsity players not in this PDF: ${esc(missing.join(", "))}. They keep last season's numbers until they appear on MaxPreps.</p>` : ""}
         <div class="btn-row" style="margin-top:8px"><button class="btn btn-primary btn-small" type="button" id="dcSave"${Object.keys(matched).length ? "" : " disabled"}>Update the depth chart</button><button class="btn btn-glass btn-small" type="button" id="dcCancel">Cancel</button></div></div>`;
     } catch (err) {
       pending = null;
