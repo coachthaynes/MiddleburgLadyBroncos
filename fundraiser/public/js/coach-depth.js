@@ -68,6 +68,7 @@
     const leads = keys.filter((k) => num(s[k]) > 0 && num(s[k]) === best[k]);
     const role = ROLE[p.primary] ? `${last} is ${ROLE[p.primary]}${p.backups.length ? `, with backup minutes at ${andList(p.backups)}` : ""}.` : `${last} has no primary position set.`;
     let strengths = `${role} Her index of ${f2(p.index)} ranks #${rank} of ${ranked.length}.`;
+    if (p.blend) strengths += p.from === "last" ? ` She has no games in this week's upload yet, so these are last season's numbers.` : ` Her numbers still include last season until she has ${BLEND_GAMES} games (she has ${p.gp}).`;
     if (leads.length) strengths += ` She leads the team in ${andList(leads.map((k) => `${WORDS[k]} (${f1(s[k])})`))}.`;
     const others = strong.filter((k) => !leads.includes(k));
     if (others.length) strengths += ` She ranks ${andList(others.map((k) => `#${teamRank(k)} in ${WORDS[k]} (${f1(s[k])}, team average ${f1(avg[k])})`))}.`;
@@ -131,7 +132,7 @@
     const rankOf = new Map(ranked.map((p, i) => [p.name, i + 1]));
 
     $("#dcBoard").innerHTML = ranked.map((p, i) => `<tr class="${i < 3 ? "dc-top" : ""}">
-      <td><b>${i + 1}</b></td><td><b>${esc(p.name)}</b></td><td>${esc(posLabel(p))}</td><td>${p.gp == null ? "" : p.gp}</td>
+      <td><b>${i + 1}</b></td><td><b>${esc(p.name)}</b></td><td>${esc(posLabel(p))}</td><td>${p.gp == null ? "" : `${p.gp}${p.blend ? "*" : ""}`}</td>
       <td>${f1(p.stats.ppg)}</td><td>${f1(p.stats.reb)}</td><td>${f1(p.stats.ast)}</td><td>${f1(p.stats.stl)}</td><td>${f1(p.stats.blk)}</td>
       <td><b>${f2(p.index)}</b></td><td>${changeText(p, i + 1)}</td></tr>`).join("");
     // The Change column only means something with two MaxPreps uploads.
@@ -164,8 +165,13 @@
 
     const fromElevate = players.filter((p) => p.from === "elevate").length;
     const missing = players.filter((p) => p.from === "none").map((p) => p.name);
+    const lastOnly = players.filter((p) => p.from === "last").map((p) => p.name);
+    const mixed = players.filter((p) => p.blend).length;
     $("#dcStatus").textContent = (useMp()
-      ? `${players.length} varsity players. This season's averages from MaxPreps, stats as of ${prettyDate(mp.current.asOf)}${mp.previous ? `; Change compares with ${prettyDate(mp.previous.asOf)}` : ""}.${missing.length ? ` Not in the upload: ${missing.join(", ")}.` : ""}`
+      ? `${players.length} varsity players. This season's averages from MaxPreps, stats as of ${prettyDate(mp.current.asOf)}${mp.previous ? `; Change compares with ${prettyDate(mp.previous.asOf)}` : ""}.` +
+        (mixed ? ` * mixes in last season until a player has ${BLEND_GAMES} games (${mixed} player${mixed === 1 ? "" : "s"}).` : "") +
+        (lastOnly.length ? ` Not in the upload yet, shown with last season: ${lastOnly.join(", ")}.` : "") +
+        (missing.length ? ` Not in the upload: ${missing.join(", ")}.` : "")
       : `${players.length} varsity players. Last season's averages: ${fromElevate} from Elevate Her, ${players.length - fromElevate} from the depth chart report.`) + ` Calculated ${new Date().toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}.`;
   }
 
@@ -202,32 +208,52 @@
     } catch (err) { $("#dcStatus").textContent = err.message; }
   }
 
-  const useMp = () => source === "mp" && !!mp.current;
+  // "mp": this season blended with last season early on; "mponly": this season only; "last": last season.
+  const useMp = () => (source === "mp" || source === "mponly") && !!mp.current;
+  const blending = () => source === "mp";
   const zero = () => Object.fromEntries(Object.keys(W).map((k) => [k, 0]));
   const pick = (rec, name) => (rec && rec.players[name]) || null;
+
+  // A few games can swing a player's averages a long way, so like college ratings that start the year from
+  // last season, last season counts until she has this many games, fading out game by game.
+  const BLEND_GAMES = 5;
+  function statsFor(rec, name, blend) {
+    const x = pick(rec, name);
+    const now = x ? Object.fromEntries(Object.keys(W).map((k) => [k, num(x[k])])) : zero();
+    const gp = x ? num(x.gp) : 0;
+    const last = (lastSeason.get(name) || {}).stats || zero();
+    const hasLast = Object.keys(W).some((k) => num(last[k]) > 0);
+    if (!blend || !hasLast || gp >= BLEND_GAMES) return { stats: now, gp, from: x ? "maxpreps" : "none", blend: false };
+    const mix = Object.fromEntries(Object.keys(W).map((k) => [k, Math.round(((gp * now[k] + (BLEND_GAMES - gp) * num(last[k])) / BLEND_GAMES) * 10) / 10]));
+    return { stats: mix, gp, from: x ? "maxpreps" : "last", blend: true };
+  }
 
   // Put the chosen averages on every player, and last week's index and rank for the Change column.
   function applySource() {
     const sel = $("#dcSource");
-    sel.innerHTML = (mp.current ? `<option value="mp">This season: MaxPreps, as of ${esc(prettyDate(mp.current.asOf))}</option>` : "") + '<option value="last">Last season: Elevate Her and the report</option>';
-    sel.value = useMp() ? "mp" : "last";
+    sel.innerHTML = (mp.current
+      ? `<option value="mp">This season, blended with last season until ${BLEND_GAMES} games (MaxPreps, as of ${esc(prettyDate(mp.current.asOf))})</option><option value="mponly">This season only (MaxPreps)</option>`
+      : "") + '<option value="last">Last season: Elevate Her and the report</option>';
+    sel.value = useMp() ? source : "last";
     let prevRanked = null;
     if (useMp() && mp.previous) {
-      prevRanked = players.map((p) => { const x = pick(mp.previous, p.name); return { name: p.name, index: x ? indexOf(x) : null }; })
+      // Last week ranked the same way, so the moves compare like with like.
+      prevRanked = players.map((p) => { const x = statsFor(mp.previous, p.name, blending()); return { name: p.name, index: x.from === "none" ? null : indexOf(x.stats) }; })
         .filter((x) => x.index != null).sort((a, b) => b.index - a.index || a.name.localeCompare(b.name));
     }
     players.forEach((p) => {
       if (useMp()) {
-        const x = pick(mp.current, p.name);
-        p.stats = x ? Object.fromEntries(Object.keys(W).map((k) => [k, num(x[k])])) : zero();
-        p.gp = x ? x.gp : 0;
-        p.from = x ? "maxpreps" : "none";
+        const x = statsFor(mp.current, p.name, blending());
+        p.stats = x.stats;
+        p.gp = x.gp;
+        p.from = x.from;
+        p.blend = x.blend;
         const at = prevRanked ? prevRanked.findIndex((y) => y.name === p.name) : -1;
         p.prevIndex = at >= 0 ? prevRanked[at].index : null;
         p.prevRank = at >= 0 ? at + 1 : null;
       } else {
         const ls = lastSeason.get(p.name) || { stats: zero(), from: "report" };
-        p.stats = ls.stats; p.from = ls.from; p.gp = null; p.prevIndex = null; p.prevRank = null;
+        p.stats = ls.stats; p.from = ls.from; p.gp = null; p.prevIndex = null; p.prevRank = null; p.blend = false;
       }
     });
   }
