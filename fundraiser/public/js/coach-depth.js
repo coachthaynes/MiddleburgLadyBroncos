@@ -19,6 +19,7 @@
     "Aliyna McCobb": { primary: "PG", backups: ["SG"], stats: { ppg: 3.3, reb: 2.2, ast: 0.9, stl: 1.5, blk: 0 } },
     "Catherine Bodway": { primary: "PF", backups: ["C"], stats: { ppg: 2.7, reb: 3.2, ast: 0.2, stl: 0.4, blk: 0.7 } },
     "Savanna Padgett": { primary: "C", backups: [], stats: { ppg: 2.3, reb: 2.1, ast: 0.2, stl: 0.4, blk: 0.3 } },
+    "Mikayla Burns": { primary: "PF", backups: ["SF"], stats: {} },
     "Andrea Brady": { primary: "PF", backups: ["SF"], stats: { ppg: 1.3, reb: 1.5, ast: 0.2, stl: 0.1, blk: 0 } },
   };
 

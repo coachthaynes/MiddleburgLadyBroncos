@@ -154,6 +154,15 @@ const MIGRATIONS: { id: string; run: (c: HomeRecord["content"]) => boolean }[] =
     },
   },
   {
+    id: "2026-11-burns-forward",
+    run: (c) => {
+      const key = Object.keys(c.rosterExtras || {}).find((n) => /^mikayla burns$/i.test(n.trim()));
+      if (!key || c.rosterExtras[key].position) return false;
+      c.rosterExtras[key] = { ...c.rosterExtras[key], position: "Forward" };
+      return true;
+    },
+  },
+  {
     id: "2026-10-nyla-parsons-elite",
     run: (c) => {
       const key = Object.keys(c.rosterExtras || {}).find((n) => /^nyla parsons$/i.test(n.trim()));
@@ -226,6 +235,15 @@ const DEPTH_MIGRATIONS: { id: string; run: (p: ReturnType<typeof cleanDepth>["pl
       const k = p["Kennedy Jeffress"];
       if (!k || k.primary === "SG" || k.backups.includes("SG")) return false;
       k.backups = POSITIONS.filter((x) => x === "SG" || k.backups.includes(x));
+      return true;
+    },
+  },
+  {
+    // Mikayla Burns, new to varsity: power forward with backup minutes at small forward.
+    id: "2026-11-burns-pf",
+    run: (p) => {
+      if (p["Mikayla Burns"]?.primary) return false;
+      p["Mikayla Burns"] = { primary: "PF", backups: ["SF"] };
       return true;
     },
   },
