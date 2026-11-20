@@ -134,8 +134,8 @@
   // the site, and the Athlete Monitor shows each player only her own line. Nothing here names a teammate.
   const plain = (t) => String(t).replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
   let lastSent = "", sendTimer = null;
-  function publish(ranked) {
-    if (mp.current && source !== "mp") return; // the coach is looking at another view; players keep the default one
+  // Players always get the default view (this season mixed with last season), whatever view the coach has open.
+  function snapshotOf(ranked) {
     const entries = ranked.map((p, i) => {
       const rank = i + 1, r = breakdown(p, rank, ranked, { anon: true });
       const spots = POS.map(([code]) => {
@@ -147,11 +147,30 @@
       return { name: p.name, rank, of: ranked.length, spots, gp: p.gp, blend: !!p.blend, stats: p.stats, index: p.index, moved, why: plain(r.strengths), plan: r.plan.map(plain) };
     });
     const body = { asOf: useMp() ? mp.current.asOf : "", basis: useMp() ? `This season's MaxPreps stats${mp.current.asOf ? `, as of ${prettyDate(mp.current.asOf)}` : ""}${players.some((p) => p.blend) ? `, mixed with last season until a player has ${BLEND_GAMES} games` : ""}` : "Last season's averages", players: entries };
+    return body;
+  }
+  function shared(text) {
+    let el = $("#dcShared");
+    if (!el) { el = document.createElement("p"); el.id = "dcShared"; el.className = "muted dc-noprint"; el.style.cssText = "font-size:.82rem;margin:4px 0 0"; $("#dcStatus").after(el); }
+    el.textContent = text;
+  }
+  function publish(ranked) {
+    let body;
+    if (mp.current && source !== "mp") {
+      const keep = source;
+      source = "mp"; applySource();
+      players.forEach((p) => { p.index = indexOf(p.stats); });
+      body = snapshotOf(players.slice().sort((x, y) => y.index - x.index || x.name.localeCompare(y.name)));
+      source = keep; applySource();
+      players.forEach((p) => { p.index = indexOf(p.stats); });
+    } else body = snapshotOf(ranked);
     const key = JSON.stringify(body);
     if (key === lastSent) return;
     clearTimeout(sendTimer);
     sendTimer = setTimeout(() => {
-      api("/api/coach/depth-snapshot", { method: "POST", body }).then(() => { lastSent = key; }).catch(() => { /* try again on the next calculation */ });
+      api("/api/coach/depth-snapshot", { method: "POST", body })
+        .then(() => { lastSent = key; shared(`Players see this version in the Athlete Monitor (sent ${new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}).`); })
+        .catch(() => shared("Could not send to the Athlete Monitor; it will try again next time the chart updates."));
     }, 1500);
   }
 
