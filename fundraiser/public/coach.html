@@ -184,10 +184,19 @@
         <div class="glass card fade-in dc-head">
           <div class="section-head" style="margin:0">
             <div><span class="eyebrow">Coaches only</span><h2 style="margin-top:10px">Statistical evaluation and positional depth chart</h2>
-              <p class="muted" style="font-size:.9rem;margin:4px 0 0">Calculated automatically from each player's season averages every time you open this tab. Nothing to enter or save.</p></div>
+              <p class="muted" style="font-size:.9rem;margin:4px 0 0">Calculated automatically from each player's season averages every time you open this tab. Upload the MaxPreps stats PDF each week to rank on this season's numbers.</p></div>
             <div class="btn-row dc-noprint"><button class="btn btn-glass btn-small" id="dcRebuild">Refresh stats</button><button class="btn btn-primary btn-small" id="dcPrint">Print report</button></div>
           </div>
           <p class="muted" id="dcStatus" style="font-size:.85rem;margin:10px 0 0">Loading stats...</p>
+          <div class="dc-noprint dc-upload">
+            <div class="dc-upload-row">
+              <label class="field">Averages from<select class="gselect" id="dcSource"></select></label>
+              <label class="field">This week's MaxPreps stats PDF<input type="file" id="dcPdf" accept=".pdf,application/pdf"></label>
+              <label class="field">Stats as of<input type="date" class="gselect" id="dcAsOf"></label>
+            </div>
+            <p class="muted" style="font-size:.82rem;margin:6px 0 0">On MaxPreps open the Lady Broncos Stats page, choose Print, save it as a PDF and upload it here. Each upload replaces the last one, and the leaderboard shows how far each player moved since the week before.</p>
+            <div id="dcPreview"></div>
+          </div>
         </div>
 
         <section class="glass card dc-sec">
@@ -209,7 +218,7 @@
         <section class="glass card dc-sec">
           <h3><span class="dc-n">2</span>Overall statistical leaderboard</h3>
           <div class="table-wrap"><table class="players dc-tbl dc-board">
-            <thead><tr><th>Rank</th><th>Player</th><th>Pos</th><th>PPG</th><th>RPG</th><th>APG</th><th>SPG</th><th>BPG</th><th>Index</th></tr></thead>
+            <thead><tr><th>Rank</th><th>Player</th><th>Pos</th><th>GP</th><th>PPG</th><th>RPG</th><th>APG</th><th>SPG</th><th>BPG</th><th>Index</th><th>Change</th></tr></thead>
             <tbody id="dcBoard"></tbody>
           </table></div>
         </section>
@@ -535,6 +544,8 @@ Heather Towne</textarea>
 <script src="/js/coach-hub.js"></script>
 <script src="/js/coach-orders.js"></script>
 <script src="/js/coach-contracts.js"></script>
+<script src="/js/pdftables.js"></script>
+<script src="/js/maxpreps-stats.js"></script>
 <script src="/js/coach-depth.js"></script>
 <script src="/js/coach-prospects.js"></script>
 </body>

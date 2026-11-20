@@ -227,6 +227,40 @@ export async function saveDepth(body: unknown) {
   return rec;
 }
 
+// This season's averages from the MaxPreps stats PDF the coach uploads each week. The newest upload is used;
+// the one before it is kept so the depth chart can show who moved.
+const DEPTH_STATS_KEY = "coach/depthstats";
+const n1 = (v: unknown) => { const n = Number(v); return Number.isFinite(n) && n >= 0 && n < 200 ? Math.round(n * 10) / 10 : 0; };
+export function cleanDepthStats(body: unknown) {
+  const b = obj(body);
+  const players = Object.fromEntries(Object.entries(obj(b.players)).slice(0, 40).map(([name, v]) => {
+    const x = obj(v);
+    return [str(name, 60), { gp: Math.round(n1(x.gp)), ppg: n1(x.ppg), reb: n1(x.reb), ast: n1(x.ast), stl: n1(x.stl), blk: n1(x.blk) }];
+  }).filter(([n]) => n));
+  return {
+    team: str(b.team, 80), season: str(b.season, 20), asOf: /^\d{4}-\d{2}-\d{2}$/.test(String(b.asOf)) ? String(b.asOf) : new Date().toISOString().slice(0, 10),
+    players, notMatched: list(b.notMatched, 40).map((x) => str(x, 60)).filter(Boolean), uploadedAt: new Date().toISOString(),
+  };
+}
+type DepthStats = ReturnType<typeof cleanDepthStats>;
+export async function getDepthStats() {
+  return ((await db().get(DEPTH_STATS_KEY, { type: "json" })) as { current: DepthStats | null; previous: DepthStats | null } | null) || { current: null, previous: null };
+}
+export async function saveDepthStats(body: unknown) {
+  const next = cleanDepthStats(body);
+  if (!Object.keys(next.players).length) throw new Error("No players were matched, so nothing was saved.");
+  const old = await getDepthStats();
+  // A second upload on the same day replaces that day's numbers instead of pushing out last week's.
+  const previous = old.current && old.current.asOf !== next.asOf ? old.current : old.previous;
+  const rec = { current: next, previous };
+  await db().setJSON(DEPTH_STATS_KEY, rec);
+  return rec;
+}
+export async function clearDepthStats() {
+  await db().setJSON(DEPTH_STATS_KEY, { current: null, previous: null });
+  return { current: null, previous: null };
+}
+
 // ---------- YouTube highlights ----------
 // Latest uploads from the team channel through YouTube's public feed (no API key). Cached for an hour.
 const clip = (s: string) => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">")

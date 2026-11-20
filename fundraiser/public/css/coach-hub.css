@@ -77,6 +77,10 @@
 
 /* Depth chart report */
 .dc-sec { margin-top: 18px; }
+.dc-upload { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--glass-line); }
+.dc-upload-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; align-items: end; }
+.dc-up { color: #1d7a46; font-weight: 700; }
+.dc-down { color: var(--red); font-weight: 700; }
 .dc-sec h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.04em; }
 .dc-n { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--red); color: #fff; font-size: 0.9rem; }
 .dc-sec > p { font-size: 0.92rem; margin: 0 0 12px; }

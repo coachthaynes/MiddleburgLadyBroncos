@@ -13,7 +13,7 @@ import {
   isOptedOut, normalizeEmail, providerStatus, renderEmail, renderProspectEmail, renderSms, saveContacts, saveWaves,
   sendEmail, SendLog, siteOrigin, unsubUrl, Wave,
 } from "../lib/messaging.mts";
-import { elevateProfiles, getDepth, getHome, getLinks, saveDepth, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
+import { clearDepthStats, elevateProfiles, getDepth, getDepthStats, getHome, getLinks, saveDepth, saveDepthStats, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
 import { createOrder, deleteOrder, listOrders, updateOrder } from "../lib/orders.mts";
 import { addProspect, askFor, deleteProspect, stageOf, getProspect, getProspectEmails, saveProspectEmails, groupLabels, findBusinesses, findEmail, importProspects, listProspects, playerProspects, playerUpdate, searchSource, updateProspect } from "../lib/prospects.mts";
 import { deleteContract, getContract, listContracts, signContract } from "../lib/contracts.mts";
@@ -484,7 +484,12 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
   // Home page content and the dashboard's own links
   if (parts[0] === "home" && method === "GET") return json((await getHome()) || { content: null, updatedAt: "" });
   if (parts[0] === "home" && method === "PUT") return json({ ok: true, ...(await saveHome(await req.json().catch(() => ({})))) });
-  if (parts[0] === "depth" && method === "GET") return json({ depth: await getDepth() });
+  if (parts[0] === "depth" && method === "GET") return json({ depth: await getDepth(), stats: await getDepthStats() });
+  if (parts[0] === "depth-stats" && method === "PUT") {
+    try { return json({ ok: true, stats: await saveDepthStats(await req.json().catch(() => ({}))) }); }
+    catch (e) { return json({ error: (e as Error).message }, 400); }
+  }
+  if (parts[0] === "depth-stats" && method === "DELETE") return json({ ok: true, stats: await clearDepthStats() });
   if (parts[0] === "depth" && method === "PUT") return json({ ok: true, depth: await saveDepth(await req.json().catch(() => ({}))) });
   if (parts[0] === "links" && method === "GET") return json({ links: await getLinks() });
   if (parts[0] === "links" && method === "PUT") return json({ ok: true, links: await saveLinks(await req.json().catch(() => ({}))) });

@@ -22,8 +22,13 @@
     "Andrea Brady": { primary: "PF", backups: ["SF"], stats: { ppg: 1.3, reb: 1.5, ast: 0.2, stl: 0.1, blk: 0 } },
   };
 
-  let players = []; // { name, primary, backups, stats, from, index }
+  let players = []; // { name, primary, backups, stats, gp, from, index, prevIndex, prevRank }
   let saved = {};
+  // This season's MaxPreps uploads ({ current, previous }) and which averages the chart uses.
+  let mp = { current: null, previous: null };
+  let source = "mp";
+  let lastSeason = new Map(); // name -> { stats, from } from Elevate Her or the report
+  const prettyDate = (d) => (d ? new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "");
   const num = (v) => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
   const f1 = (n) => num(n).toFixed(1);
   const f2 = (n) => num(n).toFixed(2);
@@ -50,6 +55,7 @@
     const last = lastName(p.name);
     const keys = Object.keys(W);
     if (!keys.some((k) => num(s[k]) > 0)) {
+      if (p.from === "none") return { strengths: `${last} has no numbers in this week's MaxPreps upload, so she ranks #${rank} for now.`, plan: ["Once she plays and her stats are on MaxPreps, the next upload ranks her."] };
       return { strengths: `${last} has no season averages listed yet, so she ranks #${rank} until her stats are posted.`, plan: ["Get her season averages onto her Elevate Her profile so she can be ranked."] };
     }
     const avg = Object.fromEntries(keys.map((k) => [k, ranked.reduce((t, x) => t + num(x.stats[k]), 0) / ranked.length]));
@@ -111,15 +117,25 @@
     return { strengths, plan };
   }
 
+  // How a player moved since the previous week's upload: rank places and index points.
+  function changeText(p, rank) {
+    if (p.prevIndex == null) return '<span class="muted">New</span>';
+    const d = Math.round((p.index - p.prevIndex) * 100) / 100, moved = p.prevRank - rank;
+    const arrow = moved > 0 ? `<span class="dc-up">Up ${moved}</span>` : moved < 0 ? `<span class="dc-down">Down ${-moved}</span>` : "Same spot";
+    return `${arrow}<div class="muted" style="font-size:.78rem">${d > 0 ? "+" : ""}${f2(d)} index</div>`;
+  }
+
   function render() {
     players.forEach((p) => { p.index = indexOf(p.stats); });
     const ranked = players.slice().sort((a, b) => b.index - a.index || a.name.localeCompare(b.name));
     const rankOf = new Map(ranked.map((p, i) => [p.name, i + 1]));
 
     $("#dcBoard").innerHTML = ranked.map((p, i) => `<tr class="${i < 3 ? "dc-top" : ""}">
-      <td><b>${i + 1}</b></td><td><b>${esc(p.name)}</b></td><td>${esc(posLabel(p))}</td>
+      <td><b>${i + 1}</b></td><td><b>${esc(p.name)}</b></td><td>${esc(posLabel(p))}</td><td>${p.gp == null ? "" : p.gp}</td>
       <td>${f1(p.stats.ppg)}</td><td>${f1(p.stats.reb)}</td><td>${f1(p.stats.ast)}</td><td>${f1(p.stats.stl)}</td><td>${f1(p.stats.blk)}</td>
-      <td><b>${f2(p.index)}</b></td></tr>`).join("");
+      <td><b>${f2(p.index)}</b></td><td>${changeText(p, i + 1)}</td></tr>`).join("");
+    // The Change column only means something with two MaxPreps uploads.
+    $$(".dc-board th:last-child, .dc-board td:last-child").forEach((x) => { x.style.display = useMp() && mp.previous ? "" : "none"; });
 
     $("#dcPositions").innerHTML = POS.map(([code, label]) => {
       const list = ranked.filter((p) => p.primary === code || p.backups.includes(code));
@@ -147,7 +163,10 @@
     </tr>`).join("");
 
     const fromElevate = players.filter((p) => p.from === "elevate").length;
-    $("#dcStatus").textContent = `${players.length} varsity players. Averages: ${fromElevate} from Elevate Her, ${players.length - fromElevate} from the depth chart report. Calculated ${new Date().toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}.`;
+    const missing = players.filter((p) => p.from === "none").map((p) => p.name);
+    $("#dcStatus").textContent = (useMp()
+      ? `${players.length} varsity players. This season's averages from MaxPreps, stats as of ${prettyDate(mp.current.asOf)}${mp.previous ? `; Change compares with ${prettyDate(mp.previous.asOf)}` : ""}.${missing.length ? ` Not in the upload: ${missing.join(", ")}.` : ""}`
+      : `${players.length} varsity players. Last season's averages: ${fromElevate} from Elevate Her, ${players.length - fromElevate} from the depth chart report.`) + ` Calculated ${new Date().toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}.`;
   }
 
   async function load() {
@@ -155,6 +174,8 @@
     try {
       const [H, d] = await Promise.all([window.loadHome(), api("/api/coach/depth").catch(() => ({ depth: null }))]);
       saved = (d.depth && d.depth.players) || {};
+      mp = d.stats || { current: null, previous: null };
+      try { source = localStorage.getItem("dcSource") || "mp"; } catch { source = "mp"; }
       const elevatePath = (url) => (/^https:\/\/(?:www\.)?elevateherhoopsreport\.com(\/(?:(?:players|elite)\/)?[a-z0-9-]+)\/?$/i.exec(url || "") || [])[1] || "";
       const varsity = new Map();
       (H.spotlights || []).forEach((s) => varsity.set(s.name, { ...s }));
@@ -172,11 +193,114 @@
         const stats = e && e.season
           ? Object.fromEntries(Object.keys(W).map((k) => [k, num(e.season[k])]))
           : Object.fromEntries(Object.keys(W).map((k) => [k, num(def.stats[k])]));
+        lastSeason.set(p.name, { stats, from: e && e.season ? "elevate" : "report" });
         return { name: p.name, primary: pos.primary || "", backups: (pos.backups || []).filter((b) => b !== pos.primary), stats, from: e && e.season ? "elevate" : "report" };
       });
+      applySource();
       render();
+      showUploadState();
     } catch (err) { $("#dcStatus").textContent = err.message; }
   }
+
+  const useMp = () => source === "mp" && !!mp.current;
+  const zero = () => Object.fromEntries(Object.keys(W).map((k) => [k, 0]));
+  const pick = (rec, name) => (rec && rec.players[name]) || null;
+
+  // Put the chosen averages on every player, and last week's index and rank for the Change column.
+  function applySource() {
+    const sel = $("#dcSource");
+    sel.innerHTML = (mp.current ? `<option value="mp">This season: MaxPreps, as of ${esc(prettyDate(mp.current.asOf))}</option>` : "") + '<option value="last">Last season: Elevate Her and the report</option>';
+    sel.value = useMp() ? "mp" : "last";
+    let prevRanked = null;
+    if (useMp() && mp.previous) {
+      prevRanked = players.map((p) => { const x = pick(mp.previous, p.name); return { name: p.name, index: x ? indexOf(x) : null }; })
+        .filter((x) => x.index != null).sort((a, b) => b.index - a.index || a.name.localeCompare(b.name));
+    }
+    players.forEach((p) => {
+      if (useMp()) {
+        const x = pick(mp.current, p.name);
+        p.stats = x ? Object.fromEntries(Object.keys(W).map((k) => [k, num(x[k])])) : zero();
+        p.gp = x ? x.gp : 0;
+        p.from = x ? "maxpreps" : "none";
+        const at = prevRanked ? prevRanked.findIndex((y) => y.name === p.name) : -1;
+        p.prevIndex = at >= 0 ? prevRanked[at].index : null;
+        p.prevRank = at >= 0 ? at + 1 : null;
+      } else {
+        const ls = lastSeason.get(p.name) || { stats: zero(), from: "report" };
+        p.stats = ls.stats; p.from = ls.from; p.gp = null; p.prevIndex = null; p.prevRank = null;
+      }
+    });
+  }
+  $("#dcSource").addEventListener("change", (e) => {
+    source = e.target.value;
+    try { localStorage.setItem("dcSource", source); } catch { /* private window */ }
+    applySource();
+    render();
+  });
+
+  // ---------- weekly MaxPreps upload ----------
+  let pending = null;
+  function showUploadState() {
+    if (!$("#dcAsOf").value) $("#dcAsOf").value = new Date().toLocaleDateString("en-CA");
+    if (pending) return;
+    $("#dcPreview").innerHTML = mp.current
+      ? `<p style="font-size:.85rem;margin:8px 0 0">Last upload: stats as of <b>${esc(prettyDate(mp.current.asOf))}</b>${mp.current.season ? `, ${esc(mp.current.season.replace("-", " to "))} season` : ""}, ${Object.keys(mp.current.players).length} players.${mp.current.notMatched.length ? ` Not matched: ${esc(mp.current.notMatched.join(", "))}.` : ""} <button class="btn btn-glass btn-small" type="button" id="dcClear">Remove uploads</button></p>`
+      : "";
+  }
+  $("#dcPdf").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    $("#dcPreview").innerHTML = '<p class="muted" style="font-size:.85rem;margin:8px 0 0">Reading the PDF...</p>';
+    try {
+      const read = MaxPrepsStats.parse(await AM.pdfToText(file));
+      if (!read.players.length) throw new Error("No player stats were found in that PDF. Use the MaxPreps Print stats page saved as a PDF.");
+      const names = players.map((p) => p.name);
+      const matched = {}, notMatched = [];
+      read.players.forEach((r) => {
+        const who = MaxPrepsStats.match(r.name, names);
+        if (who && !matched[who]) matched[who] = { gp: r.gp, ...r.stats };
+        else notMatched.push(r.name);
+      });
+      const missing = names.filter((n) => !matched[n]);
+      const other = read.team && !/middleburg/i.test(read.team);
+      pending = { team: read.team, season: read.season, asOf: $("#dcAsOf").value, players: matched, notMatched };
+      $("#dcPreview").innerHTML = `<div style="margin-top:10px">
+        ${other ? `<p class="notice">This PDF is for <b>${esc(read.team)}</b>, not Middleburg. Check you picked the right file.</p>` : ""}
+        <p style="font-size:.88rem;margin:0 0 6px">Read <b>${read.players.length}</b> players${read.team ? ` from ${esc(read.team)}` : ""}${read.season ? `, ${esc(read.season.replace("-", " to "))} season` : ""}. Matched <b>${Object.keys(matched).length}</b> of ${names.length} varsity players.</p>
+        <div class="table-wrap"><table class="players dc-tbl"><thead><tr><th>Player</th><th>GP</th><th>PPG</th><th>RPG</th><th>APG</th><th>SPG</th><th>BPG</th></tr></thead><tbody>
+        ${Object.entries(matched).map(([n, x]) => `<tr><td>${esc(n)}</td><td>${x.gp}</td><td>${f1(x.ppg)}</td><td>${f1(x.reb)}</td><td>${f1(x.ast)}</td><td>${f1(x.stl)}</td><td>${f1(x.blk)}</td></tr>`).join("")}
+        </tbody></table></div>
+        ${notMatched.length ? `<p class="muted" style="font-size:.82rem;margin:6px 0 0">On MaxPreps but not on the varsity list (JV or a different spelling): ${esc(notMatched.join(", "))}.</p>` : ""}
+        ${missing.length ? `<p class="muted" style="font-size:.82rem;margin:6px 0 0">Varsity players not in this PDF: ${esc(missing.join(", "))}. They show with no stats until they appear on MaxPreps.</p>` : ""}
+        <div class="btn-row" style="margin-top:8px"><button class="btn btn-primary btn-small" type="button" id="dcSave"${Object.keys(matched).length ? "" : " disabled"}>Update the depth chart</button><button class="btn btn-glass btn-small" type="button" id="dcCancel">Cancel</button></div></div>`;
+    } catch (err) {
+      pending = null;
+      $("#dcPreview").innerHTML = `<p class="notice" style="margin-top:8px">${esc(err.message || "That PDF could not be read.")}</p>`;
+    }
+    e.target.value = "";
+  });
+  $("#dcPreview").addEventListener("click", async (e) => {
+    if (e.target.id === "dcCancel") { pending = null; showUploadState(); }
+    if (e.target.id === "dcSave" && pending) {
+      e.target.disabled = true;
+      try {
+        pending.asOf = $("#dcAsOf").value || pending.asOf;
+        const r = await api("/api/coach/depth-stats", { method: "PUT", body: pending });
+        mp = r.stats; pending = null; source = "mp";
+        try { localStorage.setItem("dcSource", "mp"); } catch { /* private window */ }
+        applySource(); render(); showUploadState();
+        toast("Depth chart updated with this season's stats");
+      } catch (err) { toast(err.message); e.target.disabled = false; }
+    }
+    if (e.target.id === "dcClear") {
+      if (!confirm("Remove the MaxPreps uploads and go back to last season's averages?")) return;
+      try {
+        mp = (await api("/api/coach/depth-stats", { method: "DELETE" })).stats;
+        applySource(); render(); showUploadState();
+        toast("Uploads removed");
+      } catch (err) { toast(err.message); }
+    }
+  });
 
   // Position changes save on their own.
   let saveTimer = null;
