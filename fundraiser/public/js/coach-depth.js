@@ -212,7 +212,13 @@
   const useMp = () => (source === "mp" || source === "mponly") && !!mp.current;
   const blending = () => source === "mp";
   const zero = () => Object.fromEntries(Object.keys(W).map((k) => [k, 0]));
-  const pick = (rec, name) => (rec && rec.players[name]) || null;
+  // Her line in an upload: matched when it was saved, or found now among every row the PDF had.
+  const pick = (rec, name) => {
+    if (!rec) return null;
+    if (rec.players[name]) return rec.players[name];
+    const r = (rec.rows || []).find((x) => MaxPrepsStats.match(x.name, [name], x.names) === name);
+    return r ? { gp: r.gp, ...r.stats } : null;
+  };
 
   // A few games can swing a player's averages a long way, so like college ratings that start the year from
   // last season, last season counts until she has this many games, fading out game by game.
@@ -289,7 +295,8 @@
       });
       const missing = names.filter((n) => !matched[n]);
       const other = read.team && !/middleburg/i.test(read.team);
-      pending = { team: read.team, season: read.season, asOf: $("#dcAsOf").value, players: matched, notMatched };
+      pending = { team: read.team, season: read.season, asOf: $("#dcAsOf").value, players: matched, notMatched,
+        rows: read.players.map((r) => ({ name: r.name, names: r.names || [], jersey: r.jersey, gp: r.gp, stats: r.stats })) };
       $("#dcPreview").innerHTML = `<div style="margin-top:10px">
         ${other ? `<p class="notice">This PDF is for <b>${esc(read.team)}</b>, not Middleburg. Check you picked the right file.</p>` : ""}
         <p style="font-size:.88rem;margin:0 0 6px">Read <b>${read.players.length}</b> players${read.team ? ` from ${esc(read.team)}` : ""}${read.season ? `, ${esc(read.season.replace("-", " to "))} season` : ""}. Matched <b>${Object.keys(matched).length}</b> of ${names.length} varsity players.</p>

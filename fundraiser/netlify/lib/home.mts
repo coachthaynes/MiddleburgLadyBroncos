@@ -129,6 +129,19 @@ const MIGRATIONS: { id: string; run: (c: HomeRecord["content"]) => boolean }[] =
     },
   },
   {
+    // Jersey numbers as MaxPreps lists them (2026-27). Runs after the older Brady #3 and Nyla no number changes.
+    id: "2026-11-numbers-from-maxpreps",
+    run: (c) => {
+      const want: Record<string, string> = { "janiyla owens": "1", "catherine bodway": "10", "aliyna mccobb": "12", "savanna padgett": "32", "andrea brady": "15", "nyla parsons": "3" };
+      let changed = false;
+      for (const k of Object.keys(c.rosterExtras || {})) {
+        const n = want[k.trim().toLowerCase()];
+        if (n && c.rosterExtras[k].number !== n) { c.rosterExtras[k] = { ...c.rosterExtras[k], number: n }; changed = true; }
+      }
+      return changed;
+    },
+  },
+  {
     // Mikayla Burns, #21, moves up to varsity. Her Elevate Her site gets added once she has one.
     id: "2026-11-varsity-mikayla-burns",
     run: (c) => {
@@ -252,6 +265,12 @@ export function cleanDepthStats(body: unknown) {
   return {
     team: str(b.team, 80), season: str(b.season, 20), asOf: /^\d{4}-\d{2}-\d{2}$/.test(String(b.asOf)) ? String(b.asOf) : new Date().toISOString().slice(0, 10),
     players, notMatched: list(b.notMatched, 40).map((x) => str(x, 60)).filter(Boolean), uploadedAt: new Date().toISOString(),
+    // Every player on the PDF, so someone added to varsity later is still found in this upload.
+    rows: list(b.rows, 40).map((v) => {
+      const x = obj(v), st = obj(x.stats);
+      return { name: str(x.name, 60), names: list(x.names, 4).map((n) => str(n, 60)).filter(Boolean), jersey: str(x.jersey, 4), gp: Math.round(n1(x.gp)),
+        stats: { ppg: n1(st.ppg), reb: n1(st.reb), ast: n1(st.ast), stl: n1(st.stl), blk: n1(st.blk) } };
+    }).filter((r) => r.name),
   };
 }
 type DepthStats = ReturnType<typeof cleanDepthStats>;

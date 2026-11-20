@@ -120,15 +120,15 @@ window.HOME = {
   rosterExtras: {
     "Aiyana Haynes": { number: "20", position: "Guard", classYear: "2027", height: "5'8\"", site: "https://elevateherhoopsreport.com/aiyana-haynes/", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/aiyana-haynes/?careerid=5d7kddlh57g11" },
     "Kennedy Jeffress": { number: "2", position: "Guard", classYear: "2029", height: "5'6\"", site: "https://elevateherhoopsreport.com/kennedy-jeffress" },
-    "Nyla Parsons": { site: "https://elevateherhoopsreport.com/elite/nyla-parsons", maxpreps: "https://www.maxpreps.com/fl/orange-park/oakleaf-knights/athletes/nyla-parsons/?careerid=ldj8gsjp4kcrb" },
+    "Nyla Parsons": { number: "3", site: "https://elevateherhoopsreport.com/elite/nyla-parsons", maxpreps: "https://www.maxpreps.com/fl/orange-park/oakleaf-knights/athletes/nyla-parsons/?careerid=ldj8gsjp4kcrb" },
     "Maliya Lassiter": { number: "5", site: "https://elevateherhoopsreport.com/players/maliya-lassiter", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/maliya-lassiter/?careerid=ulmhdcn099e00" },
-    "Janiyla Owens": { number: "4", site: "https://elevateherhoopsreport.com/players/janiyla-owens", maxpreps: "https://www.maxpreps.com/fl/orange-park/oakleaf-knights/athletes/janiyla-owens/?careerid=7r7uliehmedue" },
+    "Janiyla Owens": { number: "1", site: "https://elevateherhoopsreport.com/players/janiyla-owens", maxpreps: "https://www.maxpreps.com/fl/orange-park/oakleaf-knights/athletes/janiyla-owens/?careerid=7r7uliehmedue" },
     "Sophia Butler": { number: "11", site: "https://elevateherhoopsreport.com/players/sophia-butler", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/sophia-butler/?careerid=8vrcld9u7susc" },
-    "Catherine Bodway": { number: "14", site: "https://elevateherhoopsreport.com/players/catherine-bodway", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/catherine-bodway/?careerid=fn361pimiao11" },
-    "Aliyna McCobb": { number: "1", site: "https://elevateherhoopsreport.com/players/aliyna-mccobb", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/aliyna-mccobb/?careerid=vm6vokeo1c6rb" },
-    "Andrea Brady": { number: "3", classYear: "2028", site: "https://elevateherhoopsreport.com/players/andrea-brady" },
+    "Catherine Bodway": { number: "10", site: "https://elevateherhoopsreport.com/players/catherine-bodway", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/catherine-bodway/?careerid=fn361pimiao11" },
+    "Aliyna McCobb": { number: "12", site: "https://elevateherhoopsreport.com/players/aliyna-mccobb", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/aliyna-mccobb/?careerid=vm6vokeo1c6rb" },
+    "Andrea Brady": { number: "15", classYear: "2028", site: "https://elevateherhoopsreport.com/players/andrea-brady" },
     "Mikayla Burns": { number: "21" },
-    "Savanna Padgett": { number: "30", site: "https://elevateherhoopsreport.com/players/savanna-padgett", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/savanna-padgett/?careerid=gmf4ef3javdcc" },
+    "Savanna Padgett": { number: "32", site: "https://elevateherhoopsreport.com/players/savanna-padgett", maxpreps: "https://www.maxpreps.com/fl/middleburg/middleburg-broncos/athletes/savanna-padgett/?careerid=gmf4ef3javdcc" },
   },
 
   // Junior varsity, shown in a drop down under the varsity cards. Add a jersey number or class year when known.
