@@ -51,7 +51,9 @@
   const pct = (part, whole) => (whole > 0 ? Math.round((100 * part) / whole) : 0);
   const andList = (items) => (items.length < 3 ? items.join(" and ") : `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`);
 
-  function breakdown(p, rank, ranked) {
+  // opts.anon: the version players see in the Athlete Monitor, which names no teammates.
+  function breakdown(p, rank, ranked, opts = {}) {
+    const who = (x) => (opts.anon ? `the player ranked #${ranked.indexOf(x) + 1}` : esc(x.name));
     const s = p.stats;
     const last = lastName(p.name);
     const keys = Object.keys(W);
@@ -86,15 +88,15 @@
     if (rank > 1) {
       const above = ranked[rank - 2];
       const gap = need(above.index - p.index);
-      plan.push(`<b>To pass ${esc(above.name)} (#${rank - 1}, ${f2(above.index)})</b> she needs ${f2(gap)} more index points: about +${up1(gap / W[k1])} ${WORDS[k1]} per game, or +${up1(gap / W[k2])} ${WORDS[k2]} per game, or a mix of +${up1(gap / 2 / W[k1])} ${WORDS[k1]} and +${up1(gap / 2 / W[k2])} ${WORDS[k2]}.`);
+      plan.push(`<b>To pass ${opts.anon ? `the player ranked #${rank - 1}` : `${esc(above.name)} (#${rank - 1}, ${f2(above.index)})`}</b> she needs ${f2(gap)} more index points: about +${up1(gap / W[k1])} ${WORDS[k1]} per game, or +${up1(gap / W[k2])} ${WORDS[k2]} per game, or a mix of +${up1(gap / 2 / W[k1])} ${WORDS[k1]} and +${up1(gap / 2 / W[k2])} ${WORDS[k2]}.`);
       if (rank > 6) {
         const fifth = ranked[4];
         const g5 = need(fifth.index - p.index);
-        plan.push(`<b>To reach the top five</b> (passing ${esc(fifth.name)} at ${f2(fifth.index)}) takes ${f2(g5)} more index points, for example +${up1(g5 / 2 / W[k1])} ${WORDS[k1]} and +${up1(g5 / 2 / W[k2])} ${WORDS[k2]} per game.`);
+        plan.push(`<b>To reach the top five</b> (passing ${opts.anon ? "the player ranked #5" : `${esc(fifth.name)} at ${f2(fifth.index)}`}) takes ${f2(g5)} more index points, for example +${up1(g5 / 2 / W[k1])} ${WORDS[k1]} and +${up1(g5 / 2 / W[k2])} ${WORDS[k2]} per game.`);
       }
     } else {
       const next = ranked[1];
-      plan.push(`<b>She leads the team</b> by ${f2(p.index - next.index)} index points over ${esc(next.name)}. Adding +0.5 ${WORDS[k1]} and +0.5 ${WORDS[k2]} per game would grow that lead by ${f2(0.5 * W[k1] + 0.5 * W[k2])}.`);
+      plan.push(`<b>She leads the team</b> by ${f2(p.index - next.index)} index points over ${who(next)}. Adding +0.5 ${WORDS[k1]} and +0.5 ${WORDS[k2]} per game would grow that lead by ${f2(0.5 * W[k1] + 0.5 * W[k2])}.`);
     }
     // Her standing at her primary position.
     if (p.primary) {
@@ -102,7 +104,7 @@
       const posRank = atPos.indexOf(p) + 1;
       if (posRank > 1) {
         const lead = atPos[0];
-        plan.push(`<b>At ${p.primary}</b> she is #${posRank} of ${atPos.length}. Moving to the top of the ${p.primary} depth chart means closing a ${f2(need(lead.index - p.index))} point gap on ${esc(lead.name)}.`);
+        plan.push(`<b>At ${p.primary}</b> she is #${posRank} of ${atPos.length}. Moving to the top of the ${p.primary} depth chart means closing a ${f2(need(lead.index - p.index))} point gap on ${opts.anon ? `the top ${p.primary}` : esc(lead.name)}.`);
       } else {
         plan.push(`<b>At ${p.primary}</b> she is first on the depth chart.`);
       }
@@ -125,6 +127,32 @@
     const d = Math.round((p.index - p.prevIndex) * 100) / 100, moved = p.prevRank - rank;
     const arrow = moved > 0 ? `<span class="dc-up">Up ${moved}</span>` : moved < 0 ? `<span class="dc-down">Down ${-moved}</span>` : "Same spot";
     return `${arrow}<div class="muted" style="font-size:.78rem">${d > 0 ? "+" : ""}${f2(d)} index</div>`;
+  }
+
+  // ---------- what players see in the Athlete Monitor ----------
+  // After each calculation the default view (this season blended, or last season before any upload) is sent to
+  // the site, and the Athlete Monitor shows each player only her own line. Nothing here names a teammate.
+  const plain = (t) => String(t).replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+  let lastSent = "", sendTimer = null;
+  function publish(ranked) {
+    if (mp.current && source !== "mp") return; // the coach is looking at another view; players keep the default one
+    const entries = ranked.map((p, i) => {
+      const rank = i + 1, r = breakdown(p, rank, ranked, { anon: true });
+      const spots = POS.map(([code]) => {
+        const list = ranked.filter((x) => x.primary === code || x.backups.includes(code));
+        const at = list.indexOf(p);
+        return at < 0 ? null : { code, order: at + 1, of: list.length, role: p.primary === code ? "primary" : "backup" };
+      }).filter(Boolean);
+      const moved = p.prevIndex == null ? null : { places: p.prevRank - rank, index: Math.round((p.index - p.prevIndex) * 100) / 100 };
+      return { name: p.name, rank, of: ranked.length, spots, gp: p.gp, blend: !!p.blend, stats: p.stats, index: p.index, moved, why: plain(r.strengths), plan: r.plan.map(plain) };
+    });
+    const body = { asOf: useMp() ? mp.current.asOf : "", basis: useMp() ? `This season's MaxPreps stats${mp.current.asOf ? `, as of ${prettyDate(mp.current.asOf)}` : ""}${players.some((p) => p.blend) ? `, mixed with last season until a player has ${BLEND_GAMES} games` : ""}` : "Last season's averages", players: entries };
+    const key = JSON.stringify(body);
+    if (key === lastSent) return;
+    clearTimeout(sendTimer);
+    sendTimer = setTimeout(() => {
+      api("/api/coach/depth-snapshot", { method: "POST", body }).then(() => { lastSent = key; }).catch(() => { /* try again on the next calculation */ });
+    }, 1500);
   }
 
   function render() {
@@ -174,6 +202,7 @@
         (lastOnly.length ? ` Not in the upload yet, shown with last season: ${lastOnly.join(", ")}.` : "") +
         (missing.length ? ` Not in the upload: ${missing.join(", ")}.` : "")
       : `${players.length} varsity players. Last season's averages: ${fromElevate} from Elevate Her, ${players.length - fromElevate} from the depth chart report.`) + ` Calculated ${new Date().toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}.`;
+    publish(ranked);
   }
 
   async function load() {

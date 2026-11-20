@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import type { Config, Context } from "@netlify/functions";
 import { randomBytes } from "node:crypto";
 import {
@@ -13,7 +14,7 @@ import {
   isOptedOut, normalizeEmail, providerStatus, renderEmail, renderProspectEmail, renderSms, saveContacts, saveWaves,
   sendEmail, SendLog, siteOrigin, unsubUrl, Wave,
 } from "../lib/messaging.mts";
-import { clearDepthStats, elevateProfiles, getDepth, getDepthStats, getHome, getLinks, saveDepth, saveDepthStats, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
+import { clearDepthStats, elevateProfiles, getDepth, getDepthSnapshot, getDepthStats, saveDepthSnapshot, getHome, getLinks, saveDepth, saveDepthStats, saveHome, saveLinks, youtubeFeed } from "../lib/home.mts";
 import { createOrder, deleteOrder, listOrders, updateOrder } from "../lib/orders.mts";
 import { addProspect, askFor, deleteProspect, stageOf, getProspect, getProspectEmails, saveProspectEmails, groupLabels, findBusinesses, findEmail, importProspects, listProspects, playerProspects, playerUpdate, searchSource, updateProspect } from "../lib/prospects.mts";
 import { deleteContract, getContract, listContracts, signContract } from "../lib/contracts.mts";
@@ -42,6 +43,13 @@ export default async (req: Request, context: Context) => {
     if (parts[0] === "sponsor" && parts[1] && parts[2] === "logo" && method === "POST") return sponsorLogoUpload(req, parts[1]);
     if (parts[0] === "sponsors" && method === "GET") return sponsorWall();
     if (parts[0] === "instagram" && method === "GET") return instagramFeed();
+    // The Athlete Monitor reads the published depth chart with the shared key. Never cached in public.
+    if (parts[0] === "depth-feed" && method === "GET") {
+      const want = Netlify.env.get("DEPTH_FEED_KEY") || "";
+      const got = req.headers.get("x-depth-key") || "";
+      if (!want || got.length !== want.length || !timingSafeEqual(Buffer.from(got), Buffer.from(want))) return json({ error: "Not allowed" }, 401, { "cache-control": "no-store" });
+      return json({ snapshot: await getDepthSnapshot() }, 200, { "cache-control": "no-store" });
+    }
     if (parts[0] === "elevate" && method === "GET") return json(await elevateProfiles((url.searchParams.get("paths") || "").split(",")), 200, { "cache-control": "public, max-age=900" });
     if (parts[0] === "youtube" && method === "GET") return json(await youtubeFeed(url.searchParams.get("channel") || ""), 200, { "cache-control": "public, max-age=600" });
     if (parts[0] === "home" && method === "GET") return json({ content: (await getHome())?.content || null }, 200, { "cache-control": "public, max-age=60" });
@@ -487,6 +495,10 @@ async function coachRoutes(req: Request, parts: string[], _s: Session) {
   if (parts[0] === "depth" && method === "GET") return json({ depth: await getDepth(), stats: await getDepthStats() });
   if (parts[0] === "depth-stats" && method === "PUT") {
     try { return json({ ok: true, stats: await saveDepthStats(await req.json().catch(() => ({}))) }); }
+    catch (e) { return json({ error: (e as Error).message }, 400); }
+  }
+  if (parts[0] === "depth-snapshot" && method === "POST") {
+    try { const rec = await saveDepthSnapshot(await req.json().catch(() => ({}))); return json({ ok: true, publishedAt: rec.publishedAt }); }
     catch (e) { return json({ error: (e as Error).message }, 400); }
   }
   if (parts[0] === "depth-stats" && method === "DELETE") return json({ ok: true, stats: await clearDepthStats() });

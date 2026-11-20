@@ -310,6 +310,38 @@ export async function clearDepthStats() {
   return { current: null, previous: null };
 }
 
+// The depth chart as players see it: published by the coach's dashboard after each calculation and read by the
+// Athlete Monitor (with the shared key), which shows each player only her own line.
+const DEPTH_SNAPSHOT_KEY = "coach/depthsnapshot";
+export function cleanDepthSnapshot(body: unknown) {
+  const b = obj(body);
+  const num = (v: unknown) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0; };
+  const players = list(b.players, 40).map((v) => {
+    const x = obj(v), st = obj(x.stats), mv = x.moved ? obj(x.moved) : null;
+    return {
+      name: str(x.name, 60), rank: Math.round(num(x.rank)), of: Math.round(num(x.of)),
+      spots: list(x.spots, 5).map((sp) => { const y = obj(sp); return { code: POSITIONS.includes(String(y.code)) ? String(y.code) : "", order: Math.round(num(y.order)), of: Math.round(num(y.of)), role: y.role === "primary" ? "primary" : "backup" }; }).filter((y) => y.code),
+      gp: x.gp == null ? null : Math.round(num(x.gp)), blend: !!x.blend,
+      stats: { ppg: num(st.ppg), reb: num(st.reb), ast: num(st.ast), stl: num(st.stl), blk: num(st.blk) }, index: num(x.index),
+      moved: mv ? { places: Math.round(num(mv.places)), index: num(mv.index) } : null,
+      why: str(x.why, 1200), plan: list(x.plan, 8).map((t) => str(t, 600)).filter(Boolean),
+    };
+  }).filter((p) => p.name);
+  return { asOf: /^\d{4}-\d{2}-\d{2}$/.test(String(b.asOf)) ? String(b.asOf) : "", basis: str(b.basis, 200), players };
+}
+export async function saveDepthSnapshot(body: unknown) {
+  const next = cleanDepthSnapshot(body);
+  if (!next.players.length) throw new Error("Nothing to publish.");
+  const old = (await db().get(DEPTH_SNAPSHOT_KEY, { type: "json" })) as (typeof next & { publishedAt: string }) | null;
+  if (old && JSON.stringify({ ...old, publishedAt: undefined }) === JSON.stringify({ ...next, publishedAt: undefined })) return old;
+  const rec = { ...next, publishedAt: new Date().toISOString() };
+  await db().setJSON(DEPTH_SNAPSHOT_KEY, rec);
+  return rec;
+}
+export async function getDepthSnapshot() {
+  return (await db().get(DEPTH_SNAPSHOT_KEY, { type: "json" })) || null;
+}
+
 // ---------- YouTube highlights ----------
 // Latest uploads from the team channel through YouTube's public feed (no API key). Cached for an hour.
 const clip = (s: string) => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
